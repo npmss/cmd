@@ -17,11 +17,11 @@ class discuz_upgrade {
 	var $locale = 'SC';
 	var $charset = 'GBK';
 
-	public function check_news(){
+	public function check_news($nocache = false){
 	    global $_G;
 	    $list = array();
 	    $file = DISCUZ_ROOT.'./data/sysdata/cache_fansnews.php';
-	    if(!file_exists($file) || filemtime($file) < TIMESTAMP - 86400){
+	    if(!file_exists($file) || filemtime($file) < TIMESTAMP - 86400 || $nocache){
 	        $data = array(
 	            'uniqueid' => $_G['setting']['siteuniqueid'],
 	            'fansuniqueid' => $_G['setting']['fansuniqueid'],

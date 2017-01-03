@@ -89,10 +89,15 @@ if(isset($_GET['attachsize'])) {
 	$attachsize = '<a href="'.ADMINSCRIPT.'?action=index&attachsize">[ '.$lang['detail'].' ]</a>';
 }
 
-if(isset($_GET['checknewversion'])){
+if(isset($_GET['checknewversion']) && $_G['formhash'] == $_GET['formhash']){
     $discuz_upgrade = new discuz_upgrade();
     $discuz_upgrade->check_newversion();
+}elseif(isset($_GET['checknews']) && $_G['formhash'] == $_GET['formhash']){
+    $discuz_upgrade = new discuz_upgrade();
+    $discuz_upgrade->check_news(1);
 }
+
+
 
 $membersmod = C::t('common_member_validate')->count_by_status(0);
 $threadsdel = C::t('forum_thread')->count_by_displayorder(-1);
@@ -274,7 +279,7 @@ $newversion = isset($newversion['newversion']) ? $newversion['newversion'] : arr
 showtablerow('', array('class="vtop td24 lineheight"', 'class="lineheight smallfont"'), array(
 	cplang('home_check_newversion'),
     ($newversion ? 'Discuz! L'.$newversion['newversion'].' Release '.$newversion['newrelease'].' ' : '').
-	'<a href="'.ADMINSCRIPT.'?action=index&checknewversion">[ '.$lang['refresh'].' ]</a>&nbsp;&nbsp;'.
+	'<a href="'.ADMINSCRIPT.'?action=index&checknewversion&formhash='.$_G['formhash'].'">[ '.$lang['refresh'].' ]</a>&nbsp;&nbsp;'.
     ($newversion['onlineupgrade'] ? '<a href="'.ADMINSCRIPT.'?action=upgrade" class="lightlink2 smallfont">'.$lang['nav_founder_upgrade'].'</a>'.' | ' : '').
     '<a href="'.($newversion['official'] ? $newversion['official'] : 'http://www.discuzfans.net/').'" target="_blank">'.cplang('home_downurl').'</a>'
 ));
@@ -331,7 +336,7 @@ if(count($news)){
 		require_once libfile('function/discuzcode');
     foreach ($news as $v){
         showtablerow('', array('', 'class="td21" style="text-align:right;"'), array(
-            '<a href="'.$v['url'].'" target="_blank">'.discuzcode(strip_tags($v['title']), 1, 0).'</a>',
+            '<a href="'.$v['url'].'" target="_blank">'.discuzcode(strip_tags(diconv($v['title'], 'GBK')), 1, 0).'</a>',
             '['.discuzcode(strip_tags($v['date']), 1, 0).']',
         ));
     }

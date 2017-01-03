@@ -109,7 +109,7 @@ e29f1570dfb5b797397fa046cdd43bc5 *source/admincp/admincp_fanscenter.php
 b66d555e832b18209cbad48413fc9c5a *source/admincp/admincp_forums.php
 637d9ec4253875a11d883150ca7abbf1 *source/admincp/admincp_founder.php
 377b4f5663f9d281437cbb1292a54e40 *source/admincp/admincp_group.php
-96ff6674c215577ba17909571b1fd4ff *source/admincp/admincp_index.php
+241d61f670711e335d84af9349b9a249 *source/admincp/admincp_index.php
 2696f1e7e0c89d8f0b0bbfef40f35c27 *source/admincp/admincp_login.php
 b83851a2371b917115ade4d6ba6e7863 *source/admincp/admincp_logs.php
 1bb4886383e494b58807893cdd465f70 *source/admincp/admincp_magics.php
@@ -343,7 +343,7 @@ ba774e11580bd66b0e68d16320ac2700 *source/class/discuz/discuz_memory.php
 f166e9c0b21d8198b065abc20b2309f0 *source/class/discuz/discuz_session_close.php
 7f92dfc0de0cf70c65570d519fdb38c1 *source/class/discuz/discuz_table.php
 bc5940c2be4338f2288f0cb179ecb685 *source/class/discuz/discuz_table_archive.php
-e56719c837676161c5e6676b76fa854e *source/class/discuz/discuz_upgrade.php
+28e25f73e250774004f040d9520b193d *source/class/discuz/discuz_upgrade.php
 2080f1fcd41de9c60032b01326ae57ab *source/class/discuz/discuz_upload.php
 d41d8cd98f00b204e9800998ecf8427e *source/class/discuz/index.htm
 bca8d6b270c0e9383383afe95dcfefe5 *source/class/extend/extend_thread_activity.php
@@ -1050,7 +1050,7 @@ e6f1091f01a20d35925c95d7a62222bc *source/language/home/lang_magic.php
 b11207dc4984a5b6a24cf1345332856d *source/language/home/lang_template.php
 d41d8cd98f00b204e9800998ecf8427e *source/language/index.htm
 0e1469673cc7b512bfaef290d974a046 *source/language/lang_action.php
-eecc0857b0e1c39975e23465fc052b25 *source/language/lang_admincp.php
+47410417387c52354b16de204b39eecf *source/language/lang_admincp.php
 d6a2fb315dab1868cca8e9a7944bb5d9 *source/language/lang_admincp_login.php
 9c44c289a833f1bb3e6626bc8cd4580b *source/language/lang_admincp_menu.php
 713d290e5e422294f1e75baaa11f402f *source/language/lang_admincp_msg.php

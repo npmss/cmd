@@ -651,7 +651,7 @@ $lang = array
 	'home_onlines_ip' => '访问 IP',
 	'home_notes' => '管理团队留言',
 	'home_notes_add' => '留言',
-	'home_news' => 'Discuz! Lite 动态',
+	'home_news' => 'Discuz! Lite 动态 <a href="'.ADMINSCRIPT.'?action=index&checknews&formhash='.FORMHASH.'">[ 刷新 ]</a>',
 	'home_news_none' => '暂未获取到动态，请登录 Discuz! Lite 查看。',
 	'home_mods' => '待处理事项',
 	'home_mod_verify_prefix' => '等待审核的',
