@@ -53,10 +53,6 @@ $shownotice
 <td colspan="2" height="53">
 <div class="mainhd">
 <a href="$basescript?frames=yes&action=index" class="logo">Discuz! Administrator's Control Panel</a>
-<div class="uinfo" id="frameuinfo">
-<p>$header_welcome, $cpadmingroup <em>{$_G['member']['username']}</em> [<a href="$basescript?action=logout" target="_top">$header_logout</a>]</p>
-<p class="btnlink"><a href="index.php" target="_blank">$header_bbs</a></p>
-</div>
 <div class="navbg"></div>
 <div class="nav">
 <ul id="topmenu">
@@ -92,6 +88,10 @@ echo <<<EOT
 
 </ul>
 </div>
+</div>
+<div class="uinfo" id="frameuinfo">
+<p>$header_welcome, $cpadmingroup <em>{$_G['member']['username']}</em> [<a href="$basescript?action=logout" target="_top">$header_logout</a>]</p>
+<p class="btnlink"><a href="index.php" target="_blank">$header_bbs</a></p>
 </div>
 </td>
 </tr>
