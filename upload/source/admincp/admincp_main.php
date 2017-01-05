@@ -88,10 +88,10 @@ echo <<<EOT
 
 </ul>
 </div>
-</div>
 <div class="uinfo" id="frameuinfo">
 <p>$header_welcome, $cpadmingroup <em>{$_G['member']['username']}</em> [<a href="$basescript?action=logout" target="_top">$header_logout</a>]</p>
 <p class="btnlink"><a href="index.php" target="_blank">$header_bbs</a></p>
+</div>
 </div>
 </td>
 </tr>
