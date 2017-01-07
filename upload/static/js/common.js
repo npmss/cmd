@@ -1515,6 +1515,11 @@ function parseurl(str, mode, parsecode) {
 function codetag(text, br) {
 	var br = !br ? 1 : br;
 	DISCUZCODE['num']++;
+
+	text = text.replace(/<\/blockquote><blockquote>/ig, '<br>');
+	text = text.replace(/<div>([\s\S]*?)<\/div>/ig, "$1");
+	text = text.replace(/<p>([\s\S]*?)<\/p>/ig, "$1");
+
 	if(br > 0 && typeof wysiwyg != 'undefined' && wysiwyg) text = text.replace(/<br[^\>]*>/ig, '\n');
 	text = text.replace(/\$/ig, '$$');
 	DISCUZCODE['html'][DISCUZCODE['num']] = '[code]' + text + '[/code]';
