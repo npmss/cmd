@@ -314,6 +314,7 @@ function html2bbcode(str) {
 		return str;
 	}
 
+	str = str.replace(/<p><\/p>/ig, '');
 	str = str.replace(/<\/p><p>/ig, '<br>');
 	str = str.replace(/<\/div><div>/ig, '<br>');
 
