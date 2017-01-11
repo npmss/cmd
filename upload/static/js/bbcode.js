@@ -315,8 +315,14 @@ function html2bbcode(str) {
 	}
 
 	str = str.replace(/<p><\/p>/ig, '');
-	str = str.replace(/<\/p><p>/ig, '<br>');
-	str = str.replace(/<\/div><div>/ig, '<br>');
+	str = str.replace(/<div><\/div>/ig, '');
+	
+	str = str.replace(/<p>/ig, '<div>');
+	str = str.replace(/<\/p>/ig, '</div>');
+
+	str = str.replace(/<br><div>/ig, '<div>');
+	str = str.replace(/<div><br><\/div>/ig, '<br>');
+	str = str.replace(/(<\/div>)+(<div>)+/ig, '<br>');
 
 	str = str.replace(/<div[^>]*blockcode[^>]*><blockquote>([\s\S]*?)<\/blockquote><\/div>([\s\S]*?)(<br[^>]*>)?/ig, function($1, $2) {return codetag($2);});
 
