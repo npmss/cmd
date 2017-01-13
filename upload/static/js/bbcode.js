@@ -141,7 +141,7 @@ function bbcode2html(str) {
 	}
 
 	for(var i = 0; i <= DISCUZCODE['num']; i++) {
-		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", DISCUZCODE['html'][i]);
+		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", function () {return DISCUZCODE['html'][i];});
 	}
 
 	if(!allowhtml || !fetchCheckbox('htmlon')) {
@@ -423,7 +423,7 @@ function html2bbcode(str) {
 	str = str.replace(/<[\/\!]*?[^<>]*?>/ig, '');
 
 	for(var i = 0; i <= DISCUZCODE['num']; i++) {
-		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", DISCUZCODE['html'][i]);
+		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", function () {return DISCUZCODE['html'][i];});
 	}
 	str = clearcode(str);
 
