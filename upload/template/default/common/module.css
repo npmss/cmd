@@ -913,7 +913,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 			.po .y { margin: 8px 0 0 5px; }
 			.po p { float: right; }
 				.po p a, .po p label { margin-right: 6px; }
-		.hin { opacity: 0.2;}
+		.hin { opacity: 0;}
 			.plhin:hover .hin { opacity: 1; }
 		.pob { line-height: 36px; }
 			.pob em { float: left;}
