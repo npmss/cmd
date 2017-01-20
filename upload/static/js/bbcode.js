@@ -87,6 +87,10 @@ function bbcode2html(str) {
 			}
 			return addCSS;
 		});
+		str = str.replace(/<p>([\s\S]*?)<\/p>/ig, '<div>$1</div>');
+
+		str = str.replace(/\[color=rgb\(0, 0, 0\)\]/ig, '<font>');
+		str = str.replace(/\[font=&quot;\]/ig, '<font>');
 		str = str.replace(/\[color=([\w#\(\),\s]+?)\]/ig, '<font color="$1">');
 		str = str.replace(/\[backcolor=([\w#\(\),\s]+?)\]/ig, '<font style="background-color:$1">');
 		str = str.replace(/\[size=(\d+?)\]/ig, '<font size="$1">');
@@ -189,8 +193,11 @@ function cuturl(url) {
 }
 
 function dstag(options, text, tagname) {
+	if(text == "\n") {
+		return text;
+	}
 	if(trim(text) == '') {
-		return '\n';
+		return tagname == 'div' ? '' : '\n';
 	}
 	var pend = parsestyle(options, '', '');
 	var prepend = pend['prepend'];
@@ -288,7 +295,14 @@ function fonttag(fontoptions, text) {
 	}
 
 	var pend = parsestyle(fontoptions, prepend, append);
-	return pend['prepend'] + recursion('font', text, 'fonttag') + pend['append'];
+	var text = recursion('font', text, 'fonttag');
+	if(text == '\n') {
+		return '';
+	}
+	if(trim(text) == '') {
+		return '';
+	}
+	return pend['prepend'] + text + pend['append'];
 }
 
 function getoptionvalue(option, text) {
@@ -313,16 +327,12 @@ function html2bbcode(str) {
 		str = str.replace(/<img([^>]*aid=[^>]*)>/ig, function($1, $2) {return imgtag($2);});
 		return str;
 	}
-
-	str = str.replace(/<p><\/p>/ig, '');
+	str = str.replace(/<p>([\s\S]*?)<\/p>/ig, '<div>$1</div>');
+	str = str.replace(/<p[^>]*><\/p>/ig, '<br>');
 	str = str.replace(/<div><\/div>/ig, '');
-	
-	str = str.replace(/<p>/ig, '<div>');
-	str = str.replace(/<\/p>/ig, '</div>');
-
+	str = str.replace(/<div[^>]*><br><\/div>/ig, '<br>');
 	str = str.replace(/<br><div>/ig, '<div>');
-	str = str.replace(/<div><br><\/div>/ig, '<br>');
-	str = str.replace(/(<\/div>)+(<div>)+/ig, '<br>');
+	str = str.replace(/<\/div><div>/ig, '<br>');
 
 	str = str.replace(/<div[^>]*blockcode[^>]*><blockquote>([\s\S]*?)<\/blockquote><\/div>([\s\S]*?)(<br[^>]*>)?/ig, function($1, $2) {return codetag($2);});
 
@@ -673,7 +683,11 @@ function recursion(tagname, text, dofunction, extraargs) {
 		if(tagbegin != 0 || tagname != 'div') {
 			var localtext = eval(dofunction)(tagoptions, text.substr(localbegin, tagend - localbegin), tagname, extraargs);
 		}else{
-			var localtext = text.substr(localbegin, tagend - localbegin);
+			if(tagoptions.length > 0) {
+				var localtext = eval(dofunction)(tagoptions, text.substr(localbegin, tagend - localbegin), tagname, extraargs);
+			}else{
+				var localtext = text.substr(localbegin, tagend - localbegin);
+			}
 		}
 		text = text.substring(0, tagbegin) + localtext + text.substring(tagend + close_tag_len);
 
