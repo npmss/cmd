@@ -12,7 +12,7 @@ if(!defined('IN_DISCUZ')) {
 }
 
 function build_cache_plugin() {
-	global $importtxt;
+	global $_G, $importtxt;
 
 	loadcache(array('addoninfo_plugin', 'addoninfo_pack'));
 	if(is_array($_G['cache']['addoninfo_plugin']) && !empty($_G['cache']['addoninfo_plugin'])){
