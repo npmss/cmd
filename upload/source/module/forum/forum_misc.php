@@ -985,7 +985,9 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 	include template('forum/pay_view');
 
 } elseif($_GET['action'] == 'viewthreadmod' && $_G['tid']) {
-
+	if(!$_G['forum']['ismoderator']){
+		showmessage('quickclear_noperm');
+	}
 	$modactioncode = lang('forum/modaction');
 	$loglist = array();
 
