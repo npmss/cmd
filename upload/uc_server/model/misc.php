@@ -92,7 +92,7 @@ class miscmodel {
 		}
 
 		$fpflag = 0;
-		if(!$fp = @fsocketopen(($scheme == 'https'?'ssl://':'').($ip ? $ip : $host), $port, $errno, $errstr, $timeout)) {
+		if(!$fp = @fsocketopen(($scheme == 'https' ? 'ssl' : $scheme).'://'.($scheme == 'https' ? $host : ($ip ? $ip : $host)), $port, $errno, $errstr, $timeout)) {
 			$context = array(
 				'http' => array(
 					'method' => $post ? 'POST' : 'GET',
@@ -102,7 +102,7 @@ class miscmodel {
 				),
 			);
 			$context = stream_context_create($context);
-			$fp = @fopen($scheme.'://'.($ip ? $ip : $host).':'.$port.$path, 'b', false, $context);
+			$fp = @fopen($scheme.'://'.($scheme == 'https' ? $host : ($ip ? $ip : $host)).':'.$port.$path, 'b', false, $context);
 			$fpflag = 1;
 		}
 

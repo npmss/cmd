@@ -936,7 +936,7 @@ function dfopen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALSE, $
 			),
 		);
 		$context = stream_context_create($context);
-		$fp = @fopen($scheme.'://'.($ip ? $ip : $host).':'.$port.$path, 'b', false, $context);
+		$fp = @fopen($scheme.'://'.($scheme == 'https' ? $host : ($ip ? $ip : $host)).':'.$port.$path, 'b', false, $context);
 		$fpflag = 1;
 	}
 
