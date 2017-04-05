@@ -66,7 +66,7 @@ h3{ margin-bottom:10px; font-size:14px; color:#09C; }
 .nav ul{ overflow:hidden; position:relative; z-index:4; font-size:14px; }
 .nav li{ float:left; height:43px; line-height:43px; background:url(btn_block.gif) right -115px no-repeat; }
 .nav li em{ display:block; }
-.nav li a{ padding:5px 10px; color:#639BB0; font-weight:700;font-size: 18px; }
+.nav li a{ padding:5px 10px; color:#639BB0; font-weight:700;font-size: 15px; }
 .nav li a:hover{ color:#09C; text-decoration:none; }
 .nav li .diffcolor{ color:#F60; }
 .nav li.navon{ line-height:33px; background:url(btn_block.gif) no-repeat; }
@@ -149,7 +149,7 @@ li.popupmenu_popup { list-style: none; }
 #scrolllink{ position: absolute; z-index: 21; bottom: 40px; *bottom: 39px; left: 0; padding: 2px 0; width: 154px; background-color: #F2F9FD; }
 #scrolllink span { cursor: pointer; }
 #scrolllink img { margin-left: 2px; }
-.copyright{ position:absolute; z-index:10; left:5px; bottom:3px;width: 165px;padding-top:3px; border-top:1px dashed #DDD; text-align:left; line-height:150%; font-family:Tahoma; font-size:13px; -webkit-text-size-adjust: none; }
+.copyright{ position:absolute; z-index:10; left:5px; bottom:3px;padding-top:3px; border-top:1px dashed #DDD; text-align:left; line-height:150%; font-family:Tahoma; font-size:13px; -webkit-text-size-adjust: none; }
 .logintb{ text-align:left; margin:120px auto 0; width:600px; }
 .login{ padding-right:30px; width:310px; height:150px; background:url(bg_login.gif) right 50% no-repeat; }
 .login h1{ text-indent:-9999px; margin-bottom:10px; width:262px; height:26px; background:url(login_title.gif) no-repeat; }
