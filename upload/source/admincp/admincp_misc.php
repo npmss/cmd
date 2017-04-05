@@ -900,7 +900,7 @@ EOT;
 							$_GET['typeidnew'][$id] = 0;
 						}
 					}
-					C::t('common_smiley')->update($id, array(
+						C::t('common_smiley')->update($id, array(
 						'displayorder' => $_GET['displayorder'][$id],
 						'code' => $_GET['code'][$id],
 						'typeid' => $_GET['typeidnew'][$id],

@@ -412,6 +412,7 @@ function showmessagenoperm($type, $fid, $formula = '') {
 
 function loadforum($fid = null, $tid = null) {
 	global $_G;
+	$forum = array();
 	$tid = intval(isset($tid) ? $tid : getgpc('tid'));
 	if(isset($fid)) {
 		$fid = intval($fid);
