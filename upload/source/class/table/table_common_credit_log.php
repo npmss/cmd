@@ -44,7 +44,7 @@ class table_common_credit_log extends discuz_table
 		$wherearr[] = is_array($relatedid) && $relatedid ? 'relatedid IN(%n)' : 'relatedid=%d';
 		$parameter[] = $operation;
 		$parameter[] = $relatedid;
-		return DB::fetch_all('SELECT * FROM %t WHERE '.implode(' AND ', $wherearr).' ORDER BY dateline', $parameter);
+		return DB::fetch_all('SELECT * FROM %t WHERE '.implode(' AND ', $wherearr).' ORDER BY dateline DESC', $parameter);
 	}
 	public function fetch_all_by_uid($uid, $start = 0, $limit = 0) {
 		$array = DB::fetch_all('SELECT * FROM %t WHERE uid=%d ORDER BY dateline DESC '.DB::limit($start, $limit), array($this->_table, $uid), 'logid');
