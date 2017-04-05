@@ -237,11 +237,15 @@ if($_GET['step'] == 'start') {
 	$i = empty($_GET['i'])?0:intval($_GET['i']);
 	$count_i = count($newtables);
 	if($i>=$count_i) {
-	    if(!C::t('common_member_archive')->check_table()) {
-		    C::t('common_member_archive')->rebuild_table(0);
-		    C::t('common_member_archive')->rebuild_table(2);
-		    C::t('common_member_archive')->rebuild_table(3);
-		  }
+    $mastertables = array('common_member', 'common_member_count', 'common_member_status', 'common_member_profile', 'common_member_field_home', 'common_member_field_forum');
+		foreach($mastertables as $key => $tablename) {
+			if(DB::fetch_first("SHOW TABLES LIKE '".DB::table("{$tablename}_archive")."'")){
+				C::t('common_member_archive')->rebuild_table($key);
+			} else {
+				$createtable = DB::fetch_first('SHOW CREATE TABLE '.DB::table($tablename));
+				DB::query(str_replace(DB::table($tablename), DB::table("{$tablename}_archive"), $createtable['Create Table']));
+			}
+		}
 		show_msg('数据库结构升级完毕，进入下一步数据升级操作', $theurl.'?step=data');
 	}
 	$newtable = $newtables[$i];
@@ -1182,7 +1186,7 @@ if($_GET['step'] == 'start') {
 
 		$replacement = DB::result_first("SELECT replacement FROM ".DB::table('forum_bbcode')." WHERE tag = 'qq' AND id = 2 LIMIT 1");
 		if($replacement && strpos($replacement, 'Uin') !== false){
-			DB::query("REPLACE INTO ".DB::table("forum_bbcode")." VALUES ('2','2','qq','bb_qq.gif','<a href=\"http://wpa.qq.com/msgrd?V=3&uin={1}&amp;Site=[Discuz!]&amp;from=discuz&amp;Menu=yes\" target=\"_blank\"><img src=\"static/image/common/qq_big.gif\" border=\"0\"></a>','[qq]688888[/qq]','显示 QQ 在线状态，点这个图标可以和他（她）聊天','1','请输入 QQ 号码:<a href=\"\" class=\"xi2\" onclick=\"this.href=\'http://wp.qq.com/set.html?from=discuz&uin=\'+$(\'e_cst1_qq_param_1\').value\" target=\"_blank\" style=\"float:right;\">设置QQ在线状态&nbsp;&nbsp;</a>','1','21','1	2	3	10	11	12	13	14	15	16	17	18	19');");
+			DB::query("REPLACE INTO ".DB::table("forum_bbcode")." VALUES ('2','2','qq','bb_qq.gif','<a href=\"http://wpa.qq.com/msgrd?v=3&uin={1}&amp;site=[Discuz!Lite]&amp;from=DiscuzLite&amp;menu=yes\" target=\"_blank\"><img src=\"static/image/common/qq_big.gif\" border=\"0\"></a>','[qq]688888[/qq]','显示 QQ 在线状态，点这个图标可以和他（她）聊天','1','请输入 QQ 号码:<a href=\"\" class=\"xi2\" onclick=\"this.href=\'http://wp.qq.com/set.html?from=discuz&uin=\'+$(\'e_cst1_qq_param_1\').value\" target=\"_blank\" style=\"float:right;\">设置QQ在线状态&nbsp;&nbsp;</a>','1','21','1	2	3	10	11	12	13	14	15	16	17	18	19');");
 		}
 
 		show_msg("自定义代码权限升级完毕", "$theurl?step=data&op=$nextop");
@@ -1990,6 +1994,8 @@ if($_GET['step'] == 'start') {
 		cleartemplatecache();
 	}
 
+	@unlink(DISCUZ_ROOT.'./install/update.php');
+
 	if($_GET['from']) {
 		show_msg('<span id="finalmsg">缓存更新中，请稍候 ...</span><iframe src="../misc.php?mod=initsys" style="display:none;" onload="window.location.href=\''.$_GET['from'].'\'"></iframe>');
 	} else {
@@ -2143,9 +2149,10 @@ END;
 }
 
 function show_footer() {
+	$y = date("Y");
 	print<<<END
 	</div>
-	<div id="footer">&copy; Comsenz Inc. 2001-2016 http://www.comsenz.com</div>
+	<div id="footer">&copy; Comsenz Inc. 2001-{$y} http://www.comsenz.com</div>
 	</div>
 	<br>
 	</body>
