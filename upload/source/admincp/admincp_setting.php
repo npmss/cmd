@@ -2238,10 +2238,15 @@ EOT;
 			$cache_config['memcache']['server'] ? cplang('open') : cplang('closed'),
 			$cache_type == 'memcache' ? $do_clear_link : '--'
 			);
-		$apc = array('APC',
-			$cache_extension['apc'] ? cplang('setting_memory_php_enable') : cplang('setting_memory_php_disable'),
-			$cache_config['apc'] ? cplang('open') : cplang('closed'),
-			$cache_type == 'apc' ? $do_clear_link : '--'
+		$yac = array('Yac',
+			$cache_extension['yac'] ? cplang('setting_memory_php_enable') : cplang('setting_memory_php_disable'),
+			$cache_config['yac'] ? cplang('open') : cplang('closed'),
+			$cache_type == 'yac' ? $do_clear_link : '--'
+			);
+		$apcu = array('APCu',
+			$cache_extension['apcu'] ? cplang('setting_memory_php_enable') : cplang('setting_memory_php_disable'),
+			$cache_config['apcu'] ? cplang('open') : cplang('closed'),
+			$cache_type == 'apcu' ? $do_clear_link : '--'
 			);
 		$xcache = array('Xcache',
 			$cache_extension['xcache'] ? cplang('setting_memory_php_enable') : cplang('setting_memory_php_disable'),
@@ -2258,13 +2263,20 @@ EOT;
 			$cache_config['wincache'] ? cplang('open') : cplang('closed'),
 			$cache_type == 'wincache' ? $do_clear_link : '--'
 			);
+		$apc = array('APC',
+			$cache_extension['apc'] ? cplang('setting_memory_php_enable') : cplang('setting_memory_php_disable'),
+			$cache_config['apc'] ? cplang('open') : cplang('closed'),
+			$cache_type == 'apc' ? $do_clear_link : '--'
+			);
 
-		showtablerow('', array('width="100"', 'width="120"', 'width="120"'), $redis);
+		showtablerow('', array('width="150"', 'width="120"', 'width="120"'), $redis);
 		showtablerow('', '', $memcache);
-		showtablerow('', '', $apc);
+		showtablerow('', '', $yac);
+		showtablerow('', '', $apcu);
 		showtablerow('', '', $xcache);
 		showtablerow('', '', $ea);
 		showtablerow('', '', $wincache);
+		showtablerow('', '', $apc);
 		showtablefooter();
 
 		if(!isset($setting['memory'])) {

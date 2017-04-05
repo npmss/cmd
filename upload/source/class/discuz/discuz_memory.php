@@ -25,10 +25,12 @@ class discuz_memory extends discuz_base
 	public function __construct() {
 		$this->extension['redis'] = extension_loaded('redis');
 		$this->extension['memcache'] = extension_loaded('memcache');
-		$this->extension['apc'] = function_exists('apc_cache_info') && @apc_cache_info();
+		$this->extension['yac'] = extension_loaded('yac');
+		$this->extension['apcu'] = function_exists('apcu_cache_info') && @apcu_cache_info();
 		$this->extension['xcache'] = function_exists('xcache_get');
 		$this->extension['eaccelerator'] = function_exists('eaccelerator_get');
 		$this->extension['wincache'] = function_exists('wincache_ucache_meminfo') && wincache_ucache_meminfo();
+		$this->extension['apc'] = function_exists('apc_cache_info') && @apc_cache_info();
 	}
 
 	public function init($config) {
@@ -52,7 +54,7 @@ class discuz_memory extends discuz_base
 			}
 		}
 
-		foreach(array('apc', 'eaccelerator', 'xcache', 'wincache') as $cache) {
+		foreach(array('yac', 'apcu', 'eaccelerator', 'xcache', 'wincache', 'apc') as $cache) {
 			if(!is_object($this->memory) && $this->extension[$cache] && $this->config[$cache]) {
 				$class_name = 'memory_driver_'.$cache;
 				$this->memory = new $class_name();
