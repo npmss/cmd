@@ -12,7 +12,7 @@ define("REQUEST_METHOD_DOMAIN", 'http://wsq.discuz.com');
 
 class mobile_core {
 
-	static function result($result) {
+	public static function result($result) {
 		global $_G;
 		ob_end_clean();
 		function_exists('ob_gzhandler') ? ob_start('ob_gzhandler') : ob_start();
@@ -27,7 +27,7 @@ class mobile_core {
 		exit;
 	}
 
-	static function format($result) {
+	public static function format($result) {
 		switch (gettype($result)) {
 			case 'array':
 				foreach($result as $_k => $_v) {
@@ -44,7 +44,7 @@ class mobile_core {
 		return $result;
 	}
 
-	static function json($encode) {
+	public static function json($encode) {
 		if(!empty($_GET['debug']) && defined('DISCUZ_DEBUG') && DISCUZ_DEBUG) {
 			return debug($encode);
 		}
@@ -52,7 +52,7 @@ class mobile_core {
 		return CJSON::encode($encode);
 	}
 
-	static function getvalues($variables, $keys, $subkeys = array()) {
+	public static function getvalues($variables, $keys, $subkeys = array()) {
 		$return = array();
 		foreach($variables as $key => $value) {
 			foreach($keys as $k) {
@@ -70,14 +70,14 @@ class mobile_core {
 		return $return;
 	}
 
-	static function arraystring($array) {
+	public static function arraystring($array) {
 		foreach($array as $k => $v) {
 			$array[$k] = is_array($v) ? mobile_core::arraystring($v) : (string)$v;
 		}
 		return $array;
 	}
 
-	static function variable($variables = array()) {
+	public static function variable($variables = array()) {
 		global $_G;
 		if(in_array('mobileoem', $_G['setting']['plugins']['available'])) {
 			$check = C::t('#mobileoem#mobileoem_member')->fetch($_G['uid']);
@@ -172,7 +172,7 @@ class mobile_core {
 		return $xml;
 	}
 
-	static function diconv_array($variables, $in_charset, $out_charset) {
+	public static function diconv_array($variables, $in_charset, $out_charset) {
 		foreach($variables as $_k => $_v) {
 			if(is_array($_v)) {
 				$variables[$_k] = mobile_core::diconv_array($_v, $in_charset, $out_charset);
@@ -183,7 +183,7 @@ class mobile_core {
 		return $variables;
 	}
 
-	static function make_cors($request_method, $origin = '') {
+	public static function make_cors($request_method, $origin = '') {
 
 		$origin = $origin ? $origin : REQUEST_METHOD_DOMAIN;
 
@@ -218,7 +218,7 @@ class mobile_core {
 
 	}
 
-	static function usergroupIconId($groupid) {
+	public static function usergroupIconId($groupid) {
 		global $_G;
 		if($_G['cache']['usergroupIconId']) {
 			return $_G['cache']['usergroupIconId']['variable'][$groupid];
@@ -249,7 +249,7 @@ class mobile_core {
 		}
 	}
 
-	static function activeHook($module, $mobileapihook, &$param, $isavariables = false) {
+	public static function activeHook($module, $mobileapihook, &$param, $isavariables = false) {
 		global $_G;
 		if($isavariables) {
 			$mobileapihook[$module] = array(
