@@ -641,7 +641,7 @@ $lang = array (
 
   'cloudaddons_check_url_fopen_error' => '您的服务器无法访问应用中心，这将会导致应用无法安装。请联系您的服务商或者网站技术人员，确保您的服务器能够正常访问 addon.discuz.com 或 addon1.discuz.com',
   'cloudaddons_check_gzuncompress_error' => '您的服务器不支持 Zlib，这将会导致应用无法安装。请联系您的服务商或者网站技术人员。',
-  'cloudaddons_genuine_message' => '对不起，您安装的不是正版应用，安装程序无法继续执行<br /><br /><a href="admin.php?action=cloudaddons&id={addonid}">点击这里安装正版应用</a>',
+  'cloudaddons_genuine_message' => '对不起，您安装的不是正版应用，安装程序无法继续执行<br /><br /><a href="'.ADMINSCRIPT.'?action=cloudaddons&id={addonid}">点击这里安装正版应用</a>',
 
   'admincp_makehtml_cleanhtml_error' => '对不起，开启生成HTML静态文件时，不能清理HTML文件。',
   'admincp_makehtml_cleanhtml_succeed' => '清理HTML文件成功。',
