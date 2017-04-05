@@ -205,19 +205,5 @@ if(!$_G['privacy']) {
 	}
 }
 
-function show_credit() {
-	global $_G, $space;
-
-	$showinfo = C::t('home_show')->fetch($space['uid']);
-	if($showinfo['credit'] > 0) {
-		$showinfo['unitprice'] = intval($showinfo['unitprice']);
-		if($showinfo['credit'] <= $showinfo['unitprice']) {
-			notification_add($space['uid'], 'show', 'show_out');
-			C::t('home_show')->delete($space['uid']);
-		} else {
-			C::t('home_show')->update_credit_by_uid($space['uid'], -$showinfo['unitprice']);
-		}
-	}
-}
 
 ?>
