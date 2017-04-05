@@ -328,13 +328,14 @@ function html2bbcode(str) {
 		return str;
 	}
 	str = str.replace(/<p>([\s\S]*?)<\/p>/ig, '<div>$1</div>');
-	str = str.replace(/<p[^>]*><\/p>/ig, '<br>');
-	str = str.replace(/<div><\/div>/ig, '');
-	str = str.replace(/<div[^>]*><br><\/div>/ig, '<br>');
-	str = str.replace(/<br><div>/ig, '<div>');
-	str = str.replace(/<\/div><div>/ig, '<br>');
+	str = str.replace(/<p[^>]*><\/p>/ig, '<br />');
+	str = str.replace(/<div[^>]*><\/div>/ig, '');
+	str = str.replace(/<div[^>]*><br[^>]*><\/div>/ig, '<br />');
+	str = str.replace(/<\/div><div>/ig, '<br />');
+	str = str.replace(/<br><div/ig, '<div');
 
-	str = str.replace(/<div[^>]*blockcode[^>]*><blockquote>([\s\S]*?)<\/blockquote><\/div>([\s\S]*?)(<br[^>]*>)?/ig, function($1, $2) {return codetag($2);});
+	str = str.replace(/<\/blockquote><blockquote>/ig, '<br>');
+	str = str.replace(/<div\sclass=["']?blockcode["']?>[\s\S]*?<blockquote>([\s\S]+?)<\/blockquote>[\s\S]*?<\/div>/ig, function($1, $2) {return codetag($2);});
 
 	if(!fetchCheckbox('bbcodeoff') && allowbbcode) {
 		var postbg = '';
