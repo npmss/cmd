@@ -90,7 +90,7 @@ $_config['db']['common']['slave_except_table'] = '';
 //内存变量前缀, 可更改,避免同服务器中的程序引用错乱
 $_config['memory']['prefix'] = 'discuz_';
 
-/* reids设置, 需要PHP扩展组件支持, timeout参数的作用没有查证 */
+/* redis设置, 需要PHP扩展组件支持, timeout参数的作用没有查证 */
 $_config['memory']['redis']['server'] = '';
 $_config['memory']['redis']['port'] = 6379;
 $_config['memory']['redis']['pconnect'] = 1;
