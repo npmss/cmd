@@ -16,4 +16,4 @@ Discuz! L1.0 由Discuz粉丝基于Discuz! X系列开发，仅供 [Discuz! 粉丝
 - Discuz! 开放平台：http://open.discuz.net
 - Discuz! 粉丝网：https://www.discuzfans.net
 
-![输入图片说明](https://git.oschina.net/uploads/images/2016/1229/002755_5e1b3227_134400.png "在这里输入图片标题")
+![输入图片说明](https://images.gitee.com/uploads/images/2019/0104/142935_73eddc5c_134400.png "qqqun.png")
