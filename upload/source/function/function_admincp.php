@@ -198,7 +198,7 @@ function showmenu($key, $menus, $return = 0) {
 	if(is_array($menus)) {
 		foreach($menus as $menu) {
 			if($menu[0] && $menu[1]) {
-				if(strpos($menu[1], 'action=plugins&operation=config') === false){
+				if(strpos($menu[1], 'plugins&operation=config') === false){
 					list($action, $operation, $do) = explode('_', $menu[1]);
 					$menu[1] = $action.($operation ? '&operation='.$operation.($do ? '&do='.$do : '') : '');
 				}
