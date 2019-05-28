@@ -31,7 +31,7 @@ class dbstuff {
 			}
 		}
 
-		if($this->version() > 4.1) {
+		if($this->version() > '4.1') {
 			if($dbcharset) {
 				mysql_query("SET character_set_connection=".$dbcharset.", character_set_results=".$dbcharset.", character_set_client=binary", $this->link);
 			}

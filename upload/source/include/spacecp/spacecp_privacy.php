@@ -36,6 +36,7 @@ if(submitcheck('privacysubmit')) {
 	}
 	privacy_update();
 
+	manyoulog('user', $_G['uid'], 'update');
 	showmessage('do_success', 'home.php?mod=spacecp&ac=privacy&op='.$operation);
 
 } elseif(submitcheck('privacy2submit')) {
@@ -77,17 +78,11 @@ if($operation == 'filter') {
 		list($icon, $uid) = explode('|', $key);
 		$icons[$key] = $icon;
 		$uids[$key] = $uid;
-		if(is_numeric($icon)) {
-			$appids[$key] = $icon;
-		}
 	}
 	foreach ($filter_note as $key => $value) {
 		list($type, $uid) = explode('|', $key);
 		$types[$key] = $type;
 		$uids[$key] = $uid;
-		if(is_numeric($type)) {
-			$appids[$key] = $type;
-		}
 	}
 	if($uids) {
 		foreach(C::t('common_member')->fetch_all($uids) as $uid => $value) {

@@ -238,7 +238,7 @@ EOT;
 
 			if($_GET['sendemail']) {
 				if(!function_exists('sendmail')) {
-					include_once libfile('function/mail');
+					include libfile('function/mail');
 				}
 				foreach(array('delete', 'validate', 'invalidate') as $o) {
 					foreach($moderation[$o] as $uid) {

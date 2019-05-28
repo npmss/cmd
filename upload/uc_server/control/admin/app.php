@@ -57,7 +57,7 @@ class control extends adminbase {
 
 			$a = getgpc('a');
 			$this->view->assign('a', $a);
-			$typelist = array('DISCUZX'=>'DiscuzX/DiscuzL','UCHOME'=>'UCenter Home','XSPACE'=>'X-Space','DISCUZ'=>'Discuz!','SUPESITE'=>'SupeSite','SUPEV'=>'SupeV','ECSHOP'=>'ECShop','ECMALL'=>'ECMall','OTHER'=>$this->lang['other']);
+			$typelist = array('DISCUZX'=>'DiscuzX','UCHOME'=>'UCenter Home','XSPACE'=>'X-Space','DISCUZ'=>'Discuz!','SUPESITE'=>'SupeSite','SUPEV'=>'SupeV','ECSHOP'=>'ECShop','ECMALL'=>'ECMall','OTHER'=>$this->lang['other']);
 			$this->view->assign('typelist', $typelist);
 			$this->view->display('admin_app');
 		} else {
@@ -109,7 +109,7 @@ class control extends adminbase {
 
 			$_ENV['app']->alter_app_table($appid, 'ADD');
 			$this->writelog('app_add', "appid=$appid; appname=$_POST[name]");
-			header("location: ".UC_ADMINSCRIPT."?m=app&a=detail&appid=$appid&addapp=yes&sid=".$this->view->sid);
+			header("location: admin.php?m=app&a=detail&appid=$appid&addapp=yes&sid=".$this->view->sid);
 		}
 	}
 
@@ -233,7 +233,7 @@ class control extends adminbase {
 		$this->view->assign('dbcharset', $app['dbcharset']);
 		$this->view->assign('type', $app['type']);
 		$this->view->assign('recvnotechecked', $recvnotechecked);
-		$typelist = array('DISCUZX'=>'DiscuzX/DiscuzL','UCHOME'=>'UCenter Home','XSPACE'=>'X-Space','DISCUZ'=>'Discuz!','SUPESITE'=>'SupeSite','SUPEV'=>'SupeV','ECSHOP'=>'ECShop','ECMALL'=>'ECMall','OTHER'=>$this->lang['other']);
+		$typelist = array('DISCUZX'=>'DiscuzX','UCHOME'=>'UCenter Home','XSPACE'=>'X-Space','DISCUZ'=>'Discuz!','SUPESITE'=>'SupeSite','SUPEV'=>'SupeV','ECSHOP'=>'ECShop','ECMALL'=>'ECMall','OTHER'=>$this->lang['other']);
 		$this->view->assign('typelist', $typelist);
 		$this->view->assign('updated', $updated);
 		$addapp = getgpc('addapp');

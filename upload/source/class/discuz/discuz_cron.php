@@ -52,6 +52,7 @@ class discuz_cron
 				$data = array('available' => '0');
 				C::t('common_cron')->update($cron['cronid'], $data);
 			}
+
 		}
 
 		self::nextcron();

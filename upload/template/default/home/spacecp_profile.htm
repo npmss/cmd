@@ -63,22 +63,13 @@
 							<p class="d" id="chk_newpassword2">{lang memcp_profile_passwd_comment}</p>
 						</td>
 					</tr>
-					<tr>
-						<th>{lang loginname}</th>
-						<td>
-							<input type="text" name="loginname" id="loginname" class="px" value="$loginNameEnc" />
-							<p class="d" id="chk_loginname">{lang memcp_profile_loginname_comment}</p>
-						</td>
-					</tr>
 					<tr id="contact"{if $_GET[from] == 'contact'} style="background-color: {$_G['style']['specialbg']};"{/if}>
 						<th>{lang email}</th>
 						<td>
 							<input type="text" name="emailnew" id="emailnew" value="$space[email]" class="px" />
 							<p class="d">
 								<!--{if empty($space['newemail'])}-->
-									<!--{if $space['emailstatus']}-->
-										{lang email_been_active}
-									<!--{/if}-->
+									{lang email_been_active}
 								<!--{else}-->
 									$acitvemessage
 								<!--{/if}-->
@@ -155,7 +146,7 @@
 			<form action="{if $operation != 'plugin'}home.php?mod=spacecp&ac=profile&op=$operation{else}home.php?mod=spacecp&ac=plugin&op=profile&id=$_GET[id]{/if}" method="post" enctype="multipart/form-data" autocomplete="off"{if $operation != 'plugin'} target="frame_profile"{/if} onsubmit="clearErrorInfo();">
 				<input type="hidden" value="{FORMHASH}" name="formhash" />
 				<!--{if $_GET[vid]}-->
-				<input type="hidden" value="$vid" name="vid" />
+				<input type="hidden" value="$_GET[vid]" name="vid" />
 				<!--{/if}-->
 				<table cellspacing="0" cellpadding="0" class="tfm" id="profilelist">
 					<tr>

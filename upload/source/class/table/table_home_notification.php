@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: table_home_notification.php 34369 2014-04-01 02:00:04Z jeffjzhang $
+ *      $Id: table_home_notification.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {

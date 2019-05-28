@@ -4,14 +4,12 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: spacecp_friend.php 36273 2016-11-23 06:37:15Z nemohou $
+ *      $Id: spacecp_friend.php 36272 2016-11-23 06:35:37Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
-
-global $_G;
 
 require_once libfile('function/friend');
 

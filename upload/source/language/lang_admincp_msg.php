@@ -55,9 +55,6 @@ $lang = array (
   'members_email_illegal' => 'Email 地址无效',
   'members_email_domain_illegal' => 'Email 包含不可使用的邮箱域名',
   'members_email_duplicate' => '该 Email 地址已经被注册',
-  'members_loginname_is_numeric' => '抱歉，登录名不能是纯数字',
-  'members_loginname_tooshort' => '抱歉，您输入的登录名小于 3 个字符，请输入一个较长的登录名',
-  'members_loginname_exists' => '抱歉，您输入的登录名重复，请更换',
   'members_edit_succeed' => '用户资料更新成功 ',
   'members_profile_edit_succeed' => '用户栏目更新成功 ',
   'members_stat_update_data_succeed' => '统计数据更新成功 ',
@@ -71,14 +68,7 @@ $lang = array (
   'nav_add_succeed' => '导航栏更新成功 ',
   'nav_not_found' => '导航未找到或类型不符',
   'patch_successful' => '操作成功',
-
-  'pack_not_found' => '未安装过扩展程序，或扩展程序已全部卸载',
-  'packs_identifier_invalid' => '扩展标识符不合法',
-  'packs_validator_noupdate' => '没有检测到新版本扩展',
-  'packs_delete_invalid' => '该扩展包含系统文件，为避免系统功能异常，不允许直接卸载，请联系 {pack} 的作者处理',
-
   'plugin_not_found' => '插件未找到',
-  'plugin_setting_not_found' => '此插件没有设置项目',
   'plugins_install_succeed' => '插件成功安装！<br />为了正常使用此插件，您可能还需要上传或修改相应的文件或模板，详情请查看本插件的安装说明<br /><br /><a href="http://addon.discuz.com?view=plugins">点击这里返回应用中心</a><br />',
   'plugin_file_error' => '插件文件缺失',
   'plugins_edit_identifier_invalid' => '您输入的唯一标识符不合法或与现有插件重复',
@@ -86,8 +76,6 @@ $lang = array (
   'plugins_edit_name_invalid' => '您没有输入插件名称',
   'plugins_edit_succeed' => '插件配置更新成功 ',
   'plugins_delete_succeed' => '插件成功卸载！<br />为了正常卸载此插件，您可能还需要删除或修改相应的文件或模板，详情请查看本插件的安装说明',
-  'plugins_delete_failure' => '插件卸载失败！是否继续卸载？',
-  'plugins_bump_succeed' => '提升成功',
   'portalcategory_move_category_failed' => '无法移动文章到所选分类',
   'portalcategory_delete_succeed' => '删除分类成功 ',
   'portalcategory_catgory_not_found' => '分类不存在或没有选择分类',
@@ -244,11 +232,10 @@ $lang = array (
   'tenpay_bargainor_invalid' => '请输入 10 位数字的财付通商户号',
   'tenpay_key_invalid' => '密钥只能用32位字母或数字组成',
   'tenpay_succeed' => '财付通功能设定成功 ',
-  'orders_disabled' => '您没有启用积分交易或积分充值功能，无法对订单进行管理',
+  'orders_disabled' => '您没有启用交易积分或支付宝积分充值功能，无法对订单进行管理',
   'ecommerce_invalidcredit' => '信用度必须大于 0 才能进行评级',
   'ecommerce_must_larger' => '信用等级 {rank} 的信用度必须大于上一等级的信用度',
   'ec_credit_succeed' => '信用评价体系设定成功 ',
-  'wxpay_succeed' => '微信支付功能设定成功 ',
 
   'faq_nonexistence' => '指定帮助不存在',
   'faq_no_title' => '您没有填写帮助标题',
@@ -572,7 +559,7 @@ $lang = array (
   'upgrade_download_upgradelist_error' => '获取待更新文件列表失败，是否重新获取？ {upgradeurl}',
   'upgrade_download_complete_to_compare' => '待更新文件下载完成，即将进行本地文件比较 {upgradeurl}',
   'upgrade_redownload' => '文件 {file} 下载出现问题，请查看您的服务器网络以及data目录是否有写权限，请确认无误后点击确定 {upgradeurl}',
-  'upgrade_downloading_file' => '正在下载更新文件 {file} <br>已完成{percent} {upgradeurl}',
+  'upgrade_downloading_file' => '正在从官方下载更新文件 {file} <br>已完成{percent} {upgradeurl}',
   'upgrade_cannot_access_file' => '发现您的目录及文件无修改权限，请您填写 ftp 账号，或者修改文件权限为可读可写后重试',
   'upgrade_backuping' => '正在备份原始文件... {upgradeurl}',
   'upgrade_backup_error' => '备份原始文件出错 {upgradeurl}',
@@ -580,7 +567,7 @@ $lang = array (
   'upgrade_ftp_upload_error' => 'ftp上传文件 {file} 出错， 请修改文件权限后重新上传 或 重新设置ftp账号 {upgradeurl}',
   'upgrade_copy_error' => '复制文件 {file} 出错，请检测原始文件是否存在，重新复制 或 通过ftp上传复制文件 {upgradeurl}',
   'upgrade_file_successful' => '文件升级成功，即将进入更新数据库 {upgradeurl}',
-  'upgrade_successful' => '恭喜您，升级成功! <br />您当前的版本为：Discuz! L{version} Release[{release}] <br /><br />为安全起见，升级文件已保存至{save_update_dir}目录，<br />备份文件已保存至{save_back_dir}目录 {upgradeurl}',
+  'upgrade_successful' => '恭喜您，升级成功! <br />您当前的版本为：[Discuz! X{version} Release[{release}] <br /><br />为安全起见，升级文件已保存至{save_update_dir}目录，<br />备份文件已保存至{save_back_dir}目录 {upgradeurl}',
   'upgrade_checking' => '正在检测新的升级版本',
   'upgrade_latest_version' => '您目前使用的已经是最新版本，不需要升级',
   'upgrade_param_error' => '请求的参数不正确',
@@ -615,6 +602,7 @@ $lang = array (
   'connect_like_url_miss' => '您没有填写QQ空间喜欢链接 URL',
   'connect_update_succeed' => 'QQ绑定设置更新成功 ',
 
+  'my_app_status_off' => '请先正常开启漫游功能',
 
   'moderate_articles_succeed' => '审核操作成功，共 {validates} 个文章被通过，{ignores} 个文章被忽略，{deletes} 个文章被删除',
 
@@ -641,7 +629,7 @@ $lang = array (
 
   'cloudaddons_check_url_fopen_error' => '您的服务器无法访问应用中心，这将会导致应用无法安装。请联系您的服务商或者网站技术人员，确保您的服务器能够正常访问 addon.discuz.com 或 addon1.discuz.com',
   'cloudaddons_check_gzuncompress_error' => '您的服务器不支持 Zlib，这将会导致应用无法安装。请联系您的服务商或者网站技术人员。',
-  'cloudaddons_genuine_message' => '对不起，您安装的不是正版应用，安装程序无法继续执行<br /><br /><a href="'.ADMINSCRIPT.'?action=cloudaddons&id={addonid}">点击这里安装正版应用</a>',
+  'cloudaddons_genuine_message' => '对不起，您安装的不是正版应用，安装程序无法继续执行<br /><br /><a href="admin.php?action=cloudaddons&id={addonid}">点击这里安装正版应用</a>',
 
   'admincp_makehtml_cleanhtml_error' => '对不起，开启生成HTML静态文件时，不能清理HTML文件。',
   'admincp_makehtml_cleanhtml_succeed' => '清理HTML文件成功。',

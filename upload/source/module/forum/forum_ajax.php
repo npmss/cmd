@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: forum_ajax.php 34303 2014-01-15 04:32:19Z hypowang $
+ *      $Id: forum_ajax.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -280,6 +280,17 @@ if($_GET['action'] == 'checkusername') {
 		$query = C::t('forum_forumfield')->fetch($fid);
 		$forum_field['threadtypes'] = dunserialize($query['threadtypes']);
 		$forum_field['threadsorts'] = dunserialize($query['threadsorts']);
+
+		if($forum_field['threadtypes']['types']) {
+			safefilter($forum_field['threadtypes']['types']);
+		}
+		if($forum_field['threadtypes']['options']['name']) {
+			safefilter($forum_field['threadtypes']['options']['name']);
+		}
+		if($forum_field['threadsorts']['types']) {
+			safefilter($forum_field['threadsorts']['types']);
+		}
+
 		unset($query);
 		$forum_field = daddslashes($forum_field);
 		$todaytime = strtotime(dgmdate(TIMESTAMP, 'Ymd'));
@@ -290,7 +301,7 @@ if($_GET['action'] == 'checkusername') {
 			}
 			list($thread['subject'], $thread['author'], $thread['lastposter']) = daddslashes(array($thread['subject'], $thread['author'], $thread['lastposter']));
 			$thread['dateline'] = $thread['dateline'] > $todaytime ? "<span class=\"xi1\">".dgmdate($thread['dateline'], 'd')."</span>" : "<span>".dgmdate($thread['dateline'], 'd')."</span>";
-			$thread['lastpost'] = dgmdate($thread['lastpost'], 'u');
+			$thread['lastpost'] = dgmdate($thread['lastpost']);
 			if($forum_field['threadtypes']['prefix']) {
 				if($forum_field['threadtypes']['prefix'] == 1) {
 					$thread['threadtype'] = $forum_field['threadtypes']['types'][$thread['typeid']] ? '<em>[<a href="forum.php?mod=forumdisplay&fid='.$fid.'&filter=typeid&typeid='.$thread['typeid'].'">'.$forum_field['threadtypes']['types'][$thread['typeid']].'</a>]</em> ' : '' ;
@@ -345,6 +356,9 @@ if($_GET['action'] == 'checkusername') {
 
 	}
 } elseif($_GET['action'] == 'downremoteimg') {
+	if(!$_G['group']['allowdownremoteimg']) {
+		dexit();
+	}
 	$_GET['message'] = str_replace(array("\r", "\n"), array($_GET['wysiwyg'] ? '<br />' : '', "\\n"), $_GET['message']);
 	preg_match_all("/\[img\]\s*([^\[\<\r\n]+?)\s*\[\/img\]|\[img=\d{1,4}[x|\,]\d{1,4}\]\s*([^\[\<\r\n]+?)\s*\[\/img\]/is", $_GET['message'], $image1, PREG_SET_ORDER);
 	preg_match_all("/\<img.+src=('|\"|)?(.*)(\\1)([\s].*)?\>/ismUe", $_GET['message'], $image2, PREG_SET_ORDER);
@@ -382,7 +396,7 @@ if($_GET['action'] == 'checkusername') {
 						continue;
 					}
 					$content = '';
-					if(preg_match('/^(https?:\/\/|\.)/i', $imageurl)) {
+					if(preg_match('/^(http:\/\/|\.)/i', $imageurl)) {
 						$content = dfsockopen($imageurl);
 					} elseif(preg_match('/^('.preg_quote(getglobal('setting/attachurl'), '/').')/i', $imageurl)) {
 						$imagereplace['newimageurl'][] = $value[0];
@@ -671,8 +685,6 @@ EOF;
 			include libfile('function/cache');
 			updatecache('setting');
 		}
-		echo '<script type="text/javascript" reload="1">top.location.href=\''.dreferer().'\';</script>';
-		dexit();
 		showmessage('do_success', dreferer(), array(), array('header'=>true));
 	}
 	exit;

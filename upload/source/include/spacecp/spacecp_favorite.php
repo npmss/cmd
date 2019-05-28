@@ -30,10 +30,8 @@ if($_GET['op'] == 'delete') {
 				C::t('forum_forum')->update_forum_counter($deletecounter['fids'], 0, 0, 0, 0, -1);
 			}
 			C::t('home_favorite')->delete($_GET['favorite'], false, $_G['uid']);
-			showmessage('favorite_delete_succeed', 'home.php?mod=space&uid='.$_G['uid'].'&do=favorite&view=me&type='.$_GET['type'].'&quickforward=1');
-		}else{
-			showmessage('admin_nonexistence', '');
 		}
+		showmessage('favorite_delete_succeed', 'home.php?mod=space&uid='.$_G['uid'].'&do=favorite&view=me&type='.$_GET['type'].'&quickforward=1');
 	} else {
 		$favid = intval($_GET['favid']);
 		$thevalue = C::t('home_favorite')->fetch($favid);
@@ -135,6 +133,7 @@ if($_GET['op'] == 'delete') {
 			'dateline' => TIMESTAMP
 		);
 		$favid = C::t('home_favorite')->insert($arr, true);
+		
 		switch($type) {
 			case 'thread':
 				C::t('forum_thread')->increase($id, array('favtimes'=>1));

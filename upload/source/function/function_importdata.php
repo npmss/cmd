@@ -67,7 +67,7 @@ function import_styles($ignoreversion = 1, $dir = '', $restoreid = 0, $updatecac
 	}
 
 	foreach($stylearrays as $stylearray) {
-		if(empty($ignoreversion) && !cloudaddons_versioncompatible($stylearray['version'])) {
+		if(empty($ignoreversion) && !versioncompatible($stylearray['version'])) {
 			cpmsg('styles_import_version_invalid', 'action=styles', 'error', array('cur_version' => $stylearray['version'], 'set_version' => $_G['setting']['version']));
 		}
 
@@ -153,7 +153,7 @@ function import_block($xmlurl, $clientid, $xmlkey = '', $signtype = '', $ignorev
 	if(empty($blockarrays['name']) || empty($blockarrays['fields']) || empty($blockarrays['getsetting'])) {
 		cpmsg(cplang('import_data_typeinvalid').cplang($importtxt), '', 'error');
 	}
-	if(empty($ignoreversion) && !cloudaddons_versioncompatible($blockarrays['version'])) {
+	if(empty($ignoreversion) && !versioncompatible($blockarrays['version'])) {
 		cpmsg(cplang('blockxml_import_version_invalid'), '', 'error', array('cur_version' => $blockarrays['version'], 'set_version' => $_G['setting']['version']));
 	}
 	$data = array(

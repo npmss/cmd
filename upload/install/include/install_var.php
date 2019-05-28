@@ -18,7 +18,7 @@ define('INSTALL_LANG', 'SC_UTF8');
 define('CONFIG', './config/config_global.php');
 define('CONFIG_UC', './config/config_ucenter.php');
 
-$sqlfile = ROOT_PATH.'./install/data/install.sql';
+$sqlfile = ROOT_PATH.((file_exists(ROOT_PATH.'./install/data/install_dev.sql')) ? './install/data/install_dev.sql' : './install/data/install.sql');
 $lockfile = ROOT_PATH.'./data/install.lock';
 
 @include ROOT_PATH.CONFIG;
@@ -70,12 +70,12 @@ $filesock_items = array('fsockopen', 'pfsockopen', 'stream_socket_client', 'curl
 $env_items = array
 (
 	'os' => array('c' => 'PHP_OS', 'r' => 'notset', 'b' => 'unix'),
-	'php' => array('c' => 'PHP_VERSION', 'r' => '5.2', 'b' => '7.0'),
+	'php' => array('c' => 'PHP_VERSION', 'r' => '5.3', 'b' => '7.1'),
 	'attachmentupload' => array('r' => 'notset', 'b' => '2M'),
 	'gdversion' => array('r' => '1.0', 'b' => '2.0'),
 	'curl' => array('r' => 'notset', 'b' => 'enable'),
 	'opcache' => array('r' => 'notset', 'b' => 'enable'),
-	'diskspace' => array('r' => 30 * 1024 * 1024, 'b' => 'notset'),
+	'diskspace' => array('r' => 30 * 1048576, 'b' => 'notset'),
 );
 
 $dirfile_items = array
@@ -316,6 +316,10 @@ $serialize_sql_setting = array (
     ),
     7 =>
     array (
+      'title' => '视频认证',
+      'available' => '0',
+      'showicon' => '0',
+      'viewvideophoto' => '0',
       'icon' => '',
     ),
   ),

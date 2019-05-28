@@ -120,7 +120,7 @@
 		<!--{/if}-->
 
 		<!--{if !IS_ROBOT && $post['first'] && !$_G['forum_thread']['archiveid']}-->
-			<!--{if !empty($lastmod['modaction']) && $_G['forum']['ismoderator']}--><div class="modact"><a href="forum.php?mod=misc&action=viewthreadmod&tid=$_G[tid]" title="{lang thread_mod}" onclick="showWindow('viewthreadmod', this.href)"><!--{if $lastmod['modactiontype'] == 'REB'}-->{lang thread_mod_recommend_by}<!--{else}-->{lang thread_mod_by}<!--{/if}--></a></div><!--{/if}-->
+			<!--{if !empty($lastmod['modaction'])}--><div class="modact"><a href="forum.php?mod=misc&action=viewthreadmod&tid=$_G[tid]" title="{lang thread_mod}" onclick="showWindow('viewthreadmod', this.href)"><!--{if $lastmod['modactiontype'] == 'REB'}-->{lang thread_mod_recommend_by}<!--{else}-->{lang thread_mod_by}<!--{/if}--></a></div><!--{/if}-->
 			<!--{hook/viewthread_modaction}-->
 		<!--{/if}-->
 
@@ -156,7 +156,7 @@
 			</div>
 		<!--{/if}-->
 		
-		<!--{if $_G['setting']['allowfastreply'] && $post['first'] && $fastpost && $allowpostreply && !$_G['forum_thread']['archiveid'] && $_GET['from'] != 'preview' && !($secqaacheck || $seccodecheck)}-->
+		<!--{if $_G['setting']['allowfastreply'] && $post['first'] && $fastpost && $allowpostreply && !$_G['forum_thread']['archiveid'] && $_GET['from'] != 'preview'}-->
 			<form method="post" autocomplete="off" id="vfastpostform" action="forum.php?mod=post&action=reply&fid=$_G[fid]&tid=$_G[tid]&fromvf=1&extra=$_G[gp_extra]&replysubmit=yes{if $_G['gp_ordertype'] != 1}&infloat=yes&handlekey=vfastpost{/if}{if $_G[gp_from]}&from=$_G[gp_from]{/if}" onsubmit="this.message.value = parseurl(this.message.value);ajaxpost('vfastpostform', 'return_reply', 'return_reply', 'onerror');return false;">
 			<div id="vfastpost" class="fullvfastpost">				
 				<input type="hidden" name="formhash" value="{FORMHASH}" />

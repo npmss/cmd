@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: admincp_main.php 33988 2013-09-13 10:06:19Z nemohou $
+ *      $Id: admincp_main.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ') || !defined('IN_ADMINCP')) {
@@ -33,9 +33,6 @@ if(isfounder()) {
 require './source/admincp/admincp_menu.php';
 $basescript = ADMINSCRIPT;
 
-$shownotice = '';
-
-
 echo <<<EOT
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
@@ -50,9 +47,13 @@ echo <<<EOT
 $shownotice
 <table id="frametable" cellpadding="0" cellspacing="0" width="100%" height="100%">
 <tr>
-<td colspan="2" height="53">
+<td colspan="2" height="90">
 <div class="mainhd">
 <a href="$basescript?frames=yes&action=index" class="logo">Discuz! Administrator's Control Panel</a>
+<div class="uinfo" id="frameuinfo">
+<p>$header_welcome, $cpadmingroup <em>{$_G['member']['username']}</em> [<a href="$basescript?action=logout" target="_top">$header_logout</a>]</p>
+<p class="btnlink"><a href="index.php" target="_blank">$header_bbs</a></p>
+</div>
 <div class="navbg"></div>
 <div class="nav">
 <ul id="topmenu">
@@ -74,11 +75,7 @@ $uc_api_url = '';
 if($isfounder) {
 	loaducenter();
 	$uc_api_url = UC_API;
-
-	if($_G['setting']['httpsoptimize']){
-			$uc_api_url = $_G['isHTTPS'] ? str_replace('http://', 'https://', $uc_api_url) : str_replace('https://', 'http://', $uc_api_url);
-	}
-	echo '<li><em><a id="header_uc" hidefocus="true" href="'.$uc_api_url.'/admin.php?m=frame" onmouseover="previewheader(\'uc\')" onmouseout="previewheader()" onclick="uc_login=1;toggleMenu(\'uc\', \'\');doane(event);">'.cplang('header_uc').'</a></em></li>';
+	echo '<li><em><a id="header_uc" hidefocus="true" href="'.UC_API.'/admin.php?m=frame" onmouseover="previewheader(\'uc\')" onmouseout="previewheader()" onclick="uc_login=1;toggleMenu(\'uc\', \'\');doane(event);">'.cplang('header_uc').'</a></em></li>';
 	$topmenu['uc'] = '';
 }
 
@@ -87,33 +84,21 @@ $headers = "'".implode("','", array_keys($topmenu))."'";
 echo <<<EOT
 
 </ul>
+<div class="currentloca">
+<p id="admincpnav"></p>
 </div>
-<div class="uinfo" id="frameuinfo">
-<p>$header_welcome, $cpadmingroup <em>{$_G['member']['username']}</em> [<a href="$basescript?action=logout" target="_top">$header_logout</a>]</p>
-<p class="btnlink"><a href="index.php" target="_blank">$header_bbs</a></p>
+<div class="navbd"></div>
+<div class="sitemapbtn">
+	<div style="float: left; margin:-7px 10px 0 0"><form name="search" method="post" autocomplete="off" action="$basescript?action=search" target="main"><input type="text" name="keywords" value="" class="txt" x-webkit-speech speech /> <input type="hidden" name="searchsubmit" value="yes" class="btn" /><input type="submit" name="searchsubmit" value="$lang[search]" class="btn" style="margin-top: 5px;vertical-align:middle" /></form></div>
+	<span id="add2custom" style="display: none"></span>
+	<a href="###" id="cpmap" onclick="showMap();return false;"><img src="static/image/admincp/btn_map.gif" title="$lang[admincp_maptext]" width="46" height="18" /></a>
+</div>
 </div>
 </div>
 </td>
 </tr>
-
 <tr>
-<td valign="top" width="170" style="height:36px;background: #F2F9FD;">
-	<div class="sitemapbtn cl">
-		<div style="margin:2px 0px 5px 0px;"><form name="search" method="post" autocomplete="off" action="$basescript?action=search" target="main"><input type="text" name="keywords" value="" class="txt" style="width:105px;" x-webkit-speech speech /> <input type="hidden" name="searchsubmit" value="yes" class="btn" /><input type="submit" name="searchsubmit" value="$lang[search]" class="btn" style="margin-top: 5px;vertical-align:middle" /></form></div>
-		<span id="add2custom" style="display: none"></span>
-	</div>
-</td>
-<td valign="top" width="100%" class="">
-	<div class="currentloca">
-	<a href="###" id="cpmap" onclick="showMap();return false;" style="float: left;margin: 10px 8px;"><img src="static/image/admincp/btn_map.gif" title="$lang[admincp_maptext]" width="46" height="18" /></a>
-	<div id="admincpnav"></div>
-	</div>
-</td>
-</tr>
-
-
-<tr>
-<td valign="top" width="170" class="menutd">
+<td valign="top" width="160" class="menutd">
 <div id="leftmenu" class="menu">
 
 EOT;
@@ -124,7 +109,7 @@ foreach ($menu as $k => $v) {
 unset($menu);
 
 $plugindefaultkey = $isfounder ? 1 : 0;
-$y = date("Y");
+
 echo <<<EOT
 
 </div>
@@ -138,8 +123,8 @@ echo <<<EOT
 	<span onclick="menuScroll(1)"><img src="static/image/admincp/scrollu.gif" /></span><span onclick="menuScroll(2)"><img src="static/image/admincp/scrolld.gif" /></span>
 </div>
 <div class="copyright">
-	<p>Powered by <a href="http://www.discuz.net/" target="_blank">Discuz!</a> <a href="http://www.discuzfans.net/" target="_blank">{$_G['setting']['version']}</a></p>
-	<p>&copy; 2001-{$y} <a href="http://www.comsenz.com/" target="_blank">Comsenz Inc.</a></p>
+	<p>Powered by <a href="http://www.discuz.net/" target="_blank">Discuz!</a> {$_G['setting']['version']}</p>
+	<p>&copy; 2001-2017, <a href="http://www.comsenz.com/" target="_blank">Comsenz Inc.</a></p>
 </div>
 
 <div id="cpmap_menu" class="custom" style="display: none">

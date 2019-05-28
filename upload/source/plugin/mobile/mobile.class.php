@@ -27,7 +27,7 @@ class mobile_core {
 		exit;
 	}
 
-	public static function format($result) {
+    public static function format($result) {
 		switch (gettype($result)) {
 			case 'array':
 				foreach($result as $_k => $_v) {
@@ -44,7 +44,7 @@ class mobile_core {
 		return $result;
 	}
 
-	public static function json($encode) {
+    public static function json($encode) {
 		if(!empty($_GET['debug']) && defined('DISCUZ_DEBUG') && DISCUZ_DEBUG) {
 			return debug($encode);
 		}
@@ -70,14 +70,14 @@ class mobile_core {
 		return $return;
 	}
 
-	public static function arraystring($array) {
+	static function arraystring($array) {
 		foreach($array as $k => $v) {
 			$array[$k] = is_array($v) ? mobile_core::arraystring($v) : (string)$v;
 		}
 		return $array;
 	}
 
-	public static function variable($variables = array()) {
+	static function variable($variables = array()) {
 		global $_G;
 		if(in_array('mobileoem', $_G['setting']['plugins']['available'])) {
 			$check = C::t('#mobileoem#mobileoem_member')->fetch($_G['uid']);
@@ -183,7 +183,7 @@ class mobile_core {
 		return $variables;
 	}
 
-	public static function make_cors($request_method, $origin = '') {
+    public static function make_cors($request_method, $origin = '') {
 
 		$origin = $origin ? $origin : REQUEST_METHOD_DOMAIN;
 
@@ -443,6 +443,7 @@ class plugin_mobile_forum extends base_plugin_mobile_forum {
 class plugin_mobile_misc extends base_plugin_mobile_misc {}
 class mobileplugin_mobile extends base_plugin_mobile {
 	function global_header_mobile() {
+        global $_G;
 		if(in_array('mobileoem', $_G['setting']['plugins']['available'])) {
 			loadcache('mobileoem_data');
 			if($_G['cache']['mobileoem_data']['iframeUrl']) {

@@ -28,14 +28,7 @@ class table_forum_order extends discuz_table
 		$sql .= $orderid ? ' AND o.'.DB::field('orderid', $orderid) : '';
 		$sql .= $email ? ' AND o.'.DB::field('email', $email) : '';
 		$sql .= $username ? ' AND m.'.DB::field('username', $username) : '';
-		if($buyer){
-		    $buyerInfo = explode("\t", $buyer);
-		    if(count($buyerInfo)==2){
-		        $sql .= ' AND o.'.DB::field('buyer', $buyer);
-		    }else{
-		        $sql .= ' AND o.'.DB::field('buyer', '%'.$buyer.'%', 'like');
-		    }
-		}
+		$sql .= $buyer ? ' AND o.'.DB::field('buyer', $buyer) : '';
 		$sql .= $admin ? ' AND o.'.DB::field('admin', $admin) : '';
 		$sql .= $submit_starttime ? ' AND o.'.DB::field('submitdate', $submit_starttime, '>=') : '';
 		$sql .= $submit_endtime ? ' AND o.'.DB::field('submitdate', $submit_endtime, '<') : '';
@@ -51,14 +44,7 @@ class table_forum_order extends discuz_table
 		$sql .= $orderid ? ' AND o.'.DB::field('orderid', $orderid) : '';
 		$sql .= $email ? ' AND o.'.DB::field('email', $email) : '';
 		$sql .= $username ? ' AND m.'.DB::field('username', $username) : '';
-		if($buyer){
-		    $buyerInfo = explode("\t", $buyer);
-		    if(count($buyerInfo)==2){
-		        $sql .= ' AND o.'.DB::field('buyer', $buyer);
-		    }else{
-		        $sql .= ' AND o.'.DB::field('buyer', '%'.$buyer.'%', 'like');
-		    }
-		}
+		$sql .= $buyer ? ' AND o.'.DB::field('buyer', $buyer) : '';
 		$sql .= $admin ? ' AND o.'.DB::field('admin', $admin) : '';
 		$sql .= $submit_starttime ? ' AND o.'.DB::field('submitdate', $submit_starttime, '>=') : '';
 		$sql .= $submit_endtime ? ' AND o.'.DB::field('submitdate', $submit_endtime, '<') : '';

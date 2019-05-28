@@ -1,10 +1,17 @@
 <?php
 
+/**
+ *      [Discuz!] (C)2001-2099 Comsenz Inc.
+ *      This is NOT a freeware, use is subject to license terms
+ *
+ *      $Id: restore.php 36278 2016-12-09 07:52:35Z nemohou $
+ */
+
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 @set_time_limit(1000);
 
-if(PHP_VERSION_ID < 70000){
-	 @set_magic_quotes_runtime(0);
+if(function_exists('set_magic_quotes_runtime')) {
+	@set_magic_quotes_runtime(0);
 }
 
 define('IN_DISCUZ', TRUE);
@@ -395,7 +402,6 @@ function sizecount($size) {
 }
 
 function show_header() {
-	header("Content-type: text/html; charset=".CHARSET);
 	ob_start();
 	$charset = CHARSET;
 	print <<< EOT

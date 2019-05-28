@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: forum_misc.php 35222 2015-03-02 02:16:20Z nemohou $
+ *      $Id: forum_misc.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -26,7 +26,7 @@ if($_GET['action'] == 'paysucceed') {
 	exit;
 
 } elseif($_GET['action'] == 'attachcredit') {
-	if($_GET['formhash'] != FORMHASH) {
+	if($_GET['formhash'] != FORMHASH || !$_G['uid']) {
 		showmessage('undefined_action', NULL);
 	}
 
@@ -151,15 +151,11 @@ if($_GET['action'] == 'paysucceed') {
 			$aidencode = aidencode($aid, 0, $_GET['tid']);
 		}
 		discuz_process::unlock($lockid);
-		if(defined('IN_MOBILE')) {
-			showmessage('attachment_mobile_buy', 'forum.php?mod=redirect&goto=findpost&ptid='.$attach['tid'].'&pid='.$attach['pid']);
+		if(count($aids) > 1) {
+			showmessage('attachment_buyall', 'forum.php?mod=redirect&goto=findpost&ptid='.$attach['tid'].'&pid='.$attach['pid']);
 		} else {
-			if(count($aids) > 1) {
-				showmessage('attachment_buyall', 'forum.php?mod=redirect&goto=findpost&ptid='.$attach['tid'].'&pid='.$attach['pid']);
-			} else {
-				$_G['forum_attach_filename'] = $attach['filename'];
-				showmessage('attachment_buy', "forum.php?mod=attachment&aid=$aidencode", array('filename' => $_G['forum_attach_filename']), array('redirectmsg' => 1));
-			}
+			$_G['forum_attach_filename'] = $attach['filename'];
+			showmessage('attachment_buy', "forum.php?mod=attachment&aid=$aidencode", array('filename' => $_G['forum_attach_filename']), array('redirectmsg' => 1));
 		}
 	}
 
@@ -989,9 +985,7 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 	include template('forum/pay_view');
 
 } elseif($_GET['action'] == 'viewthreadmod' && $_G['tid']) {
-	if(!$_G['forum']['ismoderator']){
-		showmessage('quickclear_noperm');
-	}
+
 	$modactioncode = lang('forum/modaction');
 	$loglist = array();
 
@@ -1395,10 +1389,10 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 		if(strlen($apply['message']) > 11 && is_numeric($apply['message'])) {
 			$apply['message'] = '['.$apply['message'].']';
 		}
-		$apply['message'] = str_replace(array("\r\n", "\r", "\n"), " ", $apply['message']);
 		$applylist[] = $apply;
 	}
 	$filename = "activity_{$_G[tid]}.csv";
+
 	include template('forum/activity_export');
 	$csvstr = ob_get_contents();
 	ob_end_clean();
@@ -1611,7 +1605,9 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 		$fieldarr['heats'] = 0;
 	$fieldarr['recommends'] = $_G['group']['allowrecommend'];
 	C::t('forum_thread')->increase($_G['tid'], $fieldarr);
-	C::t('forum_thread')->update($_G['tid'], array('lastpost' => TIMESTAMP));
+	if(empty($thread['closed'])) {
+		C::t('forum_thread')->update($_G['tid'], array('lastpost' => TIMESTAMP));
+	}
 	C::t('forum_memberrecommend')->insert(array('tid'=>$_G['tid'], 'recommenduid'=>$_G['uid'], 'dateline'=>$_G['timestamp']));
 
 	dsetcookie('recommend', 1, 43200);
@@ -1649,7 +1645,7 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 	include template('common/footer_ajax');
 
 } elseif($_GET['action'] == 'usertag') {
-	if($_G['tid']) {
+	if($_G['tid'] && $_G['group']['alloweditusertag']) {
 		if(!submitcheck('addusertag')) {
 			$recent_use_tag = $lastlog = $polloptions = array();
 			$i = 0;
@@ -1707,8 +1703,6 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 					}
 					if($uids) {
 						$uids = explode("\t", trim($uids));
-					}else{
-						$uids = array();
 					}
 				} elseif($_G['thread']['special'] == 4) {
 					$query = C::t('forum_activityapply')->fetch_all_for_thread($_G['tid'], 0, 2000);
@@ -1802,7 +1796,7 @@ if($_GET['action'] == 'votepoll' && submitcheck('pollsubmit', 1)) {
 	if(!$_G['uid']) {
 		showmessage('group_nopermission', NULL, array('grouptitle' => $_G['group']['grouptitle']), array('login' => 1));
 	}
-	if($thread['displayorder'] > 0 || $thread['highlight'] || $thread['digest'] || $thread['stamp'] > -1) {
+	if(in_array($thread['fid'], $_G['setting']['security_forums_white_list']) || $thread['displayorder'] > 0 || $thread['highlight'] || $thread['digest'] || $thread['stamp'] > -1) {
 		showmessage('thread_hidden_error', NULL);
 	}
 	$member = C::t('common_member')->fetch($thread['authorid']);

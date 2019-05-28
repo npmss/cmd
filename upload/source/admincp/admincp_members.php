@@ -103,7 +103,7 @@ EOF;
 					$freezeshow = $member['freeze'] ? '<em class="lightnum">['.cplang('freeze').']</em>' : '';
 					$members .= showtablerow('', array('class="td25"', '', 'title="'.implode("\n", $memberextcredits).'"'), array(
 						"<input type=\"checkbox\" name=\"uidarray[]\" value=\"$member[uid]\"".($member['adminid'] == 1 ? 'disabled' : '')." class=\"checkbox\">",
-						"<a href=\"home.php?mod=space&uid=$member[uid]\" target=\"_blank\">$member[username]</a>",
+						($_G['setting']['connect']['allow'] && $member['conisbind'] ? '<img class="vmiddle" src="static/image/common/connect_qq.gif" /> ' : '')."<a href=\"home.php?mod=space&uid=$member[uid]\" target=\"_blank\">$member[username]</a>",
 						$member['credits'],
 						$member['posts'],
 						$usergroups[$member['adminid']]['grouptitle'],
@@ -205,6 +205,7 @@ EOF;
 
 	if(empty($_GET['uid']) && empty($_GET['username']) && empty($_GET['ip'])) {
 
+		/*search={"nav_repeat":"action=members&operation=repeat"}*/
 		shownav('user', 'nav_members');
 		showsubmenu('nav_members', array(
 			array('search', 'members&operation=search', 0),
@@ -220,6 +221,7 @@ EOF;
 		showsubmit('submit', 'submit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -919,6 +921,7 @@ EOF;
 			($groupselect['special'] ? '<optgroup label="'.$lang['usergroups_special'].'">'.$groupselect['special'].'</optgroup>' : '').
 			($groupselect['specialadmin'] ? '<optgroup label="'.$lang['usergroups_specialadmin'].'">'.$groupselect['specialadmin'].'</optgroup>' : '').
 			'<optgroup label="'.$lang['usergroups_system'].'">'.$groupselect['system'].'</optgroup>';
+		/*search={"nav_members_add":"action=members&operation=add"}*/
 		shownav('user', 'nav_members_add');
 		showsubmenu('members_add');
 		showformheader('members&operation=add');
@@ -931,6 +934,7 @@ EOF;
 		showsubmit('addsubmit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -942,7 +946,7 @@ EOF;
 			cpmsg('members_add_invalid', '', 'error');
 		}
 
-		if(C::t('common_member')->fetch_uid_by_username($newusername) || C::t('common_member_archive')->fetch_uid_by_username($newusername) || C::t('common_member_login')->getUid($newusername)) {
+		if(C::t('common_member')->fetch_uid_by_username($newusername) || C::t('common_member_archive')->fetch_uid_by_username($newusername)) {
 			cpmsg('members_add_username_duplicate', '', 'error');
 		}
 
@@ -983,7 +987,6 @@ EOF;
 		$init_arr = explode(',', $_G['setting']['initcredits']);
 		$password = md5(random(10));
 		C::t('common_member')->insert($uid, $newusername, $password, $newemail, 'Manual Acting', $_GET['newgroupid'], $init_arr, $newadminid);
-
 		if($_GET['emailnotify']) {
 			if(!function_exists('sendmail')) {
 				include libfile('function/mail');
@@ -1062,6 +1065,7 @@ EOF;
 			$groups['member'] = '<option value="'.$group['groupid'].'" gtype="member">'.$group['grouptitle'].'</option>';
 		}
 
+		/*search={"members_group":"action=members&operation=group"}*/
 		shownav('user', 'members_group');
 		showsubmenu('members_group_member', array(), '', array('username' => $member['username']));
 		echo '<script src="static/js/calendar.js" type="text/javascript"></script>';
@@ -1088,6 +1092,7 @@ EOF;
 		showtablefooter();
 
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -1178,6 +1183,7 @@ EOF;
 		}
 
 		if($_GET['groupidnew'] != $member['groupid'] && (in_array($_GET['groupidnew'], array(4, 5)) || in_array($member['groupid'], array(4, 5)))) {
+			$my_opt = in_array($_GET['groupidnew'], array(4, 5)) ? 'banuser' : 'unbanuser';			
 			banlog($member['username'], $member['groupid'], $_GET['groupidnew'], $groupexpirynew, $_GET['reason']);
 		}
 
@@ -1229,6 +1235,7 @@ EOF;
 EOT;
 		shownav('user', 'members_credit');
 		showsubmenu('members_credit');
+		/*search={"members_credit":"action=members&operation=credit"}*/
 		showtips('members_credit_tips');
 		showformheader("members&operation=credit&uid={$_GET['uid']}");
 		showtableheader('<em class="right"><a href="'.ADMINSCRIPT.'?action=logs&operation=credit&srch_uid='.$_GET['uid'].'&frame=yes" target="_blank">'.cplang('members_credit_logs').'</a></em>'.cplang('members_credit').' - '.$member['username'].'('.$member['grouptitle'].')', 'nobottom');
@@ -1241,6 +1248,7 @@ EOT;
 		showsubmit('creditsubmit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -1525,9 +1533,6 @@ EOF;
 			}
 			if(!$member['adminid']) {
 				$member_status = C::t('common_member_status')->fetch($member['uid']);
-				if($member_status) {
-					captcha::report($member_status['lastip']);
-				}
 			}
 		} elseif($member['groupid'] == 4 || $member['groupid'] == 5) {
 			if(!empty($member['groupterms']['main']['groupid'])) {
@@ -1550,7 +1555,6 @@ EOF;
 				uc_user_deleteavatar($member['uid']);
 			}
 		}
-
 
 		$setarr['adminid'] = $adminidnew;
 		$setarr['groupid'] = $groupidnew;
@@ -1758,6 +1762,7 @@ EOF;
 
 		shownav('user', 'members_access_edit');
 		showsubmenu('members_access_edit');
+		/*search={"members_access_edit":"action=members&operation=access"}*/
 		showtips('members_access_tips');
 		showtableheader(cplang('members_access_now').' - '.$member['username'], 'nobottom fixpadding');
 		showsubtitle(array('forum', 'members_access_view', 'members_access_post', 'members_access_reply', 'members_access_getattach', 'members_access_getimage', 'members_access_postattach', 'members_access_postimage', 'members_access_adminuser', 'members_access_dateline'));
@@ -1811,6 +1816,7 @@ EOF;
 		showsubmit('accesssubmit', 'submit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -1850,6 +1856,44 @@ EOF;
 } elseif($operation == 'edit') {
 
 	$uid = $member['uid'];
+	if(!empty($_G['setting']['connect']['allow']) && $do == 'bindlog') {
+		$member = array_merge($member, C::t('#qqconnect#common_member_connect')->fetch($uid));
+		showsubmenu("$lang[members_edit] - $member[username]", array(
+			array('connect_member_info', 'members&operation=edit&uid='.$uid,  0),
+			array('connect_member_bindlog', 'members&operation=edit&do=bindlog&uid='.$uid,  1),
+		));
+		if($member['conopenid']) {
+			showtableheader();
+			showtitle('connect_member_bindlog_uin');
+			showsubtitle(array('connect_member_bindlog_username', 'connect_member_bindlog_date', 'connect_member_bindlog_type'));
+			$bindlogs = $bindloguids = $usernames = array();
+			foreach(C::t('#qqconnect#connect_memberbindlog')->fetch_all_by_openids($member['conopenid']) as $bindlog) {
+				$bindlogs[$bindlog['dateline']] = $bindlog;
+				$bindloguids[] = $bindlog['uid'];
+			}
+			$usernames = C::t('common_member')->fetch_all_username_by_uid($bindloguids);
+			foreach($bindlogs as $k => $v) {
+				showtablerow('', array(), array(
+					$usernames[$v['uid']],
+					dgmdate($k),
+					cplang('connect_member_bindlog_type_'.$v['type']),
+				));
+			}
+			showtablefooter();
+		}
+
+		showtableheader();
+		showtitle('connect_member_bindlog_uid');
+		showsubtitle(array('connect_member_bindlog_date', 'connect_member_bindlog_type'));
+		foreach(C::t('#qqconnect#connect_memberbindlog')->fetch_all_by_uids($member['uid']) as $bindlog) {
+			showtablerow('', array(), array(
+				dgmdate($bindlog['dateline']),
+				cplang('connect_member_bindlog_type_'.$bindlog['type']),
+			));
+		}
+		showtablefooter();
+		exit;
+	}
 	$member = array_merge($member, C::t('common_member_field_forum'.$tableext)->fetch($uid),
 			C::t('common_member_field_home'.$tableext)->fetch($uid),
 			C::t('common_member_count'.$tableext)->fetch($uid),
@@ -1857,6 +1901,11 @@ EOF;
 			C::t('common_member_profile'.$tableext)->fetch($uid),
 			C::t('common_usergroup')->fetch($member['groupid']),
 			C::t('common_usergroup_field')->fetch($member['groupid']));
+	if(!empty($_G['setting']['connect']['allow'])) {
+		$member = array_merge($member, C::t('#qqconnect#common_member_connect')->fetch($uid));
+		$uin = C::t('common_uin_black')->fetch_by_uid($uid);
+		$member = array_merge($member, array('uinblack'=>$uin['uin']));
+	}
 	loadcache(array('profilesetting'));
 	$fields = array();
 	foreach($_G['cache']['profilesetting'] as $fieldid=>$field) {
@@ -1886,18 +1935,16 @@ EOF;
 		$member['bio'] = html2bbcode($member['bio']);
 		$member['signature'] = html2bbcode($member['sightml']);
 
-		$loginData = C::t('common_member_login')->fetch($uid);
-
 		shownav('user', 'members_edit');
+		/*search={"members_edit":"action=members&operation=edit"}*/
 		showsubmenu("$lang[members_edit] - $member[username]", array(
 			array('connect_member_info', 'members&operation=edit&uid='.$uid,  1),
-			array(),
+			!empty($_G['setting']['connect']['allow']) ? array('connect_member_bindlog', 'members&operation=edit&do=bindlog&uid='.$uid,  0) : array(),
 		));
 		showformheader("members&operation=edit&uid=$uid", 'enctype');
 		showtableheader();
 		$status = array($member['status'] => ' checked');
-		showsetting('members_edit_username', '', '',
-		$member['username']);
+		showsetting('members_edit_username', '', '', ($_G['setting']['connect']['allow'] && $member['conisbind'] ? ' <img class="vmiddle" src="static/image/common/connect_qq.gif" />' : '').' '.$member['username']);
 		showsetting('members_edit_avatar', '', '', ' <img src="'.avatar($uid, 'middle', true, false, true).'?random='.random(2).'" onerror="this.onerror=null;this.src=\''.$_G['setting']['ucenterurl'].'/images/noavatar_middle.gif\'" /><br /><br /><input name="clearavatar" class="checkbox" type="checkbox" value="1" /> '.$lang['members_edit_avatar_clear']);
 		$hrefext = "&detail=1&users=$member[username]&searchsubmit=1&perpage=50&fromumanage=1";
 		showsetting('members_edit_statistics', '', '', "<a href=\"".ADMINSCRIPT."?action=prune$hrefext\" class=\"act\">$lang[posts]($member[posts])</a>".
@@ -1906,7 +1953,12 @@ EOF;
 				"<a href=\"".ADMINSCRIPT."?action=album$hrefext\" class=\"act\">$lang[albums]($member[albums])</a>".
 				"<a href=\"".ADMINSCRIPT."?action=share$hrefext\" class=\"act\">$lang[shares]($member[sharings])</a> <br>&nbsp;$lang[setting_styles_viewthread_userinfo_oltime]: $member[oltime]$lang[hourtime]");
 		showsetting('members_edit_password', 'passwordnew', '', 'text');
-		showsetting('members_edit_loginname', 'loginnamenew', $loginData['loginname'], 'text');
+		if(!empty($_G['setting']['connect']['allow']) && (!empty($member['conopenid']) || !empty($member['uinblack']))) {
+			if($member['conisbind'] && !$member['conisregister']) {
+				showsetting('members_edit_unbind', 'connectunbind', 0, 'radio');
+			}
+			showsetting('members_edit_uinblack', 'uinblack', $member['uinblack'], 'radio', '', 0, cplang('members_edit_uinblack_comment').($member['conisregister'] ? cplang('members_edit_uinblack_notice') : ''));
+		}
 		showsetting('members_edit_clearquestion', 'clearquestion', 0, 'radio');
 		showsetting('members_edit_status', 'statusnew', $member['status'], 'radio');
 		showsetting('members_edit_email', 'emailnew', $member['email'], 'text');
@@ -1941,6 +1993,7 @@ EOF;
 		showsubmit('editsubmit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -1956,18 +2009,6 @@ EOF;
 				cpmsg('members_email_domain_illegal', '', 'error');
 			} elseif($ucresult == -6) {
 				cpmsg('members_email_duplicate', '', 'error');
-			}
-		}
-
-		if($_GET['loginnamenew']) {
-			if(strlen($_GET['loginnamenew']) < 3) {
-				cpmsg('members_loginname_tooshort', '', 'error');
-			}
-			if(is_numeric($_GET['loginnamenew'])) {
-				cpmsg('members_loginname_is_numeric', '', 'error');
-			}
-			if(C::t('common_member_login')->checkExists($_GET['loginnamenew'], $_GET['uid']) || C::t('common_member')->fetch_by_username($_GET['loginnamenew'], 1)) {
-				cpmsg('members_loginname_exists', '', 'error');
 			}
 		}
 
@@ -2004,8 +2045,8 @@ EOF;
 					$fieldarr[$key] = '';
 				}
 			}
-
 		}
+
 		if($_FILES) {
 			$upload = new discuz_upload();
 
@@ -2040,6 +2081,19 @@ EOF;
 		$addfriend = intval($_GET['addfriendnew']);
 		$status = intval($_GET['statusnew']) ? -1 : 0;
 		$emailstatusnew = intval($_GET['emailstatusnew']);
+		if(!empty($_G['setting']['connect']['allow'])) {
+			if($member['uinblack'] && empty($_GET['uinblack'])) {
+				C::t('common_uin_black')->delete($member['uinblack']);
+				updatecache('connect_blacklist');
+			} elseif(!$member['uinblack'] && !empty($_GET['uinblack'])) {
+				connectunbind($member);
+				C::t('common_uin_black')->insert(array('uin' => $member['conopenid'], 'uid' => $uid, 'dateline' => TIMESTAMP), false, true);
+				updatecache('connect_blacklist');
+			}
+			if($member['conisbind'] && !$member['conisregister'] && !empty($_GET['connectunbind'])) {
+				connectunbind($member);
+			}
+		}
 		$memberupdate = array_merge($memberupdate, array('regdate'=>$regdatenew, 'emailstatus'=>$emailstatusnew, 'status'=>$status, 'timeoffset'=>$_GET['timeoffsetnew']));
 		C::t('common_member'.$tableext)->update($uid, $memberupdate);
 		C::t('common_member_field_home'.$tableext)->update($uid, array('addsize' => $addsize, 'addfriend' => $addfriend));
@@ -2050,12 +2104,8 @@ EOF;
 			C::t('common_member_profile'.$tableext)->update($uid, $fieldarr);
 		}
 
-		if($_GET['loginnamenew']) {
-			C::t('common_member_login')->insert(array('uid' => $uid, 'loginname' => $_GET['loginnamenew']), false, true);
-		} else {
-			C::t('common_member_login')->delete($uid);
-		}
 
+		manyoulog('user', $uid, 'update');
 		cpmsg('members_edit_succeed', 'action=members&operation=edit&uid='.$uid, 'succeed');
 
 	}
@@ -2070,12 +2120,7 @@ EOF;
 			$iptoban = explode('.', getgpc('ip'));
 
 			$ipbanned = '';
-			$ipcount = C::t('common_banned')->count();
-			$page = empty($_GET['page']) ? 1 : dintval($_GET['page']);
-			$pagesize = 50;
-			$startlimit = ($page - 1) * $pagesize;
-			$multipage = multi($ipcount, $pagesize, $page, ADMINSCRIPT.'?action=members&operation=ipban', 0, 10);
-			foreach(C::t('common_banned')->fetch_all_limit($startlimit, $pagesize) as $banned) {
+			foreach(C::t('common_banned')->fetch_all_order_dateline() as $banned) {
 				for($i = 1; $i <= 4; $i++) {
 					if($banned["ip$i"] == -1) {
 						$banned["ip$i"] = '*';
@@ -2165,8 +2210,7 @@ EOF;
 					'dateline' => $_G['timestamp'],
 					'expiration' => $expiration,
 				);
-				C::t('common_banned')->insert($data);
-				captcha::report($_GET['ip1new'].'.'.$_GET['ip2new'].'.'.$_GET['ip3new'].'.'.$_GET['ip4new']);
+				C::t('common_banned')->insert($data);				
 			}
 
 			if(is_array($_GET['expirationnew'])) {
@@ -2723,6 +2767,7 @@ function showsearchform($operation = '') {
 		$usertagselect .= "<option value=\"$row[tagid]\" ".(in_array($row['tagid'], $tagid) ? 'selected' : '').">$row[tagname]</option>\n";
 	}
 
+	/*search={"nav_members":"action=members&operation=search"}*/
 	showtagheader('div', 'searchmembers', !$_GET['submit']);
 	echo '<script src="static/js/calendar.js" type="text/javascript"></script>';
 	echo '<style type="text/css">#residedistrictbox select, #birthdistrictbox select{width: auto;}</style>';
@@ -2748,6 +2793,16 @@ function showsearchform($operation = '') {
 	}
 	showsetting('members_search_medal', '', '', '<select name="medalid[]" multiple="multiple" size="10">'.$medalselect.'</select>');
 	showsetting('members_search_usertag', '', '', '<select name="tagid[]" multiple="multiple" size="10">'.$usertagselect.'</select>');
+	if(!empty($_G['setting']['connect']['allow'])) {
+		showsetting('members_search_conisbind', array('conisbind', array(
+			array(1, $lang['yes']),
+			array(0, $lang['no']),
+		), 1), $_GET['conisbind'], 'mradio');
+		showsetting('members_search_uinblacklist', array('uin_low', array(
+			array(1, $lang['yes']),
+			array(0, $lang['no']),
+		), 1), $_GET['uin_low'], 'mradio');
+	}
 	showsetting('members_search_online', array('sid_noempty', array(
 		array(1, $lang['yes']),
 		array(0, $lang['no']),
@@ -2867,6 +2922,7 @@ function showsearchform($operation = '') {
 	showtablefooter();
 	showformfooter();
 	showtagfooter('div');
+	/*search*/
 }
 
 function searchcondition($condition) {
@@ -3136,7 +3192,7 @@ function notifymembers($operation, $variable) {
 	if(!function_exists('sendmail')) {
 		include libfile('function/mail');
 	}
-	if($_GET['notifymember'] && in_array($_GET['notifymembers'], array('pm', 'notice', 'email', 'mobile'))) {
+	if($_GET['notifymember'] && in_array($_GET['notifymembers'], array('pm', 'notice', 'email'))) {
 		$uids = searchmembers($search_condition, $pertask, $current);
 
 		require_once libfile('function/discuzcode');
@@ -3158,53 +3214,50 @@ function notifymembers($operation, $variable) {
 			$urladd .= '&gpmid='.$gpmid;
 		}
 		$members = C::t('common_member')->fetch_all($uids);
-		if($_GET['notifymembers'] == 'mobile') {
-		} else {
-			foreach($members as $member) {
-				if($_GET['notifymembers'] == 'pm') {
-					C::t('common_member_grouppm')->insert(array(
-						'uid' => $member['uid'],
-						'gpmid' => $gpmid,
-						'status' => 0
-					), false, true);
-					$newpm = setstatus(2, 1, $member['newpm']);
-					C::t('common_member')->update($member['uid'], array('newpm'=>$newpm));
-				} elseif($_GET['notifymembers'] == 'notice') {
-					notification_add($member['uid'], 'system', 'system_notice', array('subject' => $subject, 'message' => $message.$addmsg, 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
-				} elseif($_GET['notifymembers'] == 'email') {
-					if(!sendmail("$member[username] <$member[email]>", $subject, $message.$addmsg)) {
-						runlog('sendmail', "$member[email] sendmail failed.");
-					}
+		foreach($members as $member) {
+			if($_GET['notifymembers'] == 'pm') {
+				C::t('common_member_grouppm')->insert(array(
+					'uid' => $member['uid'],
+					'gpmid' => $gpmid,
+					'status' => 0
+				), false, true);
+				$newpm = setstatus(2, 1, $member['newpm']);
+				C::t('common_member')->update($member['uid'], array('newpm'=>$newpm));
+			} elseif($_GET['notifymembers'] == 'notice') {
+				notification_add($member['uid'], 'system', 'system_notice', array('subject' => $subject, 'message' => $message.$addmsg, 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
+			} elseif($_GET['notifymembers'] == 'email') {
+				if(!sendmail("$member[username] <$member[email]>", $subject, $message.$addmsg)) {
+					runlog('sendmail', "$member[email] sendmail failed.");
 				}
-
-				$log = array();
-				if($_GET['updatecredittype'] == 0) {
-					foreach($setarr as $key => $val) {
-						if(empty($val)) continue;
-						$val = intval($val);
-						$id = intval($key);
-						$id = !$id && substr($key, 0, -1) == 'extcredits' ? intval(substr($key, -1, 1)) : $id;
-						if(0 < $id && $id < 9) {
-								$log['extcredits'.$id] = $val;
-						}
-					}
-					$logtype = 'RPR';
-				} else {
-					foreach($setarr as $val) {
-						if(empty($val)) continue;
-						$id = intval($val);
-						$id = !$id && substr($val, 0, -1) == 'extcredits' ? intval(substr($val, -1, 1)) : $id;
-						if(0 < $id && $id < 9) {
-							$log['extcredits'.$id] = '-1';
-						}
-					}
-					$logtype = 'RPZ';
-				}
-				include_once libfile('function/credit');
-				credit_log($member['uid'], $logtype, $member['uid'], $log);
-
-				$continue = TRUE;
 			}
+
+			$log = array();
+			if($_GET['updatecredittype'] == 0) {
+				foreach($setarr as $key => $val) {
+					if(empty($val)) continue;
+					$val = intval($val);
+					$id = intval($key);
+					$id = !$id && substr($key, 0, -1) == 'extcredits' ? intval(substr($key, -1, 1)) : $id;
+					if(0 < $id && $id < 9) {
+							$log['extcredits'.$id] = $val;
+					}
+				}
+				$logtype = 'RPR';
+			} else {
+				foreach($setarr as $val) {
+					if(empty($val)) continue;
+					$id = intval($val);
+					$id = !$id && substr($val, 0, -1) == 'extcredits' ? intval(substr($val, -1, 1)) : $id;
+					if(0 < $id && $id < 9) {
+						$log['extcredits'.$id] = '-1';
+					}
+				}
+				$logtype = 'RPZ';
+			}
+			include_once libfile('function/credit');
+			credit_log($member['uid'], $logtype, $member['uid'], $log);
+
+			$continue = TRUE;
 		}
 	}
 
@@ -3246,6 +3299,7 @@ function notifymembers($operation, $variable) {
 
 function banlog($username, $origgroupid, $newgroupid, $expiration, $reason, $status = 0) {
 	global $_G, $_POST;
+	$cloud_apps = dunserialize($_G['setting']['cloud_apps']);	
 	writelog('banlog', dhtmlspecialchars("$_G[timestamp]\t{$_G[member][username]}\t$_G[groupid]\t$_G[clientip]\t$username\t$origgroupid\t$newgroupid\t$expiration\t$reason\t$status"));
 }
 
@@ -3269,6 +3323,17 @@ function accessimg($access) {
 		($access == 1 ? '<img src="static/image/common/access_allow.gif" />' : '<img src="static/image/common/access_normal.gif" />');
 }
 
+function connectunbind($member) {
+	global $_G;
+	if(!$member['conopenid']) {
+		return;
+	}
+	$_G['member'] = array_merge($_G['member'], $member);
+
+	C::t('#qqconnect#connect_memberbindlog')->insert(array('uid' => $member['uid'], 'uin' => $member['conopenid'], 'type' => '2', 'dateline' => $_G['timestamp']));
+	C::t('common_member')->update($member['uid'], array('conisbind'=>0));
+	C::t('#qqconnect#common_member_connect')->delete($member['uid']);
+}
 
 function save_newsletter($cachename, $data) {
 	C::t('common_cache')->insert(array('cachekey' => $cachename, 'cachevalue' => serialize($data), 'dateline' => TIMESTAMP), false, true);

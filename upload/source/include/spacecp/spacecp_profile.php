@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: spacecp_profile.php 34668 2014-06-23 08:11:09Z hypowang $
+ *      $Id: spacecp_profile.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -25,7 +25,7 @@ space_merge($space, 'field_home');
 space_merge($space, 'profile');
 
 list($seccodecheck, $secqaacheck) = seccheck('password');
-@include_once DISCUZ_ROOT.'./data/sysdata/cache_domain.php';
+@include_once DISCUZ_ROOT.'./data/cache/cache_domain.php';
 $spacedomain = isset($rootdomain['home']) && $rootdomain['home'] ? $rootdomain['home'] : array();
 $_GET['id'] = $_GET['id'] ? preg_replace("/[^A-Za-z0-9_:]/", '', $_GET['id']) : '';
 if($operation != 'password') {
@@ -49,7 +49,23 @@ if($_G['setting']['regverify'] == 2 && $_G['groupid'] == 8) {
 		$validate = array();
 	}
 }
+if($_G['setting']['connect']['allow']) {
+	$connect = C::t('#qqconnect#common_member_connect')->fetch($_G['uid']);
+	$conisregister = $operation == 'password' && $connect['conisregister'];
+}
 
+if(in_array('wechat', $_G['setting']['plugins']['available'])) {
+	if($_G['wechat']['setting']['wechat_qrtype']) {
+		$wechatuser = C::t('#wechat#common_member_wechatmp')->fetch($_G['uid']);
+		if($wechatuser && !$wechatuser['status']) {
+			$wechatuser['isregister'] = 1;
+		}
+	} else {
+		$wechatuser = C::t('#wechat#common_member_wechat')->fetch($_G['uid']);
+	}
+
+	$conisregister = $operation == 'password' && $wechatuser['isregister'];
+}
 
 if(submitcheck('profilesubmit')) {
 
@@ -162,8 +178,6 @@ if(submitcheck('profilesubmit')) {
 	if($_GET['deletefile'] && is_array($_GET['deletefile'])) {
 		foreach($_GET['deletefile'] as $key => $value) {
 			if(isset($_G['cache']['profilesetting'][$key]) && $_G['cache']['profilesetting'][$key]['formtype'] == 'file') {
-				@unlink(getglobal('setting/attachdir').'./profile/'.$space[$key]);
-				@unlink(getglobal('setting/attachdir').'./profile/'.$verifyinfo['field'][$key]);
 				$verifyarr[$key] = $setarr[$key] = '';
 			}
 		}
@@ -199,17 +213,14 @@ if(submitcheck('profilesubmit')) {
 				$attach['attachment'] = dhtmlspecialchars(trim($attach['attachment']));
 				if($vid && $verifyconfig['available'] && isset($verifyconfig['field'][$key])) {
 					if(isset($verifyinfo['field'][$key])) {
-						@unlink(getglobal('setting/attachdir').'./profile/'.$verifyinfo['field'][$key]);
 						$verifyarr[$key] = $attach['attachment'];
 					}
 					continue;
 				}
 				if(isset($setarr[$key]) && $_G['cache']['profilesetting'][$key]['needverify']) {
-					@unlink(getglobal('setting/attachdir').'./profile/'.$verifyinfo['field'][$key]);
 					$verifyarr[$key] = $attach['attachment'];
 					continue;
 				}
-				@unlink(getglobal('setting/attachdir').'./profile/'.$space[$key]);
 				$setarr[$key] = $attach['attachment'];
 			}
 
@@ -272,6 +283,7 @@ if(submitcheck('profilesubmit')) {
 		C::t('common_member_field_home')->update($space['uid'], array('privacy'=>serialize($space['privacy'])));
 	}
 
+	manyoulog('user', $_G['uid'], 'update');
 
 	include_once libfile('function/feed');
 	feed_add('profile', 'feed_profile_update_'.$operation, array('hash_data'=>'profile'));
@@ -285,6 +297,16 @@ if(submitcheck('profilesubmit')) {
 	$setarr = array();
 	$emailnew = dhtmlspecialchars($_GET['emailnew']);
 	$ignorepassword = 0;
+	if($_G['setting']['connect']['allow']) {
+		$connect = C::t('#qqconnect#common_member_connect')->fetch($_G['uid']);
+		if($connect['conisregister']) {
+			$_GET['oldpassword'] = '';
+			$ignorepassword = 1;
+			if(empty($_GET['newpassword'])) {
+				showmessage('profile_passwd_empty');
+			}
+		}
+	}
 
 	if(in_array('mobile', $_G['setting']['plugins']['available']) && $wechatuser['isregister']) {
 		$_GET['oldpassword'] = '';
@@ -341,31 +363,16 @@ if(submitcheck('profilesubmit')) {
 		showmessage('profile_email_duplicate', '', array(), array('return' => true));
 	}
 
-	$loginData = C::t('common_member_login')->fetch($space['uid']);
-	$loginName = $loginData['loginname'];
-	$loginNameEnc = $loginName ? mb_substr($loginName, 0, 1, CHARSET).'******'.mb_substr($loginName, mb_strlen($loginName, CHARSET)-1, 1, CHARSET) : '';
-
-	if($_GET['loginname'] != $loginNameEnc) {
-		if($_GET['loginname']) {
-			if(strlen($_GET['loginname']) < 3) {
-				showmessage('profile_loginname_tooshort', '', array(), array('return' => true));
-			}
-			if(is_numeric($_GET['loginname'])) {
-				showmessage('profile_loginname_is_numeric', '', array(), array('return' => true));
-			}
-			if(C::t('common_member_login')->checkExists($_GET['loginname'], $space['uid']) || C::t('common_member')->fetch_by_username($_GET['loginname'], 1)) {
-				showmessage('profile_loginname_exists', '', array(), array('return' => true));
-			}
-			C::t('common_member_login')->insert(array('uid' => $space['uid'], 'loginname' => $_GET['loginname']), false, true);
-		} else {
-			C::t('common_member_login')->delete($space['uid']);
-		}
-	}
-
 	if(!empty($_GET['newpassword']) || $secquesnew) {
 		$setarr['password'] = md5(random(10));
 	}
+	if($_G['setting']['connect']['allow']) {
+		C::t('#qqconnect#common_member_connect')->update($_G['uid'], array('conisregister' => 0));
+	}
 
+	if(in_array('mobile', $_G['setting']['plugins']['available']) && $wechatuser['isregister']) {
+		C::t('#wechat#common_member_wechat')->update($_G['uid'], array('isregister' => 0));
+	}
 
 	$authstr = false;
 	if($emailnew != $_G['member']['email']) {
@@ -420,9 +427,6 @@ if($operation == 'password') {
 		$space['freezereson'] = $fzvalidate['message'];
 	}
 
-	$loginData = C::t('common_member_login')->fetch($space['uid']);
-	$loginName = $loginData['loginname'];
-	$loginNameEnc = $loginName ? mb_substr($loginName, 0, 1, CHARSET).'******'.mb_substr($loginName, mb_strlen($loginName, CHARSET)-1, 1, CHARSET) : '';
 } else {
 
 	space_merge($space, 'field_home');

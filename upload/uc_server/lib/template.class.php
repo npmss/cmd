@@ -1,10 +1,10 @@
 <?php
 
 /*
-	[UCenter] (C)2001-2009 Comsenz Inc.
+	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: template.class.php 845 2008-12-08 05:36:51Z zhaoxiongfei $
+	$Id: template.class.php 1167 2014-11-03 03:06:21Z hypowang $
 */
 
 class template {
@@ -47,7 +47,6 @@ class template {
 
 	function display($file) {
 		extract($this->vars, EXTR_SKIP);
-		@header('Content-Type: text/html; charset='.UC_CHARSET);
 		include $this->gettpl($file);
 	}
 
@@ -202,6 +201,3 @@ class template {
 		return $this->_transsid($matches[3],'<a'.$matches[1].'href='.$matches[2]);
 	}
 }
-
-
-?>

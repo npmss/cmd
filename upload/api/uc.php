@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: uc.php 36278 2016-12-09 07:52:35Z nemohou $
+ *      $Id: uc.php 36358 2017-01-20 02:05:50Z nemohou $
  */
 
 error_reporting(0);
@@ -83,8 +83,7 @@ class uc_note {
 		return xml_serialize($arr, $htmlon);
 	}
 
-	function __construct() {
-
+	function _construct() {
 	}
 
 	function test($get, $post) {
@@ -190,18 +189,6 @@ class uc_note {
 		$uid = intval($get['uid']);
 		if(($member = getuserbyuid($uid, 1))) {
 			dsetcookie('auth', authcode("$member[password]\t$member[uid]", 'ENCODE'), $cookietime);
-		} else if($_G['setting']['fastactivation']) {
-			if(!function_exists('uc_user_login')) {
-				loaducenter();
-			}
-			$user = uc_get_user($uid, 1);
-			if($user) {
-				$init_arr = explode(',', $_G['setting']['initcredits']);
-				$groupid = $_G['setting']['regverify'] ? 8 : $_G['setting']['newusergroupid'];
-				$passwd = md5(random(10));
-				C::t('common_member')->insert($uid, $get[username], $passwd, $user[2], $_G['clientip'], $groupid, $init_arr);
-				dsetcookie('auth', authcode("$passwd\t$uid", 'ENCODE'), $cookietime);
-			}
 		}
 	}
 

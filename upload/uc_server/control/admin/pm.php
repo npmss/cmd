@@ -72,7 +72,7 @@ class control extends adminbase {
 				foreach($pmlist as $key => $value) {
 					$pmlist[$key]['author'] = $usernamearr[$pmlist[$key]['authorid']];
 				}
-				$multipage = $this->page($count, UC_PPP, $page, UC_ADMINSCRIPT.'?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
+				$multipage = $this->page($count, UC_PPP, $page, 'admin.php?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
 			}
 		}
 
@@ -101,16 +101,13 @@ class control extends adminbase {
 		if($this->submitcheck()) {
 			$pmids = getgpc('deletepmid');
 			if(empty($pmids)) {
-				$this->message('pm_delete_noselect', UC_ADMINSCRIPT.'?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
+				$this->message('pm_delete_noselect', 'admin.php?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
 			}
 			foreach($pmids as $pmid) {
 				$query = $this->db->query("SELECT * FROM ".UC_DBTABLEPRE."pm_indexes i LEFT JOIN ".UC_DBTABLEPRE."pm_lists l ON i.plid=l.plid WHERE i.pmid='$pmid'");
 				if($index = $this->db->fetch_array($query)) {
 					$this->db->query("DELETE FROM ".UC_DBTABLEPRE.$_ENV['pm']->getposttablename($index['plid'])." WHERE pmid='$pmid'");
 					if($index['pmtype'] == 1) {
-					    $lastmessage = unserialize($index['lastmessage']);
-					    $lastmessage['lastsummary'] = $this->lang['pm_delete_done'];
-					    $lastmessage = serialize($lastmessage);
 						$authorcount = $this->db->result_first("SELECT COUNT(*) FROM ".UC_DBTABLEPRE.$_ENV['pm']->getposttablename($index['plid'])." WHERE plid='".$index['plid']."' AND delstatus IN (0, 2)");
 						$othercount = $this->db->result_first("SELECT COUNT(*) FROM ".UC_DBTABLEPRE.$_ENV['pm']->getposttablename($index['plid'])." WHERE plid='".$index['plid']."' AND delstatus IN (0, 1)");
 						$users = explode('_', $index['min_max']);
@@ -134,7 +131,6 @@ class control extends adminbase {
 							} else {
 								$this->db->query("DELETE FROM ".UC_DBTABLEPRE."pm_members WHERE plid='".$index['plid']."' AND uid='".$other."'");
 							}
-							$this->db->query("UPDATE ".UC_DBTABLEPRE."pm_lists SET lastmessage='". $lastmessage ."' WHERE plid='".$index['plid']."'");
 						}
 					} elseif($index['pmtype'] == 2) {
 						$count = $this->db->result_first("SELECT COUNT(*) FROM ".UC_DBTABLEPRE.$_ENV['pm']->getposttablename($index['plid'])." WHERE plid='".$index['plid']."'");
@@ -148,7 +144,7 @@ class control extends adminbase {
 					}
 				}
 			}
-			$this->message('pm_clear_succeed', UC_ADMINSCRIPT.'?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
+			$this->message('pm_clear_succeed', 'admin.php?m=pm&a=ls&srchtablename='.$srchtablename.'&srchauthor='.urlencode($srchauthor).'&srchstarttime='.urlencode($srchstarttime).'&srchendtime='.urlencode($srchendtime).'&srchmessage='.urlencode($srchmessage).'&searchpmsubmit=true');
 		}
 	}
 
@@ -161,7 +157,7 @@ class control extends adminbase {
 			$pertask = $pertask ? $pertask : 100;
 			$current = $current > 0 ? $current : 0;
 			$next = $current + $pertask;
-			$nexturl = UC_ADMINSCRIPT."?m=pm&a=clear&usernames=$usernames&current=$next&pertask=$pertask&clearpmsubmit=1";
+			$nexturl = "admin.php?m=pm&a=clear&usernames=$usernames&current=$next&pertask=$pertask&clearpmsubmit=1";
 
 			if($usernames) {
 				$uids = 0;
@@ -203,7 +199,7 @@ class control extends adminbase {
 				if($processed) {
 					$this->message('pm_clear_processing', $nexturl, 0, array('current' => $current, 'next' => $next));
 				} else {
-					$this->message('pm_clear_succeed', UC_ADMINSCRIPT.'?m=pm&a=clear');
+					$this->message('pm_clear_succeed', 'admin.php?m=pm&a=clear');
 				}
 			}
 		}

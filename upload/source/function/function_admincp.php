@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_admincp.php 36299 2016-12-15 06:35:18Z nemohou $
+ *      $Id: function_admincp.php 36353 2017-01-17 07:19:28Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -24,10 +24,6 @@ function isplugindir($dir) {
 
 function ispluginkey($key) {
 	return preg_match("/^[a-z]+[a-z0-9_]*$/i", $key);
-}
-
-function isinstalltype($key) {
-	return preg_match('/^\w+$/', $key);
 }
 
 function dir_writeable($dir) {
@@ -62,75 +58,6 @@ function checkpermission($action, $break = 1) {
 	} else {
 		return $_G['config']['admincp'][$action];
 	}
-}
-
-function siteinformation() {
-
-	global $_G, $siteuniqueid, $save_mastermobile, $save_masterqq, $save_masteremail;
-	$db = DB::object();
-	$update = array(
-				'uniqueid' => $siteuniqueid,
-				'version' => DISCUZ_VERSION,
-				'release' => DISCUZ_RELEASE,
-				'php' => PHP_VERSION,
-				'mysql' => $db->version(),
-				'charset' => CHARSET,
-				'bbname' => $_G['setting']['bbname'],
-				'mastermobile' => $save_mastermobile,
-				'masterqq' => $save_masterqq,
-				'masteremail' => $save_masteremail,
-				'software' => $_SERVER['SERVER_SOFTWARE'],
-				'my_siteid' => $_G['setting']['my_siteid'],
-				'my_sitekey' => $_G['setting']['my_sitekey'],
-			);
-
-	$updatetime = @filemtime(DISCUZ_ROOT.'./data/updatetime.lock');
-	if(empty($updatetime) || (TIMESTAMP - $updatetime > 3600 * 4)) {
-		@touch(DISCUZ_ROOT.'./data/updatetime.lock');
-		$tableprelen = strlen($db->tablepre);
-		$table = array(
-			'forum_thread' => 'threads',
-			'forum_post' => 'posts',
-			'forum_attachment' => 'fattachments',
-			'common_member' => 'members',
-			'home_album' => 'albums',
-			'home_blog' => 'blogs',
-			'home_doing' => 'doings',
-			'home_poke' => 'pokes',
-			'home_share' => 'shares',
-			'portal_topic' => 'topics',
-			'portal_article_title' => 'articles',
-			'portal_attachment' => 'pattachments',
-		);
-		foreach(C::t('common_setting')->fetch_all_table_status() as $row) {
-			$tablename = substr($row['Name'], $tableprelen);
-			if(!isset($table[$tablename])) continue;
-			$update[$table[$tablename]] = $row['Rows'];
-		}
-		foreach(C::t('forum_thread')->count_special_group_by_special() as $thread) {
-			$thread['special'] = intval($thread['special']);
-			$update['spt_'.$thread['special']] = $thread['spcount'];
-		}
-		$update['groups'] = C::t('forum_forum')->fetch_forum_num('group');
-		$update['forums'] = C::t('forum_forum')->fetch_forum_num();
-		$update['adminemail'] = $_G['setting']['adminemail'];
-		if($_G['setting']['msn']['on'] && $_G['setting']['msn']['domain']) {
-			$update['msn_domain'] = $_G['setting']['msn']['domain'];
-		}
-
-		$comma = '';
-		foreach(C::t('common_patch')->fetch_patch_by_status(array(1, 2)) as $patch) {
-			$update['patch'] .= $comma.$patch['serial'];
-			$comma = ',';
-		}
-	}
-
-	$data = '';
-	foreach($update as $key => $value) {
-		$data .= $key.'='.rawurlencode($value).'&';
-	}
-
-	return 'os=dx&update='.rawurlencode(base64_encode($data)).'&md5hash='.substr(md5($_SERVER['HTTP_USER_AGENT'].implode('', $update).TIMESTAMP), 8, 8).'&timestamp='.TIMESTAMP;
 }
 
 function upgradeinformation($status = 0) {
@@ -273,7 +200,7 @@ function showmenu($key, $menus, $return = 0) {
 			if($menu[0] && $menu[1]) {
 				list($action, $operation, $do) = explode('_', $menu[1]);
 				$menu[1] = $action.($operation ? '&operation='.$operation.($do ? '&do='.$do : '') : '');
-				$body .= '<li><a href="'.(preg_match('/^https?:\/\//i', $menu[1]) ? $menu[1] : ADMINSCRIPT.'?action='.$menu[1]).'" hidefocus="true" target="'.($menu[2] ? $menu[2] : 'main').'"'.($menu[3] ? $menu[3] : '').'><em onclick="menuNewwin(this)" title="'.cplang('nav_newwin').'"></em>'.cplang($menu[0]).'</a></li>';
+				$body .= '<li><a href="'.(substr($menu[1], 0, 4) == 'http' ? $menu[1] : ADMINSCRIPT.'?action='.$menu[1]).'" hidefocus="true" target="'.($menu[2] ? $menu[2] : 'main').'"'.($menu[3] ? $menu[3] : '').'><em onclick="menuNewwin(this)" title="'.cplang('nav_newwin').'"></em>'.cplang($menu[0]).'</a></li>';
 			} elseif($menu[0] && $menu[2]) {
 				if($menu[2] == 1) {
 					$id = 'M'.substr(md5($menu[0]), 0, 8);
@@ -282,7 +209,8 @@ function showmenu($key, $menus, $return = 0) {
 						$hide = true;
 					}
 					$body .= '<li class="s"><div class="lsub'.($hide ? '' : ' desc').'" subid="'.$id.'"><div onclick="lsub(\''.$id.'\', this.parentNode)">'.$menu[0].'</div><ol style="display:'.($hide ? 'none' : '').'" id="'.$id.'">';
-				}elseif($menu[2] == 2) {
+				}
+				if($menu[2] == 2) {
 					$body .= '<li class="sp"></li></ol></div></li>';
 				}
 			}
@@ -322,10 +250,7 @@ function cpmsg($message, $url = '', $type = '', $values = array(), $extra = '', 
 		default: $classname = 'marginbot normal';break;
 	}
 	if($url) {
-		$url = preg_match('/^https?:\/\//i', $url) ? $url : ADMINSCRIPT.'?'.$url;
-		if(strpos($url, 'cpmsgtime=') === false){
-			$url .= (strpos($url, '?') === false ? '?' : '&').'cpmsgtime='.$_G['timestamp'];
-		}
+		$url = substr($url, 0, 5) == 'http:' ? $url : ADMINSCRIPT.'?'.$url;
 	}
 	$message = "<h4 class=\"$classname\">$message</h4>";
 	$url .= $url && !empty($_GET['scrolltop']) ? '&scrolltop='.intval($_GET['scrolltop']) : '';
@@ -349,7 +274,7 @@ function cpmsg($message, $url = '', $type = '', $values = array(), $extra = '', 
 				$message = "<br />$message<br /><p class=\"margintop\"><input type=\"submit\" class=\"btn\" name=\"submit\" value=\"".cplang('start')."\" onclick=\"location.href='$url'\" />";
 			} else {
 				$message .= '<p class="marginbot"><a href="'.$url.'" class="lightlink">'.cplang($type == 'download' ? 'message_download' : 'message_redirect').'</a></p>';
-				$timeout = ($values['timeout'] && is_numeric($values['timeout'])) ? $values['timeout'] : ($type != 'loading' ? 3000 : 1000);
+				$timeout = $type != 'loading' ? 3000 : 1000;
 				$message .= "<script type=\"text/JavaScript\">setTimeout(\"redirect('$url');\", $timeout);</script>";
 			}
 		} elseif($type != 'succeed') {
@@ -369,15 +294,6 @@ function cpmsg($message, $url = '', $type = '', $values = array(), $extra = '', 
 	}
 }
 
-function cpformhashurl($lang = '') {
-	if(empty($_GET['formhash']) || FORMHASH != $_GET['formhash']){
-		parse_str($_SERVER['QUERY_STRING'], $query);
-		$query['formhash'] = FORMHASH;
-		$query_sting_tmp = http_build_query($query);
-		echo '<h3>'.cplang('discuz_message').'</h3><div class="infobox"><p class="marginbot"><a href="'.ADMINSCRIPT . '?' . $query_sting_tmp . '" class="infotitle2 lightlink">'.cplang($lang ? $lang : 'message_to_formhash_url').'</a></p></div>';
-		exit;
-	}
-}
 function cpheader() {
 	global $_G;
 
@@ -403,7 +319,7 @@ function cpheader() {
 </head>
 <body>
 <script type="text/JavaScript">
-var admincpfilename = '$basescript', IMGDIR = '$IMGDIR', STYLEID = '$STYLEID', VERHASH = '$VERHASH', IN_ADMINCP = true, ISFRAME = $frame, STATICURL='static/', SITEURL = '$_G[siteurl]', JSPATH = '{$_G[setting][jspath]}', CSSPATH = '{$_G[setting][csspath]}';
+var admincpfilename = '$basescript', IMGDIR = '$IMGDIR', STYLEID = '$STYLEID', VERHASH = '$VERHASH', IN_ADMINCP = true, ISFRAME = $frame, STATICURL='static/', SITEURL = '$_G[siteurl]', JSPATH = '{$_G[setting][jspath]}';
 </script>
 <script src="{$_G[setting][jspath]}common.js?{$_G[style][verhash]}" type="text/javascript"></script>
 <script src="{$_G[setting][jspath]}admincp.js?{$_G[style][verhash]}" type="text/javascript"></script>
@@ -789,7 +705,7 @@ function showsetting($setname, $varname, $value, $type = 'radio', $disabled = ''
 			if($code[$i] != '') {
 				if($code[$i]{0} == '#') {
 					$css .= strtoupper($code[$i]).' ';
-				} elseif(preg_match('/^http:\/\//i', $code[$i])) {
+				} elseif(preg_match('/^(https?:)?\/\//i', $code[$i])) {
 					$css .= 'url(\''.$code[$i].'\') ';
 				} else {
 					$css .= 'url(\''.$stylestuff['imgdir']['subst'].'/'.$code[$i].'\') ';
@@ -831,12 +747,7 @@ function showsetting($setname, $varname, $value, $type = 'radio', $disabled = ''
 		return;
 	}
 	if(!isset($_G['showsetting_multi'])) {
-		if(!$nofaq) {
-			$faqurl = 'http://www.discuzfans.net/faq.php?type=admin&ver='.$_G['setting']['version'].'&action='.rawurlencode($_GET['action']).'&operation='.rawurlencode($_GET['operation']).'&key='.rawurlencode($setname);
-			showtablerow($noborder.'onmouseover="setfaq(this, \'faq'.$setid.'\')"', 'colspan="2" class="td27" s="1"', $name.'<a id="faq'.$setid.'" class="faq" title="'.cplang('setting_faq_title').'" href="'.$faqurl.'" target="_blank" style="display:none">&nbsp;&nbsp;&nbsp;</a>');
-		} else {
-			showtablerow('', 'colspan="2" class="td27" s="1"', $name);
-		}
+		showtablerow('', 'colspan="2" class="td27" s="1"', $name);
 	} else {
 		if(empty($_G['showsetting_multijs'])) {
 			$_G['setting_JS'] .= 'var ss = new Array();';
@@ -980,7 +891,6 @@ function cpfooter() {
 	if(defined('DISCUZ_DEBUG') && DISCUZ_DEBUG && @include(libfile('function/debug'))) {
 		function_exists('debugmessage') && debugmessage();
 	}
-
 
 	echo "\n</body>\n</html>";
 
@@ -1329,37 +1239,37 @@ function rewritedata($alldata = 1) {
 	if(!$alldata) {
 		if(in_array('portal_topic', $_G['setting']['rewritestatus'])) {
 			$data['search']['portal_topic'] = "/".$_G['domain']['pregxprw']['portal']."\?mod\=topic&(amp;)?topic\=([^#]+?)?\"([^\>]*)\>/";
-			$data['replace']['portal_topic'] = 'rewriteoutput(\'portal_topic\', 0, $matches[1], $matches[4], $matches[5])';
+			$data['replace']['portal_topic'] = 'rewriteoutput(\'portal_topic\', 0, $matches[1], $matches[3], $matches[4])';
 		}
 
 		if(in_array('portal_article', $_G['setting']['rewritestatus'])) {
 			$data['search']['portal_article'] = "/".$_G['domain']['pregxprw']['portal']."\?mod\=view&(amp;)?aid\=(\d+)(&amp;page\=(\d+))?\"([^\>]*)\>/";
-			$data['replace']['portal_article'] = 'rewriteoutput(\'portal_article\', 0, $matches[1], $matches[4], $matches[6], $matches[7])';
+			$data['replace']['portal_article'] = 'rewriteoutput(\'portal_article\', 0, $matches[1], $matches[3], $matches[5], $matches[6])';
 		}
 
 		if(in_array('forum_forumdisplay', $_G['setting']['rewritestatus'])) {
-			$data['search']['forum_forumdisplay'] = "/".$_G['domain']['pregxprw']['forum']."\?mod\=forumdisplay&(amp;)?fid\=(\w+)(&amp;page\=(\d+)?)?\"([^\>]*)\>/";
-			$data['replace']['forum_forumdisplay'] = 'rewriteoutput(\'forum_forumdisplay\', 0, $matches[1], $matches[4], $matches[6], $matches[7])';
+			$data['search']['forum_forumdisplay'] = "/".$_G['domain']['pregxprw']['forum']."\?mod\=forumdisplay&(amp;)?fid\=(\w+)(&amp;page\=(\d+))?\"([^\>]*)\>/";
+			$data['replace']['forum_forumdisplay'] = 'rewriteoutput(\'forum_forumdisplay\', 0, $matches[1], $matches[3], $matches[5], $matches[6])';
 		}
 
 		if(in_array('forum_viewthread', $_G['setting']['rewritestatus'])) {
-			$data['search']['forum_viewthread'] = "/".$_G['domain']['pregxprw']['forum']."\?mod\=viewthread&(amp;)?tid\=(\d+)(&amp;extra\=(page\%3D(\d+)?)?)?(&amp;page\=(\d+))?\"([^\>]*)\>/";
-			$data['replace']['forum_viewthread'] = 'rewriteoutput(\'forum_viewthread\', 0, $matches[1], $matches[4], $matches[9], $matches[7], $matches[10])';
+			$data['search']['forum_viewthread'] = "/".$_G['domain']['pregxprw']['forum']."\?mod\=viewthread&(amp;)?tid\=(\d+)(&amp;extra\=(page\%3D(\d+))?)?(&amp;page\=(\d+))?\"([^\>]*)\>/";
+			$data['replace']['forum_viewthread'] = 'rewriteoutput(\'forum_viewthread\', 0, $matches[1], $matches[3], $matches[8], $matches[6], $matches[9])';
 		}
 
 		if(in_array('group_group', $_G['setting']['rewritestatus'])) {
 			$data['search']['group_group'] = "/".$_G['domain']['pregxprw']['forum']."\?mod\=group&(amp;)?fid\=(\d+)(&amp;page\=(\d+))?\"([^\>]*)\>/";
-			$data['replace']['group_group'] = 'rewriteoutput(\'group_group\', 0, $matches[1], $matches[4], $matches[6], $matches[7])';
+			$data['replace']['group_group'] = 'rewriteoutput(\'group_group\', 0, $matches[1], $matches[3], $matches[5], $matches[6])';
 		}
 
 		if(in_array('home_space', $_G['setting']['rewritestatus'])) {
 			$data['search']['home_space'] = "/".$_G['domain']['pregxprw']['home']."\?mod=space&(amp;)?(uid\=(\d+)|username\=([^&]+?))\"([^\>]*)\>/";
-			$data['replace']['home_space'] = 'rewriteoutput(\'home_space\', 0, $matches[1], $matches[5], $matches[6], $matches[7])';
+			$data['replace']['home_space'] = 'rewriteoutput(\'home_space\', 0, $matches[1], $matches[4], $matches[5], $matches[6])';
 		}
 
 		if(in_array('home_blog', $_G['setting']['rewritestatus'])) {
 			$data['search']['home_blog'] = "/".$_G['domain']['pregxprw']['home']."\?mod=space&(amp;)?uid\=(\d+)&(amp;)?do=blog&(amp;)?id=(\d+)\"([^\>]*)\>/";
-			$data['replace']['home_blog'] = 'rewriteoutput(\'home_blog\', 0, $matches[1], $matches[4], $matches[7], $matches[8])';
+			$data['replace']['home_blog'] = 'rewriteoutput(\'home_blog\', 0, $matches[1], $matches[3], $matches[6], $matches[7])';
 		}
 
 		if(in_array('forum_archiver', $_G['setting']['rewritestatus'])) {
@@ -1372,48 +1282,35 @@ function rewritedata($alldata = 1) {
 			$data['replace']['plugin'] = 'rewriteoutput(\'plugin\', 0, $matches[1], $matches[2], $matches[3], $matches[4], $matches[5])';
 		}
 	} else {
-
-
-		$data['rulesearch']['forum_viewthread'] = 't-{tid}.html';
-		$data['rulereplace']['forum_viewthread'] = 'forum.php?mod=viewthread&tid={tid}&extra=page\%3D{prevpage}&page={page}';
-		$data['rulevars']['forum_viewthread']['{tid}'] = '([0-9]+)';
-		$data['rulevars']['forum_viewthread']['{page}'] = '([0-9]+)';
-		$data['rulevars']['forum_viewthread']['{prevpage}'] = '([0-9]+)';
-
-		$data['rulesearch']['forum_forumdisplay'] = 'f-{fid}.html';
-		$data['rulereplace']['forum_forumdisplay'] = 'forum.php?mod=forumdisplay&fid={fid}&page={page}';
-		$data['rulevars']['forum_forumdisplay']['{fid}'] = '(\w+)';
-		$data['rulevars']['forum_forumdisplay']['{page}'] = '([0-9]+)';
-
-		$data['rulesearch']['forum_forumdisplay2'] = 'f-{fid}-{page}.html';
-		$data['rulereplace']['forum_forumdisplay2'] = 'forum.php?mod=forumdisplay&fid={fid}&page={page}';
-		$data['rulevars']['forum_forumdisplay2']['{fid}'] = '(\w+)';
-		$data['rulevars']['forum_forumdisplay2']['{page}'] = '([0-9]+)';
-
-		$data['rulesearch']['home_space'] = 'space-{user}-{value}.html';
-		$data['rulereplace']['home_space'] = 'home.php?mod=space&{user}={value}';
-		$data['rulevars']['home_space']['{user}'] = '(username|uid)';
-		$data['rulevars']['home_space']['{value}'] = '(.+)';
-
-		$data['rulesearch']['forum_viewthread2'] = 't-{tid}-{page}.html';
-		$data['rulereplace']['forum_viewthread2'] = 'forum.php?mod=viewthread&tid={tid}&extra=page\%3D{prevpage}&page={page}';
-		$data['rulevars']['forum_viewthread2']['{tid}'] = '([0-9]+)';
-		$data['rulevars']['forum_viewthread2']['{page}'] = '([0-9]+)';
-		$data['rulevars']['forum_viewthread2']['{prevpage}'] = '([0-9]+)';
+		$data['rulesearch']['portal_topic'] = 'topic-{name}.html';
+		$data['rulereplace']['portal_topic'] = 'portal.php?mod=topic&topic={name}';
+		$data['rulevars']['portal_topic']['{name}'] = '(.+)';
 
 		$data['rulesearch']['portal_article'] = 'article-{id}-{page}.html';
 		$data['rulereplace']['portal_article'] = 'portal.php?mod=view&aid={id}&page={page}';
 		$data['rulevars']['portal_article']['{id}'] = '([0-9]+)';
 		$data['rulevars']['portal_article']['{page}'] = '([0-9]+)';
 
-		$data['rulesearch']['portal_topic'] = 'topic-{name}.html';
-		$data['rulereplace']['portal_topic'] = 'portal.php?mod=topic&topic={name}';
-		$data['rulevars']['portal_topic']['{name}'] = '(.+)';
+		$data['rulesearch']['forum_forumdisplay'] = 'forum-{fid}-{page}.html';
+		$data['rulereplace']['forum_forumdisplay'] = 'forum.php?mod=forumdisplay&fid={fid}&page={page}';
+		$data['rulevars']['forum_forumdisplay']['{fid}'] = '(\w+)';
+		$data['rulevars']['forum_forumdisplay']['{page}'] = '([0-9]+)';
+
+		$data['rulesearch']['forum_viewthread'] = 'thread-{tid}-{page}-{prevpage}.html';
+		$data['rulereplace']['forum_viewthread'] = 'forum.php?mod=viewthread&tid={tid}&extra=page\%3D{prevpage}&page={page}';
+		$data['rulevars']['forum_viewthread']['{tid}'] = '([0-9]+)';
+		$data['rulevars']['forum_viewthread']['{page}'] = '([0-9]+)';
+		$data['rulevars']['forum_viewthread']['{prevpage}'] = '([0-9]+)';
 
 		$data['rulesearch']['group_group'] = 'group-{fid}-{page}.html';
 		$data['rulereplace']['group_group'] = 'forum.php?mod=group&fid={fid}&page={page}';
 		$data['rulevars']['group_group']['{fid}'] = '([0-9]+)';
 		$data['rulevars']['group_group']['{page}'] = '([0-9]+)';
+
+		$data['rulesearch']['home_space'] = 'space-{user}-{value}.html';
+		$data['rulereplace']['home_space'] = 'home.php?mod=space&{user}={value}';
+		$data['rulevars']['home_space']['{user}'] = '(username|uid)';
+		$data['rulevars']['home_space']['{value}'] = '(.+)';
 
 		$data['rulesearch']['home_blog'] = 'blog-{uid}-{blogid}.html';
 		$data['rulereplace']['home_blog'] = 'home.php?mod=space&uid={uid}&do=blog&id={blogid}';

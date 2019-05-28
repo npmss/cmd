@@ -185,23 +185,6 @@ function postsubmit(theform) {
 	theform.submit();
 }
 
-function relatekw(subject, message) {
-	if(isUndefined(subject) || subject == -1) {
-		subject = $('subject').value;
-		subject = subject.replace(/<\/?[^>]+>|\[\/?.+?\]|"/ig, "");
-		subject = subject.replace(/\s{2,}/ig, ' ');
-	}
-	if(isUndefined(message) || message == -1) {
-		message = getEditorContents();
-		message = message.replace(/<\/?[^>]+>|\[\/?.+?\]|"/ig, "");
-		message = message.replace(/\s{2,}/ig, ' ');
-	}
-	subject = (BROWSER.ie && document.charset == 'utf-8' ? encodeURIComponent(subject) : subject);
-	message = (BROWSER.ie && document.charset == 'utf-8' ? encodeURIComponent(message) : message);
-	message = message.replace(/&/ig, '', message).substr(0, 500);
-	ajaxget('forum.php?mod=relatekw&subjectenc=' + subject + '&messageenc=' + message, 'tagselect');
-}
-
 function switchicon(iconid, obj) {
 	$('iconid').value = iconid;
 	$('icon_img').src = obj.src;
@@ -724,14 +707,12 @@ function insertText(str) {
 }
 
 function insertAllAttachTag() {
-	var attachArray = new Array();
 	var attachListObj = $('e_attachlist').getElementsByTagName("tbody");
 	for(var i in attachListObj) {
 		if(typeof attachListObj[i] == "object") {
 			var attach = attachListObj[i];
 			var ids = attach.id.split('_');
-			if(ids[0] == 'attach' && !in_array(ids[1], attachArray)) {
-				attachArray[i] = ids[1];
+			if(ids[0] == 'attach') {
 				if($('attachname'+ids[1]) && attach.style.display != 'none') {
 					if(parseInt($('attachname'+ids[1]).getAttribute('isimage'))) {
 						insertAttachimgTag(ids[1]);

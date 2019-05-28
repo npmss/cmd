@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: admincp_checktools.php 36306 2016-12-16 08:12:49Z nemohou $
+ *      $Id: admincp_checktools.php 36334 2017-01-03 01:32:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ') || !defined('IN_ADMINCP')) {
@@ -64,8 +64,6 @@ if($operation == 'filecheck') {
 		checkfiles('data/threadcache/', '\.htm', 0);
 		checkfiles('template/', '');
 		checkfiles('api/', '');
-		checkfiles('extend/', '');
-		checkfiles('m/', '');
 		checkfiles('source/', '', 1, 'discuzfiles.md5,plugin');
 		checkfiles('static/', '');
 		checkfiles('archiver/', '');
@@ -94,7 +92,6 @@ if($operation == 'filecheck') {
 			'dateline' => $_G['timestamp'],
 		), false, true);
 
-		$modifylist = array();
 		foreach($discuzfiles as $line) {
 			$file = trim(substr($line, 34));
 			$md5datanew[$file] = substr($line, 0, 32);
@@ -103,7 +100,6 @@ if($operation == 'filecheck') {
 			}
 			$md5datanew[$file] = $md5data[$file];
 		}
-
 
 		$weekbefore = TIMESTAMP - 604800;
 		$addlist = @array_merge(@array_diff_assoc($md5data, $md5datanew), $cachelist[2]);
@@ -173,11 +169,6 @@ if($operation == 'filecheck') {
 			$result .= '</tbody>';
 			$resultjs .= '$(\'status_'.$status.'\').style.display=\'none\';';
 		}
-
-		$modifiedfiles = count($modifylist);
-		$deletedfiles = count($dellist);
-		$unknownfiles = count($addlist);
-		$doubt = intval($doubt);
 
 		$result .= '<script>function showresult(o) {'.$resultjs.'$(\'status_\' + o).style.display=\'\';}</script>';
 		showtips('filecheck_tips');
@@ -259,7 +250,7 @@ if($operation == 'filecheck') {
 		}
 
 		foreach($difffilelist as $dir => $files) {
-      $dir = str_replace('template/default/', substr($style['directory'], 2).'/', $dir);
+                        $dir = str_replace('template/default/', substr($style['directory'], 2).'/', $dir);
 			$result .= '<tbody><tr><td class="td30"><a href="javascript:;" onclick="toggle_group(\'dir_'.$dir.'\')" id="a_dir_'.$dir.'">[-]</a></td><td colspan="3"><div class="ofolder">'.$dir.'</div></td></tr></tbody>';
 			$result .= '<tbody id="dir_'.$dir.'">';
 			foreach($files as $file) {
@@ -399,7 +390,6 @@ if($operation == 'filecheck') {
 
 	echo '<script language="javascript">alert(\''.str_replace(array('\'', "\n", "\r"), array('\\\'', '\n', ''), $alertmsg).'\');parent.$(\'cpform\').action=\''.ADMINSCRIPT.'?action=setting&edit=yes\';parent.$(\'cpform\').target=\'_self\';parent.$(\'cpform\').operation.value=\'mail\';</script>';
 
-
 } elseif($operation == 'imagepreview') {
 
 	$settingnew = $_GET['settingnew'];
@@ -459,7 +449,7 @@ if($operation == 'filecheck') {
 	}
 
 } elseif($operation == 'rewrite') {
-	shownav('global', 'nav_seo');
+
 	$rule = array();
 	$rewritedata = rewritedata();
 	$rule['{apache1}'] = $rule['{apache2}'] = $rule['{iis}'] = $rule['{iis7}'] = $rule['{zeus}'] = $rule['{nginx}'] = '';
@@ -468,24 +458,6 @@ if($operation == 'filecheck') {
 			continue;
 		}
 		$v = !$_G['setting']['rewriterule'][$k] ? $v : $_G['setting']['rewriterule'][$k];
-		$_G['setting']['rewriterule'][$k] = $v;
-
-		if($k == 'forum_forumdisplay2' && $v == $_G['setting']['rewriterule']['forum_forumdisplay']){
-			continue;
-		}elseif($k == 'forum_viewthread2' && $v == $_G['setting']['rewriterule']['forum_viewthread']){
-			continue;
-		}
-
-		if(strpos($v, '{page}') === false){
-			unset($rewritedata['rulevars'][$k]['{page}']);
-			$rewritedata['rulereplace'][$k] = str_replace('{page}', '', $rewritedata['rulereplace'][$k]);
-		}
-
-		if(strpos($v, '{prevpage}') === false){
-			unset($rewritedata['rulevars'][$k]['{prevpage}']);
-			$rewritedata['rulereplace'][$k] = str_replace('{prevpage}', '', $rewritedata['rulereplace'][$k]);
-		}
-
 		$pvmaxv = count($rewritedata['rulevars'][$k]) + 2;
 		$vkeys = array_keys($rewritedata['rulevars'][$k]);
 		$rewritedata['rulereplace'][$k] = pvsort($vkeys, $v, $rewritedata['rulereplace'][$k]);

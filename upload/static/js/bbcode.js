@@ -2,7 +2,7 @@
 	[Discuz!] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: bbcode.js 35332 2015-06-15 07:05:10Z nemohou $
+	$Id: bbcode.js 36359 2017-01-20 05:06:45Z nemohou $
 */
 
 var re, DISCUZCODE = [];
@@ -87,10 +87,6 @@ function bbcode2html(str) {
 			}
 			return addCSS;
 		});
-		str = str.replace(/<p>([\s\S]*?)<\/p>/ig, '<div>$1</div>');
-
-		str = str.replace(/\[color=rgb\(0, 0, 0\)\]/ig, '<font>');
-		str = str.replace(/\[font=&quot;\]/ig, '<font>');
 		str = str.replace(/\[color=([\w#\(\),\s]+?)\]/ig, '<font color="$1">');
 		str = str.replace(/\[backcolor=([\w#\(\),\s]+?)\]/ig, '<font style="background-color:$1">');
 		str = str.replace(/\[size=(\d+?)\]/ig, '<font size="$1">');
@@ -145,7 +141,7 @@ function bbcode2html(str) {
 	}
 
 	for(var i = 0; i <= DISCUZCODE['num']; i++) {
-		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", function() {return DISCUZCODE['html'][i];});
+		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", DISCUZCODE['html'][i]);
 	}
 
 	if(!allowhtml || !fetchCheckbox('htmlon')) {
@@ -193,11 +189,8 @@ function cuturl(url) {
 }
 
 function dstag(options, text, tagname) {
-	if(text == "\n") {
-		return text;
-	}
 	if(trim(text) == '') {
-		return tagname == 'div' ? '' : '\n';
+		return '\n';
 	}
 	var pend = parsestyle(options, '', '');
 	var prepend = pend['prepend'];
@@ -208,7 +201,7 @@ function dstag(options, text, tagname) {
 			prepend = '[align=' + align + ']' + prepend;
 			append += '[/align]';
 		} else {
-			prepend += '\n';
+			append += '\n';
 		}
 	}
 	return prepend + recursion(tagname, text, 'dstag') + append;
@@ -219,7 +212,7 @@ function ptag(options, text, tagname) {
 		return '\n';
 	}
 	if(trim(options) == '') {
-		return text;
+		return text + '\n';
 	}
 
 	var lineHeight = null;
@@ -295,14 +288,7 @@ function fonttag(fontoptions, text) {
 	}
 
 	var pend = parsestyle(fontoptions, prepend, append);
-	var text = recursion('font', text, 'fonttag');
-	if(text == '\n') {
-		return '';
-	}
-	if(trim(text) == '') {
-		return '';
-	}
-	return pend['prepend'] + text + pend['append'];
+	return pend['prepend'] + recursion('font', text, 'fonttag') + pend['append'];
 }
 
 function getoptionvalue(option, text) {
@@ -327,14 +313,7 @@ function html2bbcode(str) {
 		str = str.replace(/<img([^>]*aid=[^>]*)>/ig, function($1, $2) {return imgtag($2);});
 		return str;
 	}
-	str = str.replace(/<p>([\s\S]*?)<\/p>/ig, '<div>$1</div>');
-	str = str.replace(/<p[^>]*><\/p>/ig, '<br />');
-	str = str.replace(/<div[^>]*><\/div>/ig, '');
-	str = str.replace(/<div[^>]*><br[^>]*><\/div>/ig, '<br />');
-	str = str.replace(/<\/div><div>/ig, '<br />');
-	str = str.replace(/<br><div/ig, '<div');
 
-	str = str.replace(/<\/blockquote><blockquote>/ig, '<br>');
 	str = str.replace(/<div\sclass=["']?blockcode["']?>[\s\S]*?<blockquote>([\s\S]+?)<\/blockquote>[\s\S]*?<\/div>/ig, function($1, $2) {return codetag($2);});
 
 	if(!fetchCheckbox('bbcodeoff') && allowbbcode) {
@@ -434,7 +413,7 @@ function html2bbcode(str) {
 	str = str.replace(/<[\/\!]*?[^<>]*?>/ig, '');
 
 	for(var i = 0; i <= DISCUZCODE['num']; i++) {
-		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", function() {return DISCUZCODE['html'][i];});
+		str = str.replace("[\tDISCUZ_CODE_" + i + "\t]", DISCUZCODE['html'][i]);
 	}
 	str = clearcode(str);
 
@@ -681,15 +660,8 @@ function recursion(tagname, text, dofunction, extraargs) {
 		}
 
 		var localbegin = optionend + 1;
-		if(tagbegin != 0 || tagname != 'div') {
-			var localtext = eval(dofunction)(tagoptions, text.substr(localbegin, tagend - localbegin), tagname, extraargs);
-		}else{
-			if(tagoptions.length > 0) {
-				var localtext = eval(dofunction)(tagoptions, text.substr(localbegin, tagend - localbegin), tagname, extraargs);
-			}else{
-				var localtext = text.substr(localbegin, tagend - localbegin);
-			}
-		}
+		var localtext = eval(dofunction)(tagoptions, text.substr(localbegin, tagend - localbegin), tagname, extraargs);
+
 		text = text.substring(0, tagbegin) + localtext + text.substring(tagend + close_tag_len);
 
 		beginsearchpos = tagbegin + localtext.length;

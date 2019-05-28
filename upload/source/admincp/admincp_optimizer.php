@@ -37,6 +37,7 @@ $security_option = array(
 	'optimizer_usergroup4',
 	'optimizer_usergroup5',
 	'optimizer_usergroup6',
+	'optimizer_cloudsecurity',
 	'optimizer_attachexpire',
 	'optimizer_attachrefcheck',
 	'optimizer_filecheck',
@@ -45,8 +46,15 @@ $security_option = array(
 	'optimizer_patch',
 	'optimizer_loginpwcheck',
 	'optimizer_loginoutofdate',
+	'optimizer_eviluser',
+	'optimizer_white_list',
+	'optimizer_security_daily',
 );
 
+if($_G['setting']['connect']['allow']) {
+	$security_option[] = 'optimizer_postqqonly';
+	$security_option[] = 'optimizer_aggid';
+}
 
 $check_record_time_key = 'check_record_time';
 if(in_array($operation, array('security', 'performance'))) {

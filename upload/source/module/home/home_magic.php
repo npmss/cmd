@@ -1,7 +1,7 @@
 <?php
 
 /*
-	[Discuz!] (C)2001-2009 Comsenz Inc.
+	[Discuz!] (C)2001-2009 Comsenz Inc111.
 	This is NOT a freeware, use is subject to license terms
 
 	$Id: home_magic.php 33875 2013-08-26 07:33:49Z andyzheng $
@@ -31,6 +31,7 @@ $page = max(1, intval($_GET['page']));
 $action = $_GET['action'];
 $operation = $_GET['operation'];
 $start_limit = ($page - 1) * $_G['tpp'];
+$_GET['idtype'] = dhtmlspecialchars($_GET['idtype']);
 
 $comma = $typeadd = $filteradd = $forumperm = $targetgroupperm = '';
 $magicarray = is_array($_G['cache']['magics']) ? $_G['cache']['magics'] : array();

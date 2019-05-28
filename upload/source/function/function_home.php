@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_home.php 30195 2012-05-16 07:15:03Z zhengqingpeng $
+ *      $Id: function_home.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -25,7 +25,6 @@ function getstr($string, $length = 0, $in_slashes=0, $out_slashes=0, $bbcode=0, 
 	$string = preg_replace("/\[hide=?\d*\](.*?)\[\/hide\]/is", '', $string);
 	if($html < 0) {
 		$string = preg_replace("/(\<[^\<]*\>|\r|\n|\s|\[.+?\])/is", ' ', $string);
-		$string = strip_tags($string);
 	} elseif ($html == 0) {
 		$string = dhtmlspecialchars($string);
 	}
@@ -91,6 +90,12 @@ function ckstart($start, $perpage) {
 	}
 }
 
+
+function get_my_app() {
+}
+
+function get_my_userapp() {
+}
 
 function getspace($uid) {
 	return getuserbyuid($uid);
@@ -246,11 +251,11 @@ function space_domain($space) {
 	if($_G['setting']['allowspacedomain'] && $_G['setting']['domain']['root']['home']) {
 		space_merge($space, 'field_home');
 		if($space['domain']) {
-			$space['domainurl'] = 'http://'.$space['domain'].'.'.$_G['setting']['domain']['root']['home'];
+			$space['domainurl'] = $_G['scheme'].'://'.$space['domain'].'.'.$_G['setting']['domain']['root']['home'];
 		}
 	}
 	if(!empty($_G['setting']['domain']['app']['home'])) {
-		$space['domainurl'] = 'http://'.$_G['setting']['domain']['app']['home'].'/?'.$space['uid'];
+		$space['domainurl'] = $_G['scheme'].'://'.$_G['setting']['domain']['app']['home'].'/?'.$space['uid'];
 	} elseif(empty($space['domainurl'])) {
 		$space['domainurl'] = $_G['siteurl'].'?'.$space['uid'];
 	}
@@ -311,7 +316,10 @@ function sarray_rand($arr, $num=1) {
 }
 
 function my_showgift() {
-	return '';
+	global $_G, $space;
+	if($_G['setting']['my_showgift'] && $_G['my_userapp'][$_G['home_gift_appid']]) {
+		echo '<script language="javascript" type="text/javascript" src="http://gift.manyou-apps.com/recommend.js"></script>';
+	}
 }
 
 function getsiteurl() {
@@ -498,6 +506,7 @@ function getuserdefaultdiy() {
 									'block`wall' => array('attr' => array('name'=>'wall'))
 							),
 							'column`frame1_right' => array(
+									'block`myapp' => array('attr' => array('name'=>'myapp')),
 									'block`friend' => array('attr' => array('name'=>'friend')),
 									'block`visitor' => array('attr' => array('name'=>'visitor')),
 									'block`group' => array('attr' => array('name'=>'group'))
@@ -515,6 +524,7 @@ function getuserdefaultdiy() {
 					'visitor' => array('shownum' => 18),
 					'wall' => array('shownum' => 16),
 					'feed' => array('shownum' => 16),
+					'myapp' => array('shownum' => 9, 'logotype'=> 'logo'),
 			),
 		'nv' => array(
 			'nvhidden' => 0,
@@ -584,18 +594,4 @@ function getthread() {
 	return $threads;
 }
 
-function show_credit() {
-	global $_G, $space;
-
-	$showinfo = C::t('home_show')->fetch($space['uid']);
-	if($showinfo['credit'] > 0) {
-		$showinfo['unitprice'] = intval($showinfo['unitprice']);
-		if($showinfo['credit'] <= $showinfo['unitprice']) {
-			notification_add($space['uid'], 'show', 'show_out');
-			C::t('home_show')->delete($space['uid']);
-		} else {
-			C::t('home_show')->update_credit_by_uid($space['uid'], -$showinfo['unitprice']);
-		}
-	}
-}
 ?>

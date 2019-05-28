@@ -66,6 +66,8 @@ if($_GET['op'] == 'delete') {
 		}
 		showmessage('do_success', dreferer(), array('feedid' => $feedid), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
 	}
+} elseif($_GET['op'] == 'getapp') {
+
 } elseif($_GET['op'] == 'getcomment') {
 
 	if(empty($feed['id']) || empty($feed['idtype'])) {

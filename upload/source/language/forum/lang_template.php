@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: lang_template.php 33872 2013-08-23 08:54:40Z nemohou $
+ *      $Id: lang_template.php 36334 2017-01-03 01:32:35Z nemohou $
  *
  *      This file is automatically generate
  */
@@ -1205,7 +1205,6 @@ $lang = array (
   'more_images' => '更多图片',
   'pack' => '收起',
   'pay_threads' => '付费主题, 价格',
-  'pay_threads_content' => '付费内容',
   'published_in_floor' => '查看楼层',
   'rate_total' => '总评分',
   'replies_recommended' => '回帖推荐',

@@ -4,13 +4,12 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: forum_viewthread.php 35494 2015-08-06 09:31:59Z nemohou $
+ *      $Id: forum_viewthread.php 36348 2017-01-13 06:36:44Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
-
 
 require_once libfile('function/forumlist');
 require_once libfile('function/discuzcode');
@@ -22,25 +21,13 @@ $forum = & $_G['forum'];
 if(!empty($_GET['checkrush']) && preg_match('/[^0-9_]/', $_GET['checkrush'])) {
 	$_GET['checkrush'] = '';
 }
+
 if(!$_G['forum_thread'] || !$_G['forum']) {
 	showmessage('thread_nonexistence');
 }
 
 $page = max(1, $_G['page']);
 $_GET['stand'] = isset($_GET['stand']) && in_array($_GET['stand'], array('0', '1', '2')) ? $_GET['stand'] : null;
-
-if(!$_G['uid']){
-	$tologin = false;
-	if($page > 1 && $_G['setting']['guestpage1'] && ($_G['setting']['guestpage1'] == 2 || !defined('IN_MOBILE'))){
-		$tologin = true;
-	}elseif($_G['setting']['threadguestlite'] && ($_GET['authorid'] || $_GET['ordertype'])){
-		$tologin = true;
-	}
-	if($tologin){
-		showmessage('not_loggedin', null, array(), array('login' => 1));
-	}
-}
-
 
 if($page === 1 && !empty($_G['setting']['antitheft']['allow']) && empty($_G['setting']['antitheft']['disable']['thread']) && empty($_G['forum']['noantitheft'])) {
 	helper_antitheft::check($_G['forum_thread']['tid'], 'tid');
@@ -275,6 +262,8 @@ if($_G['forum_thread']['replycredit'] > 0) {
 	$_G['forum_thread']['replycredit_rule'] = C::t('forum_replycredit')->fetch($thread['tid']);
 	$_G['forum_thread']['replycredit_rule']['remaining'] = $_G['forum_thread']['replycredit'] / $_G['forum_thread']['replycredit_rule']['extcredits'];
 	$_G['forum_thread']['replycredit_rule']['extcreditstype'] = $_G['forum_thread']['replycredit_rule']['extcreditstype'] ? $_G['forum_thread']['replycredit_rule']['extcreditstype'] : $_G['setting']['creditstransextra'][10] ;
+} else {
+	$_G['forum_thread']['replycredit_rule']['extcreditstype'] = $_G['setting']['creditstransextra'][10];
 }
 $_G['group']['raterange'] = $_G['setting']['modratelimit'] && $adminid == 3 && !$_G['forum']['ismoderator'] ? array() : $_G['group']['raterange'];
 
@@ -319,7 +308,7 @@ $lastmod = viewthread_lastmod($_G['forum_thread']);
 $showsettings = str_pad(decbin($_G['setting']['showsettings']), 3, '0', STR_PAD_LEFT);
 
 $showsignatures = $showsettings{0};
-$showavatars = (!$_G['uid'] && $_G['setting']['threadguestlite']) ? 0 : $showsettings{1};
+$showavatars = $showsettings{1};
 $_G['setting']['showimages'] = $showsettings{2};
 
 $highlightstatus = isset($_GET['highlight']) && str_replace('+', '', $_GET['highlight']) ? 1 : 0;
@@ -328,11 +317,9 @@ $_G['forum']['allowreply'] = isset($_G['forum']['allowreply']) ? $_G['forum']['a
 $_G['forum']['allowpost'] = isset($_G['forum']['allowpost']) ? $_G['forum']['allowpost'] : '';
 
 $allowpostreply = ($_G['forum']['allowreply'] != -1) && (($_G['forum_thread']['isgroup'] || (!$_G['forum_thread']['closed'] && !checkautoclose($_G['forum_thread']))) || $_G['forum']['ismoderator']) && ((!$_G['forum']['replyperm'] && $_G['group']['allowreply']) || ($_G['forum']['replyperm'] && forumperm($_G['forum']['replyperm'])) || $_G['forum']['allowreply']);
-
-$fastpost = $_G['setting']['allowfastreply'] && !$_G['forum_thread']['archiveid'] && ($_G['forum']['status'] != 3 || $_G['isgroupuser']);
-$allowfastpost = $_G['setting']['allowfastreply'] && $allowpostreply;
-
-if(!$_G['adminid'] && (!cknewuser(1) || $_G['setting']['newbiespan'] && (!getuserprofile('lastpost') || TIMESTAMP - getuserprofile('lastpost') < $_G['setting']['newbiespan'] * 60) && TIMESTAMP - $_G['member']['regdate'] < $_G['setting']['newbiespan'] * 60)) {
+$fastpost = $_G['setting']['fastpost'] && !$_G['forum_thread']['archiveid'] && ($_G['forum']['status'] != 3 || $_G['isgroupuser']);
+$allowfastpost = $_G['setting']['fastpost'] && $allowpostreply;
+if(!$_G['uid'] && ($_G['setting']['need_avatar'] || $_G['setting']['need_email'] || $_G['setting']['need_friendnum']) || !$_G['adminid'] && (!cknewuser(1) || $_G['setting']['newbiespan'] && (!getuserprofile('lastpost') || TIMESTAMP - getuserprofile('lastpost') < $_G['setting']['newbiespan'] * 60) && TIMESTAMP - $_G['member']['regdate'] < $_G['setting']['newbiespan'] * 60)) {
 	$allowfastpost = false;
 }
 $_G['group']['allowpost'] = $_G['forum']['allowpost'] != -1 && ((!$_G['forum']['postperm'] && $_G['group']['allowpost']) || ($_G['forum']['postperm'] && forumperm($_G['forum']['postperm'])) || $_G['forum']['allowpost']);
@@ -749,7 +736,7 @@ if($postusers) {
 	if($_G['setting']['threadblacklist'] && $_G['uid'] && !in_array($_G['uid'], $selfuids)) {
 		$selfuids[] = $_G['uid'];
 	}
-	if(!($_G['setting']['threadguestlite'] && !$_G['uid']) && (!$close_leftinfo || $_G['setting']['threadguestlite'] != 2)) {
+	if(!($_G['setting']['threadguestlite'] && !$_G['uid'])) {
 		if($_G['setting']['verify']['enabled']) {
 			$member_verify = C::t('common_member_verify')->fetch_all($uids);
 			foreach($member_verify as $uid => $data) {
@@ -769,15 +756,6 @@ if($postusers) {
 		$member_field_forum = C::t('common_member_field_forum')->fetch_all($uids);
 		$member_profile = C::t('common_member_profile')->fetch_all($uids);
 		$member_field_home = C::t('common_member_field_home')->fetch_all($uids);
-
-	}else{
-		$close_leftinfo = 1;
-		if($showsignatures && $_G['uid'] && $_G['setting']['threadguestlite'] == 2){
-			$member_field_forum = C::t('common_member_field_forum')->fetch_all($uids);
-		}
-		if($showavatars && $_G['uid'] && $_G['setting']['threadguestlite'] == 2){
-			$member_count = C::t('common_member_count')->fetch_all($selfuids);
-		}
 	}
 
 	if($_G['setting']['threadblacklist'] && $_G['uid'] && $member_count[$_G['uid']]['blacklist']) {
@@ -897,7 +875,7 @@ if($_G['forum_cachepid']) {
 	foreach(C::t('forum_postcache')->fetch_all($_G['forum_cachepid']) as $postcache) {
 		if($postcache['rate']) {
 			$postcache['rate'] = dunserialize($postcache['rate']);
-			$postlist[$postcache['pid']]['ratelog'] = $postcache['rate']['ratelogs'];
+			$postlist[$postcache['pid']]['ratelog'] = dhtmlspecialchars($postcache['rate']['ratelogs']);
 			$postlist[$postcache['pid']]['ratelogextcredits'] = $postcache['rate']['extcredits'];
 			$postlist[$postcache['pid']]['totalrate'] = $postcache['rate']['totalrate'];
 		}
@@ -1023,12 +1001,6 @@ if(empty($_GET['viewpid'])) {
 		$post['message'] = cutstr(strip_tags(preg_replace('/(<ignore_js_op>.*<\/ignore_js_op>)/is', '', $post['message'])), 200);
 		require_once libfile('thread/album', 'include');
 	}
-
-	if(!$_G['uid'] && !empty($multipage) && $_G['setting']['guestpage1'] && ($_G['setting']['guestpage1'] == 2 || !defined('IN_MOBILE'))){
-		$multipage = '';
-		$morepage = true;
-	}
-
 	include template('diy:forum/viewthread'.$sufix.':'.$_G['fid']);
 } else {
 	$_G['setting']['admode'] = 0;
@@ -1064,7 +1036,7 @@ function viewthread_updateviews($tableid) {
 
 	if(!$_G['setting']['preventrefresh'] || $_G['cookie']['viewid'] != 'tid_'.$_G['tid']) {
 		if(!$tableid && $_G['setting']['optimizeviews']) {
-			if($_G['forum_thread']['addviews']) {
+			if(isset($_G['forum_thread']['addviews'])) {
 				if($_G['forum_thread']['addviews'] < 100) {
 					C::t('forum_threadaddviews')->update_by_tid($_G['tid']);
 				} else {
@@ -1228,7 +1200,7 @@ function viewthread_procpost($post, $lastvisit, $ordertype, $maxposition = 0) {
 	$imgcontent = $post['first'] ? getstatus($_G['forum_thread']['status'], 15) : 0;
 	if(!defined('IN_ARCHIVER')) {
 		if($post['first']) {
-			if(!defined('IN_MOBILE')|| 1) {
+			if(!defined('IN_MOBILE')) {
 				$messageindex = false;
 				if(strpos($post['message'], '[/index]') !== FALSE) {
 					$post['message'] = preg_replace_callback("/\s?\[index\](.+?)\[\/index\]\s?/is", create_function('$matches', 'return parseindex($matches[1], '.intval($post['pid']).');'), $post['message']);
@@ -1320,7 +1292,7 @@ function viewthread_loadcache() {
 
 			viewthread_updateviews($_G['forum_thread']['threadtableid']);
 			$_G['setting']['debug'] && debuginfo();
-			$_G['setting']['debug'] ? die('<script type="text/javascript">document.getElementById("debuginfo").innerHTML = " '.($_G['setting']['debug'] ? 'Updated at '.gmdate("H:i:s", $threadcache['filemtime'] + 3600 * 8).', Processed in '.$debuginfo['time'].' second(s), '.$debuginfo['queries'].' Queries'.($_G['gzipcompress'] ? ', Gzip enabled' : '') : '').'";</script></body></html>') : die('</body></html>');
+			$_G['setting']['debug'] ? die('<script type="text/javascript">document.getElementById("debuginfo").innerHTML = " '.($_G['setting']['debug'] ? 'Updated at '.gmdate("H:i:s", $threadcache['filemtime'] + 3600 * 8).', Processed in '.$debuginfo['time'].' second(s), '.$debuginfo['queries'].' Queries'.($_G['gzipcompress'] ? ', Gzip enabled' : '') : '').'";</script>') : die();
 		}
 	}
 }
@@ -1385,7 +1357,7 @@ function viewthread_baseinfo($post, $extra) {
 		if($field != 'qq') {
 			$v = profile_show($field, $post);
 		} elseif(!empty($post['qq'])) {
-			$v = '<a href="http://wpa.qq.com/msgrd?v=3&uin='.$post['qq'].'&site='.$_G['setting']['bbname'].'&menu=yes&from=DiscuzLite" target="_blank" title="'.lang('spacecp', 'qq_dialog').'"><img src="'.STATICURL.'/image/common/qq_big.gif" alt="QQ" style="margin:0px;"/></a>';
+			$v = '<a href="//wpa.qq.com/msgrd?v=3&uin='.$post['qq'].'&site='.$_G['setting']['bbname'].'&menu=yes&from=discuz" target="_blank" title="'.lang('spacecp', 'qq_dialog').'"><img src="'.STATICURL.'/image/common/qq_big.gif" alt="QQ" style="margin:0px;"/></a>';
 		}
 		if($v) {
 			if(!isset($_G['cache']['profilesetting'])) {

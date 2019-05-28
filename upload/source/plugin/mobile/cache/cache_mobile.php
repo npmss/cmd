@@ -36,7 +36,7 @@ function build_cache_plugin_mobile() {
 			'pluginversion' => $_G['setting']['plugins']['version']['mobile'],
 			'oemversion' => in_array('mobileoem', $_G['setting']['plugins']['available']) ? $_G['setting']['plugins']['version']['mobileoem'] : '0',
 			'regname' => $_G['setting']['regname'],
-			'qqconnect' => '0',//in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
+			'qqconnect' => in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
 			'sitename' => $_G['setting']['bbname'],
 			'mysiteid' => $_G['setting']['my_siteid'],
 			'ucenterurl' => $_G['setting']['ucenterurl'],

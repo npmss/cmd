@@ -12,32 +12,13 @@ if(!defined('IN_DISCUZ')) {
 }
 
 function build_cache_plugin() {
-	global $_G, $importtxt;
-
-	loadcache(array('addoninfo_plugin', 'addoninfo_pack'));
-	if(is_array($_G['cache']['addoninfo_plugin']) && !empty($_G['cache']['addoninfo_plugin'])){
-    foreach($_G['cache']['addoninfo_plugin'] as $key => $value){
-    	if(!ispluginkey($key) || !file_exists(DISCUZ_ROOT . './source/plugin/' . $key . '/plugin_logo.png')){
-    		unset($_G['cache']['addoninfo_plugin'][$key]);
-    	}
-    }
-    savecache('addoninfo_plugin', $_G['cache']['addoninfo_plugin']);
-  }
-	if(is_array($_G['cache']['addoninfo_pack']) && !empty($_G['cache']['addoninfo_pack'])){
-    foreach($_G['cache']['addoninfo_pack'] as $key => $value){
-    	if(!ispluginkey($key) || !file_exists(DISCUZ_ROOT . './data/attachment/addonpack/' . $key . '.png')){
-    		unset($_G['cache']['addoninfo_pack'][$key]);
-    	}
-    }
-    savecache('addoninfo_pack', $_G['cache']['addoninfo_pack']);
-  }
-
+	global $importtxt;
 	$data = $pluginsetting = array();
 	foreach(C::t('common_plugin')->fetch_all_data(1) as $plugin) {
-		$dir = $plugin['identifier'];
+		$dir = substr($plugin['directory'], 0, -1);
 		$plugin['modules'] = unserialize($plugin['modules']);
 		if($plugin['modules']['extra']['langexists']) {
-			$file = DISCUZ_ROOT.'./source/plugin/'.$dir.'/discuz_plugin_'.$dir.'.xml';
+			$file = DISCUZ_ROOT.'./source/plugin/'.$dir.'/discuz_plugin_'.$dir.($plugin['modules']['extra']['installtype'] ? '_'.$plugin['modules']['extra']['installtype'] : '').'.xml';
 			if(file_exists($file)) {
 				require_once libfile('function/plugin');
 				require_once libfile('function/admincp');
@@ -72,6 +53,7 @@ function build_cache_plugin() {
 			}
 		}
 	}
+
 
 	writetocache('pluginsetting', getcachevars(array('pluginsetting' => $pluginsetting)));
 

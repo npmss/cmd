@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: topicadmin_delpost.php 30872 2012-06-27 10:11:44Z liulanbo $
+ *      $Id: topicadmin_delpost.php 36334 2017-01-03 01:32:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {

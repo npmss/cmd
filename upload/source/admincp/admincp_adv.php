@@ -269,7 +269,7 @@ if($operation == 'ad') {
 						$customv[] = $et;
 					}
 				}
-				$targets[] = array($target, $lang['adv_edit_targets_'.$target]);
+				$targets[] = array($target, '<input title="'.cplang('adv_custom_target').'" name="advnew[targetcustom]" value="'.implode(',', $customv).'" />');
 			}
 		}
 		$imagesizes = '';
@@ -304,8 +304,8 @@ if($operation == 'ad') {
 		showsetting('adv_edit_title', 'advnew[title]', $adv['title'], 'text');
 		if($type != 'custom') {
 			showsetting('adv_edit_targets', array('advnew[targets]', $targets), explode("\t",$adv['targets']), 'mcheckbox');
-			showsetting('adv_edit_targets_custom', 'advnew[targetcustom]', implode(',', $customv), 'text', '', 0, cplang('adv_custom_target'));
 		}
+
 		if(is_array($advsetting)) {
 			foreach($advsetting as $settingvar => $setting) {
 				if(!empty($setting['value']) && is_array($setting['value'])) {
@@ -504,7 +504,6 @@ if($operation == 'ad') {
 			array('adv_admin_setting', 'adv&operation=setting', 1),
 			array('adv_admin_list', 'adv&operation=list', 0),
 			array('adv_admin_listall', 'adv&operation=ad', 0),
-			array('adv_admin_discuzunion', 'http://union.discuz.qq.com/?ADTAG=CP.DISCUZ. ADSET.TAG', 0, 1, 1)
 		));
 
 		$advexpiration = C::t('common_setting')->fetch('advexpiration', true);
@@ -530,9 +529,10 @@ if($operation == 'ad') {
 		array('adv_admin_setting', 'adv&operation=setting', 0),
 		array('adv_admin_list', 'adv&operation=list', 1),
 		array('adv_admin_listall', 'adv&operation=ad', 0),
-		array('adv_admin_discuzunion', 'http://union.discuz.qq.com/?ADTAG=CP.DISCUZ. ADSET.TAG', 0, 1, 1),
 	));
+	/*search={"adv_admin":"action=adv","adv_admin_list":"action=adv&operation=list"}*/
 	showtips('adv_list_tip');
+	/*search*/
 
 	$advs = getadvs();
 	showtableheader('', 'fixpadding');

@@ -7,7 +7,6 @@
  *      $Id: viewthread.php 34314 2014-02-20 01:04:24Z nemohou $
  */
 
-
 if(!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
 }
@@ -87,7 +86,7 @@ class mobile_api {
 			if(strpos($variable['postlist'][$k]['message'], '[/tthread]') !== FALSE) {
 				$matches = array();
 				preg_match('/\[tthread=(.+?),(.+?)\](.*?)\[\/tthread\]/', $variable['postlist'][$k]['message'], $matches);
-				$variable['postlist'][$k]['message'] = preg_replace('/\[tthread=(.+?)\](.*?)\[\/tthread\]/', '', $variable['postlist'][$k]['message']);
+				$variable['postlist'][$k]['message'] = preg_replace('/\[tthread=(.+?)\](.*?)\[\/tthread\]/', lang('plugin/qqconnect', 'connect_tthread_message', array('username' => $matches[1], 'nick' => $matches[2])), $variable['postlist'][$k]['message']);
 			}
 		}
 

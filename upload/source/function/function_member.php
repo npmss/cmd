@@ -27,34 +27,22 @@ function userlogin($username, $password, $questionid, $answer, $loginfield = 'us
 	if(!function_exists('uc_user_login')) {
 		loaducenter();
 	}
-
-	$uid_login = C::t('common_member_login')->getUid($username);
-	if(!$uid_login) {
-		if($isuid == 3) {
-			if(!strcmp(dintval($username), $username) && getglobal('setting/uidlogin')) {
-				$return['ucresult'] = uc_user_login($username, $password, 1, 1, $questionid, $answer, $ip);
-			} elseif(isemail($username)) {
-				$return['ucresult'] = uc_user_login($username, $password, 2, 1, $questionid, $answer, $ip);
-				$_GET['loginfield'] = 'email';
-			}
-			if($return['ucresult'][0] <= 0 && $return['ucresult'][0] != -3) {
-				$return['ucresult'] = uc_user_login(addslashes($username), $password, 0, 1, $questionid, $answer, $ip);
-			}
-		} else {
-			$return['ucresult'] = uc_user_login(addslashes($username), $password, $isuid, 1, $questionid, $answer, $ip);
+	if($isuid == 3) {
+		if(!strcmp(dintval($username), $username) && getglobal('setting/uidlogin')) {
+			$return['ucresult'] = uc_user_login($username, $password, 1, 1, $questionid, $answer, $ip);
+		} elseif(isemail($username)) {
+			$return['ucresult'] = uc_user_login($username, $password, 2, 1, $questionid, $answer, $ip);
 		}
-		$useloginName = false;
+		if($return['ucresult'][0] <= 0 && $return['ucresult'][0] != -3) {
+			$return['ucresult'] = uc_user_login(addslashes($username), $password, 0, 1, $questionid, $answer, $ip);
+		}
 	} else {
-		$return['ucresult'] = uc_user_login($uid_login, $password, 1, 1, $questionid, $answer, $ip);
-		$useloginName = true;
+		$return['ucresult'] = uc_user_login(addslashes($username), $password, $isuid, 1, $questionid, $answer, $ip);
 	}
 	$tmp = array();
 	$duplicate = '';
 	list($tmp['uid'], $tmp['username'], $tmp['password'], $tmp['email'], $duplicate) = $return['ucresult'];
 	$return['ucresult'] = $tmp;
-	if(!$useloginName && $return['ucresult']['uid'] > 0 && C::t('common_member_login')->fetch($return['ucresult']['uid'])) {
-		$return['ucresult'] = array();
-	}
 	if($duplicate && $return['ucresult']['uid'] > 0 || $return['ucresult']['uid'] <= 0) {
 		$return['status'] = 0;
 		return $return;
@@ -99,6 +87,9 @@ function setloginstatus($member, $cookietime) {
 	updatestat('login', 1);
 	if(defined('IN_MOBILE')) {
 		updatestat('mobilelogin', 1);
+	}
+	if($_G['setting']['connect']['allow'] && $_G['member']['conisbind']) {
+		updatestat('connectlogin', 1);
 	}
 	$rule = updatecreditbyaction('daylogin', $_G['uid']);
 	if(!$rule['updatecredit']) {
@@ -193,14 +184,14 @@ function getinvite() {
 		$appid = intval($cookies[2]);
 
 		$invite_code = space_key($uid, $appid);
-		if($code == $invite_code) {
-			$inviteprice = 0;
+		if($code === $invite_code) {
 			$member = getuserbyuid($uid);
 			if($member) {
 				$usergroup = C::t('common_usergroup')->fetch($member['groupid']);
-				$inviteprice = $usergroup['inviteprice'];
+				if(!$usergroup['allowinvite'] || $usergroup['inviteprice'] > 0) return array();
+			} else {
+				return array();
 			}
-			if($inviteprice > 0) return array();
 			$result['uid'] = $uid;
 			$result['appid'] = $appid;
 		}

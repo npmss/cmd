@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: class_template.php 34486 2014-05-08 01:31:08Z nemohou $
+ *      $Id: class_template.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -345,7 +345,6 @@ class template {
 		$content = $this->csscurmodules = '';
 		$content = @implode('', file(DISCUZ_ROOT.'./data/cache/style_'.STYLEID.'_module.css'));
 		$content = preg_replace_callback("/\[(.+?)\](.*?)\[end\]/is", array($this, 'loadcsstemplate_callback_cssvtags_12'), $content);
-
 		if($this->csscurmodules) {
 			$this->csscurmodules = preg_replace(array('/\s*([,;:\{\}])\s*/', '/[\t\n\r]/', '/\/\*.+?\*\//'), array('\\1', '',''), $this->csscurmodules);
 			if(@$fp = fopen(DISCUZ_ROOT.'./data/cache/style_'.STYLEID.'_'.$_G['basescript'].'_'.CURMODULE.'.css', 'w')) {

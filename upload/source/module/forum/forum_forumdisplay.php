@@ -4,13 +4,12 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: forum_forumdisplay.php 34350 2014-03-19 03:16:35Z hypowang $
+ *      $Id: forum_forumdisplay.php 36328 2016-12-26 00:38:47Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
-
 
 require_once libfile('function/forumlist');
 
@@ -90,7 +89,6 @@ if($_G['forum']['type'] == 'forum') {
 }
 
 $rssauth = $_G['rssauth'];
-$rsshead = $_G['setting']['rssstatus'] ? ('<link rel="alternate" type="application/rss+xml" title="'.$_G['setting']['bbname'].' - '.$navtitle.'" href="'.$_G['siteurl'].'forum.php?mod=rss&fid='.$_G['fid'].'&amp;auth='.$rssauth."\" />\n") : '';
 
 $forumseoset = array(
 	'seotitle' => $_G['forum']['seotitle'],
@@ -149,6 +147,9 @@ $_GET['typeid'] = intval($_GET['typeid']);
 if(!empty($_GET['typeid']) && !empty($_G['forum']['threadtypes']['types'][$_GET['typeid']])) {
 	$navtitle = strip_tags($_G['forum']['threadtypes']['types'][$_GET['typeid']]).' - '.$navtitle;
 }
+
+$rsshead = $_G['setting']['rssstatus'] ? ('<link rel="alternate" type="application/rss+xml" title="'.$_G['setting']['bbname'].' - '.$navtitle.'" href="'.$_G['siteurl'].'forum.php?mod=rss&fid='.$_G['fid'].'&amp;auth='.$rssauth."\" />\n") : '';
+
 if(!$metakeywords) {
 	$metakeywords = $_G['forum']['name'];
 }
@@ -462,7 +463,7 @@ $_GET['ascdesc'] = isset($_G['cache']['forums'][$_G['fid']]['ascdesc']) ? $_G['c
 $check = array();
 $check[$filter] = $check[$_GET['orderby']] = $check[$_GET['ascdesc']] = 'selected="selected"';
 
-if(($_G['forum']['status'] != 3 && $_G['forum']['allowside']) || !empty($_G['forum']['threadsorts']['templatelist'])) {
+if(($_G['forum']['status'] != 3 && $_G['forum']['allowside'])) {
 	updatesession();
 	$onlinenum = C::app()->session->count_by_fid($_G['fid']);
 	if(!IS_ROBOT && ($_G['setting']['whosonlinestatus'] == 2 || $_G['setting']['whosonlinestatus'] == 3)) {
@@ -628,7 +629,7 @@ if($filter !== 'hot') {
 		if($filterarr['digest']) {
 			$indexadd = " FORCE INDEX (digest) ";
 		}
-	} elseif($showsticky && is_array($stickytids) && ($stickytids[0] || $stickytids[1])) {
+	} elseif($showsticky && is_array($stickytids) && $stickytids[0]) {
 		$filterarr1 = $filterarr;
 		$filterarr1['inforum'] = '';
 		$filterarr1['intids'] = $stickytids;
@@ -974,7 +975,7 @@ if(!defined('IN_ARCHIVER')) {
 
 function forumdisplay_verify_author($ids) {
 	global $_G;
-  $verify = array();
+	$verify = array();
 	foreach(C::t('common_member_verify')->fetch_all($ids) as $value) {
 		foreach($_G['setting']['verify'] as $vid => $vsetting) {
 			if($vsetting['available'] && $vsetting['showicon'] && $value['verify'.$vid] == 1) {

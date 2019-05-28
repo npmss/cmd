@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_delete.php 34074 2013-10-08 01:30:38Z nemohou $
+ *      $Id: function_delete.php 36334 2017-01-03 01:32:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -96,6 +96,7 @@ function deletemember($uids, $delpost = true) {
 	}
 	C::t('common_member')->delete($arruids, 1, 1);
 
+	manyoulog('user', $uids, 'delete');
 	if($_G['setting']['plugins']['func'][HOOKTYPE]['deletemember']) {
 		hookscript('deletemember', 'global', 'funcs', array('param' => $hookparam, 'step' => 'delete'), 'deletemember');
 	}
@@ -279,7 +280,7 @@ function deletethread($tids, $membercount = false, $credit = false, $ponly = fal
 	C::t('forum_threadclosed')->delete($arrtids);
 	C::t('forum_newthread')->delete_by_tids($arrtids);
 
-		$cachefids = $atids = $fids = $postids = $threadtables = $_G['deleteauthorids'] = array();
+	$cachefids = $atids = $fids = $postids = $threadtables = $_G['deleteauthorids'] = array();
 	foreach($threadtableids as $tableid) {
 		foreach(C::t('forum_thread')->fetch_all_by_tid($arrtids, 0, 0, $tableid) as $row) {
 			$atids[] = $row['tid'];
@@ -701,6 +702,7 @@ function deletespace($uid) {
 
 	if($allowmanage) {
 		C::t('common_member')->update($uid, array('status' => 1));
+		manyoulog('user', $uid, 'delete');
 		return true;
 	} else {
 		return false;
@@ -1058,4 +1060,5 @@ function deletememberpost($uids) {
 		}
 	}
 }
+
 ?>

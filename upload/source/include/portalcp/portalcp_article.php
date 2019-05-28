@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: portalcp_article.php 34294 2013-12-26 01:50:00Z hypowang $
+ *      $Id: portalcp_article.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -69,11 +69,11 @@ if(submitcheck("articlesubmit", 0, $seccodecheck, $secqaacheck)) {
 	$_GET['fromurl'] = str_replace('&amp;', '&', dhtmlspecialchars($_GET['fromurl']));
 	$_GET['dateline'] = !empty($_GET['dateline']) ? strtotime($_GET['dateline']) : TIMESTAMP;
 
-	if(substr($_GET['url'], 0, 7) !== 'http://') {
+	if(!preg_match('/^https?:\/\//is', $_GET['url'])) {
 		$_GET['url'] = '';
 	}
 
-	if(substr($_GET['fromurl'], 0, 7) !== 'http://') {
+	if(!preg_match('/^https?:\/\//is', $_GET['fromurl'])) {
 		$_GET['fromurl'] = '';
 	}
 

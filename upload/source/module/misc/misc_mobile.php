@@ -4,19 +4,19 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: misc_mobile.php 25221 2011-10-31 09:24:20Z liulanbo $
+ *      $Id: misc_mobile.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
 if($mod == 'mobile' && defined('IN_MOBILE')) {
 	if($_G['setting']['domain']['app']['mobile']) {
-		dheader("Location:http://".$_G['setting']['domain']['app']['mobile']);
+		dheader('Location:'.$_G['scheme'].'://'.$_G['setting']['domain']['app']['mobile']);
 	} else {
-		dheader("Location:".$_G['siteurl'].'forum.php?mobile=yes');
+		dheader('Location:'.$_G['siteurl'].'forum.php?mobile=yes');
 	}
 } elseif(!$_G['setting']['mobile']['allowmobile']) {
-	dheader("Location:".($_G['setting']['domain']['app']['default'] ? 'http'.($_G['isHTTPS'] ? 's' : '').'://'.$_G['setting']['domain']['app']['default'] : $_G['siteurl']));
+	dheader("Location:".($_G['setting']['domain']['app']['default'] ? $_G['scheme'].'://'.$_G['setting']['domain']['app']['default'] : $_G['siteurl']));
 }
 include DISCUZ_ROOT.'./source/language/mobile/lang_template.php';
 $_G['lang'] = array_merge($_G['lang'], $lang);
@@ -56,9 +56,12 @@ if($_GET['view'] == true) {
 	include template('mobile/forum/discuz');
 } else {
 	if($_G['setting']['domain']['app']['mobile']) {
-		$url = 'http://'.$_G['setting']['domain']['app']['mobile'];
+		$url = $_G['scheme'].'://'.$_G['setting']['domain']['app']['mobile'];
 		$file = 'newmobiledomain.png';
-	}else {
+	} elseif($_G['setting']['mobile']['allowmnew']) {
+		$url = $_G['siteurl'].'m/';
+		$file = 'newmobileurl.png';
+	} else {
 		$url = $_G['siteurl'];
 		$file = 'newmobile.png';
 	}
@@ -79,10 +82,10 @@ function output_preview() {
 }
 
 function output_preview_callback_replace_href_21($matches) {
-	return replace_href($matches[2], $matches[1]);
+	return replace_href($matches[2]);
 }
 
-function replace_href($html_str, $other1, $other2) {
+function replace_href($html_str) {
 	$string = "<span class='lkcss'>".stripslashes($html_str)."</span>";
 	return $string;
 }

@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: table_forum_hotreply_number.php 30947 2012-07-03 03:05:21Z chenmengshu $
+ *      $Id: table_forum_hotreply_number.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {

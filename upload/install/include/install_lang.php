@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: install_lang.php 33770 2013-08-12 05:57:10Z nemohou $
+ *      $Id: install_lang.php 36287 2016-12-12 03:59:05Z nemohou $
  */
 
 if(!defined('IN_COMSENZ')) {
@@ -116,7 +116,7 @@ $lang = array(
 	'click_to_back' => '点击返回上一步',
 	'adminemail' => '系统信箱 Email',
 	'adminemail_comment' => '用于发送程序错误报告',
-	'dbhost_comment' => '数据库服务器地址, 一般为 localhost、127.0.0.1',
+	'dbhost_comment' => '数据库服务器地址, 一般为 localhost',
 	'tablepre_comment' => '同一数据库运行多个论坛时，请修改前缀',
 	'forceinstall_check_label' => '我要删除数据，强制安装 !!!',
 
@@ -174,6 +174,9 @@ $lang = array(
 
 	'install_in_processed' => '正在安装...',
 	'install_succeed' => '安装成功，点击进入',
+	'install_cloud' => '安装成功，欢迎开通Discuz!云平台<br>Discuz!云平台致力于帮助站长提高网站流量，增强网站运营能力，增加网站收入。<br>Discuz!云平台目前免费提供了QQ互联、腾讯分析、纵横搜索、漫游应用、SOSO表情服务。Discuz!云平台将陆续提供更多优质服务项目。<br>开通Discuz!平台之前，请确保您的网站（Discuz!、UCHome或SupeSite）已经升级到Discuz! X3。',
+	'to_install_cloud' => '到后台开通',
+	'to_index' => '暂不开通',
 
 	'init_credits_karma' => '威望',
 	'init_credits_money' => '金钱',
@@ -249,7 +252,7 @@ $lang = array(
 
 	'license' => '<div class="license"><h1>中文版授权协议 适用于中文用户</h1>
 
-<p>版权所有 (c) 2001-'.date("Y").'，北京康盛新创科技有限责任公司保留所有权利。</p>
+<p>版权所有 (c) 2001-2017，北京康盛新创科技有限责任公司保留所有权利。</p>
 
 <p>感谢您选择康盛产品。希望我们的努力能为您提供一个高效快速、强大的站点解决方案，和强大的社区论坛解决方案。康盛公司网址为 http://www.comsenz.com，产品官方讨论区网址为 http://www.discuz.net。</p>
 
@@ -320,6 +323,8 @@ $lang = array(
 	'allow' => '允许 ',
 	'unix' => '类Unix',
 	'diskspace' => '磁盘空间',
+	'opcache' => 'OPcache',
+	'curl' => 'cURL 库',
 	'priv_check' => '目录、文件权限检查',
 	'func_depend' => '函数依赖性检查',
 	'func_name' => '函数名称',

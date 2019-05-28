@@ -137,9 +137,7 @@ $lang = array
 	'menu_security' => '安全大师',
 
 	'menu_addons' => '应用中心',
-	'menu_plugins' => '插件管理',
-	'menu_plugin_setting' => '插件设置',
-	'menu_packs' => '扩展管理',
+	'menu_plugins' => '插件',
 	'menu_tasks' => '站点任务',
 	'menu_magics' => '道具中心',
 	'menu_medals' => '勋章中心',
@@ -205,7 +203,10 @@ $lang = array
 	'menu_safe_seccheck' => '验证设置',
 	'menu_safe_accountguard' => '帐号保镖',
 
+	'menu_setting_manyou' => 'Manyou 设置',
+	'menu_setting_qqconnect' => 'QQ 绑定设置',
 
+	'menu_cloud_doctor' => '诊断工具',
 
 	'admincp_title' => $_G['setting']['bbname'].' 管理中心',
 

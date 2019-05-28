@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: admincp_login.php 32459 2013-01-22 02:01:02Z monkey $
+ *      $Id: admincp_login.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ') || !defined('IN_ADMINCP')) {
@@ -78,7 +78,6 @@ EOT;
 
 function html_login_footer($halt = true) {
 	$version = getglobal('setting/version');
-	$y = date("Y");
 	echo <<<EOT
 
 	</td>
@@ -88,8 +87,8 @@ function html_login_footer($halt = true) {
 <tr>
 	<td colspan="2" class="footer">
 		<div class="copyright">
-			<p>Powered by <a href="http://www.discuz.net/" target="_blank">Discuz!</a> <a href="http://www.discuzfans.net" target="_blank">$version</a> </p>
-			<p>&copy; 2001-{$y}, <a href="http://www.comsenz.com/" target="_blank">Comsenz Inc.</a></p>
+			<p>Powered by <a href="http://www.discuz.net/" target="_blank">Discuz!</a> $version </p>
+			<p>&copy; 2001-2017, <a href="http://www.comsenz.com/" target="_blank">Comsenz</a> Inc.</p>
 		</div>
 	</td>
 </tr>

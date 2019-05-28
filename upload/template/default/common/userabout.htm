@@ -1,11 +1,8 @@
 <!--{hook/global_userabout_top $_G['basescript'].'::'.CURMODULE}-->
 <ul>
 	<!--{loop $_G['setting']['spacenavs'] $nav}-->
-		<!--{if $nav['available'] && (!$nav['level'] || ($nav['level'] == 1 && $_G['uid']) || ($nav['level'] == 2 && $_G['adminid'] > 0) || ($nav['level'] == 3 && $_G['adminid'] == 1))}-->
-			<!--{if in_array($nav['code'], array('userpanelarea1', 'userpanelarea2'))}-->
-			<!--{else}-->
+		<!--{if $nav['available'] && (!$nav['level'] || ($nav['level'] == 1 && $_G['uid']) || ($nav['level'] == 2 && $_G['adminid'] > 0) || ($nav['level'] == 3 && $_G['adminid'] == 1))}-->			
 			$nav[code]
-			<!--{/if}-->
 		<!--{/if}-->
 	<!--{/loop}-->
 </ul>

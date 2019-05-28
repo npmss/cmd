@@ -14,17 +14,7 @@
 			<!--{if $operation == 'base'}-->
 				<p class="tbmu mbm">{lang you_control_see_content}</p>
 				<table cellspacing="0" cellpadding="0" class="tfm">
-					<tr>
-						<th>{lang main_page}</th>
-						<td>
-							<select name="privacy[view][index]">
-								<option value="0"$sels[view][index][0]>{lang open_privacy}</option>
-								<option value="1"$sels[view][index][1]>{lang friend_privacy}</option>
-								<option value="2"$sels[view][index][2]>{lang secrecy}</option>
-								<option value="3"$sels[view][index][3]>{lang privacy_register}</option>
-							</select>
-						</td>
-					</tr>
+
 					<tr>
 						<th>{lang friend_list}</th>
 						<td>
@@ -232,9 +222,7 @@
 							<!--{loop $icons $key $icon}-->
 							<!--{eval $uid = $uids[$key];$icon_uid="$icon|$uid";}-->
 							<label>
-							<!--{if is_numeric($icon)}-->
-								<img src="{STATICURL}image/feed/userapp.gif" alt="" class="vm" />
-							<!--{else}-->
+							<!--{if is_numeric($icon)}-->								
 								<img src="{STATICURL}image/feed/{$icon}.gif" alt="" class="vm" />
 							<!--{/if}-->
 								<input type="checkbox" class="pc" name="privacy[filter_icon][$icon_uid]" value="1" checked="checked" /> 

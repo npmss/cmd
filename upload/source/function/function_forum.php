@@ -74,12 +74,6 @@ function formulaperm($formula) {
 		}
 	}
 	$formulatext = $formula[0];
-
-	$formula[1] = preg_replace(
-		array("/(digestposts|posts|threads|oltime|extcredits[1-8])/", "/(regdate|regday|regip|lastip|buyercredit|sellercredit|field\d+)/"),
-		array("getuserprofile('\\1')", "\$memberformula['\\1']"),
-		$formulatext);
-
 	$formula = $formula[1];
 	if($_G['adminid'] == 1 || $_G['forum']['ismoderator'] || in_array($_G['groupid'], explode("\t", $_G['forum']['spviewperm']))) {
 		return FALSE;
@@ -179,6 +173,7 @@ function formulaperm($formula) {
 function formulaperm_callback_123($matches) {
 	return '\''.$matches[1].'-'.sprintf('%02d', $matches[2]).'-'.sprintf('%02d', $matches[3]).'\'';
 }
+
 function medalformulaperm($formula, $type) {
 	global $_G;
 
@@ -412,7 +407,6 @@ function showmessagenoperm($type, $fid, $formula = '') {
 
 function loadforum($fid = null, $tid = null) {
 	global $_G;
-	$forum = array();
 	$tid = intval(isset($tid) ? $tid : getgpc('tid'));
 	if(isset($fid)) {
 		$fid = intval($fid);
@@ -822,11 +816,11 @@ function convertunusedattach($aid, $tid, $pid) {
 }
 
 function updateattachtid($idtype, $ids, $oldtid, $newtid) {
-	foreach(C::t('forum_attachment_n')->fetch_all_by_id('tid:'.$oldtid, $idtype, $ids) as $attach) {
-		$attach['tid'] = $newtid;
-		C::t('forum_attachment_n')->insert('tid:'.$newtid, $attach);
-	}
-	C::t('forum_attachment_n')->delete_by_id('tid:'.$oldtid, $idtype, $ids);
+		foreach(C::t('forum_attachment_n')->fetch_all_by_id('tid:'.$oldtid, $idtype, $ids) as $attach) {
+			$attach['tid'] = $newtid;
+			C::t('forum_attachment_n')->insert('tid:'.$newtid, $attach);
+		}
+		C::t('forum_attachment_n')->delete_by_id('tid:'.$oldtid, $idtype, $ids);
 	C::t('forum_attachment')->update_by_id($idtype, $ids, $newtid);
 }
 
@@ -1006,10 +1000,6 @@ function set_atlist_cookie($uids) {
 	dsetcookie('atlist', implode(',', $uids).($tmp ? ','.implode(',', $tmp) : ''), 86400 * 360);
 }
 
-function cloud_referer_related() {
-	return '';
-}
-
 function viewthread_is_search_referer() {
 	$regex = "((http|https)\:\/\/)?";
 	$regex .= "([a-z]*.)?(ask.com|yahoo.com|cn.yahoo.com|bing.com|baidu.com|soso.com|google.com|google.cn)(.[a-z]{2,3})?\/";
@@ -1153,4 +1143,5 @@ function safefilter(&$data) {
 			), strip_tags($data)));
 	}
 }
+
 ?>

@@ -571,7 +571,7 @@ function messagecutstr($str, $length = 0, $dot = ' ...') {
 	}
 	$language = lang('forum/misc');
 	loadcache(array('bbcodes_display', 'bbcodes', 'smileycodes', 'smilies', 'smileytypes', 'domainwhitelist'));
-	$bbcodes = 'b|i|u|p|color|size|font|align|list|indent|float|backcolor';
+	$bbcodes = 'b|i|u|p|color|size|font|align|list|indent|float';
 	$bbcodesclear = 'email|code|free|table|tr|td|img|swf|flash|attach|media|audio|groupid|payto'.($_G['cache']['bbcodes_display'][$_G['groupid']] ? '|'.implode('|', array_keys($_G['cache']['bbcodes_display'][$_G['groupid']])) : '');
 	$str = strip_tags(preg_replace(array(
 			"/\[hide=?\d*\](.*?)\[\/hide\]/is",
@@ -592,14 +592,14 @@ function messagecutstr($str, $length = 0, $dot = ' ...') {
 			'',
 		        '%u'
 		), $str));
+	if($length) {
+		$str = cutstr($str, $length, $dot);
+	}
 	$str = preg_replace($_G['cache']['smilies']['searcharray'], '', $str);
 	if($_G['setting']['plugins']['func'][HOOKTYPE]['discuzcode']) {
 		$_G['discuzcodemessage'] = & $str;
 		$param = func_get_args();
 		hookscript('discuzcode', 'global', 'funcs', array('param' => $param, 'caller' => 'messagecutstr'), 'discuzcode');
-	}
-	if($length) {
-		$str = cutstr($str, $length, $dot);
 	}
 	return trim($str);
 }
@@ -631,8 +631,7 @@ function setthreadcover($pid, $tid = 0, $aid = 0, $countimg = 0, $imgurl = '') {
 			$tid = empty($tid) ? $attach['tid'] : $tid;
 			$picsource = ($attach['remote'] ? $_G['setting']['ftp']['attachurl'] : $_G['setting']['attachurl']).'forum/'.$attach['attachment'];
 		} else {
-			$attachtable = 'pid:'.$pid;
-			$picsource = $imgurl;
+			return true;
 		}
 
 		$basedir = !$_G['setting']['attachdir'] ? (DISCUZ_ROOT.'./data/attachment/') : $_G['setting']['attachdir'];

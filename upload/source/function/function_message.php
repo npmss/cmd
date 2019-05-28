@@ -80,8 +80,6 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 	if(!empty($_G['inajax'])) {
 		$handlekey = $_GET['handlekey'] = !empty($_GET['handlekey']) ? dhtmlspecialchars($_GET['handlekey']) : '';
 		$param['handle'] = true;
-	}
-	if(!empty($_G['inajax'])) {
 		$param['msgtype'] = empty($_GET['ajaxmenu']) && (empty($_POST) || !empty($_GET['nopost'])) ? 2 : 3;
 	}
 	if($url_forward) {
@@ -154,9 +152,15 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 		$param['login'] = false;
 		$param['alert'] = 'info';
 		if (defined('IN_MOBILE')) {
+			if ($message == 'postperm_login_nopermission_mobile') {
+				$show_message = lang('plugin/qqconnect', 'connect_register_mobile_bind_error');
+			}
 			$show_message = str_replace(lang('forum/misc', 'connectguest_message_mobile_search'), lang('forum/misc', 'connectguest_message_mobile_replace'), $show_message);
 		} else {
 			$show_message = str_replace(lang('forum/misc', 'connectguest_message_search'), lang('forum/misc', 'connectguest_message_replace'), $show_message);
+		}
+		if ($message == 'group_nopermission') {
+			$show_message = lang('plugin/qqconnect', 'connectguest_message_complete_or_bind');
 		}
 	}
 	if($param['msgtype'] == 2 && $param['login']) {

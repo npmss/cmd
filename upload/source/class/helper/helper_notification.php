@@ -74,7 +74,9 @@ class helper_notification {
 			} else {
 				$notestring = lang('notification', $note, $notevars);
 			}
+			$frommyapp = false;
 		} else {
+			$frommyapp = true;
 			$notestring = $note;
 		}
 
@@ -127,7 +129,7 @@ class helper_notification {
 			}
 			require_once libfile('function/mail');
 			$mail_subject = lang('notification', 'mail_to_user');
-			sendmail_touser($touid, $mail_subject, $notestring, $type);
+			sendmail_touser($touid, $mail_subject, $notestring, $frommyapp ? 'myapp' : $type);
 		}
 
 		if(!$system && $_G['uid'] && $touid != $_G['uid']) {

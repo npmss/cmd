@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: discuz_database.php 35054 2014-11-03 05:17:00Z hypowang $
+ *      $Id: discuz_database.php 36294 2016-12-14 03:11:30Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -368,7 +368,7 @@ class discuz_database_safecheck {
 	private static function _do_query_safe($sql) {
 		$sql = str_replace(array('\\\\', '\\\'', '\\"', '\'\''), '', $sql);
 		$mark = $clean = '';
-		if (strpos($sql, '/') === false && strpos($sql, '#') === false && strpos($sql, '-- ') === false && strpos($sql, '@') === false && strpos($sql, '`') === false) {
+		if (strpos($sql, '/') === false && strpos($sql, '#') === false && strpos($sql, '-- ') === false && strpos($sql, '@') === false && strpos($sql, '`') === false && strpos($sql, '"') === false) {
 			$clean = preg_replace("/'(.+?)'/s", '', $sql);
 		} else {
 			$len = strlen($sql);

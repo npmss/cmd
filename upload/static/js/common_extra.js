@@ -2,7 +2,7 @@
 	[Discuz!] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: common_extra.js 35188 2015-01-19 04:22:32Z nemohou $
+	$Id: common_extra.js 35187 2015-01-19 04:22:13Z nemohou $
 */
 
 function _relatedlinks(rlinkmsgid) {
@@ -183,25 +183,6 @@ function _copycode(obj) {
 		rng.select();
 	}
 	setCopy(BROWSER.ie ? obj.innerText.replace(/\r\n\r\n/g, '\r\n') : obj.textContent, '代码已复制到剪贴板');
-}
-
-function _setCopy(text, msg){
-	if(BROWSER.ie) {
-		var r = clipboardData.setData('Text', text);
-		if(r) {
-			if(msg) {
-				showPrompt(null, null, '<span>' + msg + '</span>', 1500);
-			}
-		} else {
-			showDialog('<div class="c"><div style="width: 200px; text-align: center;">复制失败，请选择“允许访问”</div></div>', 'alert');
-		}
-	} else {
-		var msg = '<div class="c"><div style="width: 200px; text-align: center; text-decoration:underline;">点此复制到剪贴板</div>' +
-		AC_FL_RunContent('id', 'clipboardswf', 'name', 'clipboardswf', 'devicefont', 'false', 'width', '200', 'height', '40', 'src', STATICURL + 'image/common/clipboard.swf', 'menu', 'false',  'allowScriptAccess', 'sameDomain', 'swLiveConnect', 'true', 'wmode', 'transparent', 'style' , 'margin-top:-20px') + '</div>';
-		showDialog(msg, 'info');
-		text = text.replace(/[\xA0]/g, ' ');
-		CLIPBOARDSWFDATA = text;
-	}
 }
 
 function _showselect(obj, inpid, t, rettype) {
@@ -1174,6 +1155,10 @@ function _showForummenu(fid) {
 }
 
 function _showUserApp(fid) {
+	var menu = $('mn_userapp_menu');
+	if(menu && !menu.innerHTML) {
+		ajaxget('misc.php?mod=manyou&action=menu', 'mn_userapp_menu', 'ajaxwaitid');
+	}
 }
 
 function _imageRotate(imgid, direct) {
@@ -1241,7 +1226,8 @@ function _createPalette(colorid, id, func) {
 		$('append_parent').appendChild(dom);
 	}
 	func = !func ? '' : '|' + func;
-	window.frames["c"+colorid+"_frame"].location.href = SITEURL+STATICURL+"image/admincp/getcolor.htm?c"+colorid+"|"+id+func;
+	var url = /(?:https?:)?\/\//.test(STATICURL) ? STATICURL : SITEURL+STATICURL;
+	window.frames["c"+colorid+"_frame"].location.href = url+"image/admincp/getcolor.htm?c"+colorid+"|"+id+func;
 	showMenu({'ctrlid':'c'+colorid});
 	var iframeid = "c"+colorid+"_menu";
 	_attachEvent(window, 'scroll', function(){hideMenu(iframeid);});

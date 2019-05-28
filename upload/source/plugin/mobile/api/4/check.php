@@ -7,7 +7,6 @@
  *      $Id: check.php 36332 2016-12-30 01:44:19Z nemohou $
  */
 
-
 if(!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
 }
@@ -21,7 +20,7 @@ if(!defined('DISCUZ_VERSION')) {
 	require './source/discuz_version.php';
 }
 
-if(in_array('mobile', $_G['setting']['plugins']['available']) && $_G['setting']['mobilewechat']) {
+if(in_array('mobile', $_G['setting']['plugins']['available'])) {
 	loadcache('wsq_checkinfo');
 	if (!$_G['cache']['wsq_checkinfo'] || TIMESTAMP - $_G['cache']['wsq_checkinfo']['expiration'] > 600) {
 		$_G['wechat']['setting'] = unserialize($_G['setting']['mobilewechat']);
@@ -36,8 +35,8 @@ if(in_array('mobile', $_G['setting']['plugins']['available']) && $_G['setting'][
 			'version' => MOBILE_PLUGIN_VERSION,
 			'pluginversion' => $_G['setting']['plugins']['version']['mobile'],
 			'regname' => $_G['setting']['regname'],
-			'qqconnect' => '0',//in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
-			'wsqqqconnect' => '0',//in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
+			'qqconnect' => in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
+			'wsqqqconnect' => in_array('qqconnect', $_G['setting']['plugins']['available']) ? '1' : '0',
 			'wsqhideregister' => $_G['wechat']['setting']['wechat_allowregister'] && $_G['wechat']['setting']['wechat_allowfastregister'] ? '1' : '0',
 			'sitename' => $_G['setting']['bbname'],
 			'mysiteid' => $_G['setting']['my_siteid'],

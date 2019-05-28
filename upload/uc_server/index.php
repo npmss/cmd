@@ -1,10 +1,10 @@
 <?php
 
 /*
-	[UCenter] (C)2001-2009 Comsenz Inc.
+	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: index.php 1015 2010-09-18 05:26:20Z cnteacher $
+	$Id: index.php 1139 2012-05-08 09:02:11Z liulanbo $
 */
 
 error_reporting(0);

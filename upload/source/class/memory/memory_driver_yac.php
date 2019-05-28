@@ -4,20 +4,27 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: memory_driver_yac.php 27635 2017-02-02 17:02:46Z NaiXiaoXin $
+ *      $Id: memory_driver_yac.php 27635 2017-02-02 17:02:46Z NaiXiaoxIN $
  */
-
-if(!defined('IN_DISCUZ')) {
+if (!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
 
-class memory_driver_yac
-{
+class memory_driver_yac {
 
-  private $object = null;
+	public $cacheName = 'Yac';
+	private $object = null;
+	public $enable;
+
+	public function env() {
+		return extension_loaded('Yac');
+	}
 
 	public function init($config) {
-     $this->object = new yac();
+		$this->enable = $this->env();
+		if ($this->enable) {
+			$this->object = new yac();
+		}
 	}
 
 	public function get($key) {
@@ -25,13 +32,13 @@ class memory_driver_yac
 	}
 
 	public function getMulti($keys) {
-		$result  =  $this->object->get($keys);
-    foreach ($result as $key => $value) {
-     if($value===false){
-       unset($result[$key]);
-     }
-    }
-    return $result;
+		$result = $this->object->get($keys);
+		foreach ($result as $key => $value) {
+			if ($value === false) {
+				unset($result[$key]);
+			}
+		}
+		return $result;
 	}
 
 	public function set($key, $value, $ttl = 0) {
@@ -39,7 +46,7 @@ class memory_driver_yac
 	}
 
 	public function rm($key) {
-		return  $this->object->delete($key);
+		return $this->object->delete($key);
 	}
 
 	public function clear() {
@@ -47,19 +54,19 @@ class memory_driver_yac
 	}
 
 	public function inc($key, $step = 1) {
-	    $old = $this->get($key);
-      if(!$old){
-        return false;
-      }
-      return $this->set($key,$old+$step);
+		$old = $this->get($key);
+		if (!$old) {
+			return false;
+		}
+		return $this->set($key, $old + $step);
 	}
 
 	public function dec($key, $step = 1) {
-    $old = $this->get($key);
-    if(!$old){
-      return false;
-    }
-    return $this->set($key,$old-$step);
+		$old = $this->get($key);
+		if (!$old) {
+			return false;
+		}
+		return $this->set($key, $old - $step);
 	}
 
 }

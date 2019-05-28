@@ -35,10 +35,8 @@ if(!$operation) {
 					"<input type=\"text\" id=\"group_color_$group[groupid]_v\" class=\"left txt\" size=\"6\" name=\"groupnew[$group[groupid]][color]\" value=\"$group[color]\" onchange=\"updatecolorpreview('group_color_$group[groupid]')\"><input type=\"button\" id=\"group_color_$group[groupid]\"  class=\"colorwd\" onclick=\"group_color_$group[groupid]_frame.location='static/image/admincp/getcolor.htm?group_color_$group[groupid]|group_color_$group[groupid]_v';showMenu({'ctrlid':'group_color_$group[groupid]'})\" /><span id=\"group_color_$group[groupid]_menu\" style=\"display: none\"><iframe name=\"group_color_$group[groupid]_frame\" src=\"\" frameborder=\"0\" width=\"210\" height=\"148\" scrolling=\"no\"></iframe></span>",
 					"<input class=\"checkbox\" type=\"checkbox\" chkvalue=\"gmember\" value=\"$group[groupid]\" onclick=\"multiupdate(this)\" /><a href=\"".ADMINSCRIPT."?action=usergroups&operation=edit&id=$group[groupid]\" class=\"act\">$lang[edit]</a>".
 						"<a href=\"".ADMINSCRIPT."?action=usergroups&operation=copy&source=$group[groupid]\" title=\"$lang[usergroups_copy_comment]\" class=\"act\">$lang[usergroups_copy]</a>".
-						"<a href=\"".ADMINSCRIPT."?action=usergroups&operation=merge&source=$group[groupid]\" title=\"$lang[usergroups_merge_comment]\" class=\"act\">$lang[usergroups_merge_link]</a>".
-                        "<a href=\"".ADMINSCRIPT."?action=usergroups&operation=viewsgroup&sgroupid=$group[groupid]\" onclick=\"ajaxget(this.href, 'sgroup_$group[groupid]', 'sgroup_$group[groupid]');doane(event);\" class=\"act\">$lang[view]</a> &nbsp;"
+						"<a href=\"".ADMINSCRIPT."?action=usergroups&operation=merge&source=$group[groupid]\" title=\"$lang[usergroups_merge_comment]\" class=\"act\">$lang[usergroups_merge_link]</a>"
 				), TRUE);
-				$membergroup .= showtablerow('', array('colspan="8" id="sgroup_'.$group['groupid'].'" style="display: none"'), array(''), TRUE);
 			} elseif($group['type'] == 'system') {
 				$sysgroup .= showtablerow('', array('', 'class="td23 lightfont"', '', 'class="td28"'), array(
 					"<input type=\"text\" class=\"txt\" size=\"12\" name=\"group_title[$group[groupid]]\" value=\"$group[grouptitle]\">",
@@ -47,10 +45,8 @@ if(!$operation) {
 					"<input type=\"text\" class=\"txt\" size=\"2\"name=\"group_stars[$group[groupid]]\" value=\"$group[stars]\">",
 					"<input type=\"text\" id=\"group_color_$group[groupid]_v\" class=\"left txt\" size=\"6\"name=\"group_color[$group[groupid]]\" value=\"$group[color]\" onchange=\"updatecolorpreview('group_color_$group[groupid]')\"><input type=\"button\" id=\"group_color_$group[groupid]\"  class=\"colorwd\" onclick=\"group_color_$group[groupid]_frame.location='static/image/admincp/getcolor.htm?group_color_$group[groupid]|group_color_$group[groupid]_v';showMenu({'ctrlid':'group_color_$group[groupid]'})\" /><span id=\"group_color_$group[groupid]_menu\" style=\"display: none\"><iframe name=\"group_color_$group[groupid]_frame\" src=\"\" frameborder=\"0\" width=\"210\" height=\"148\" scrolling=\"no\"></iframe></span>",
 					"<input class=\"checkbox\" type=\"checkbox\" chkvalue=\"gsystem\" value=\"$group[groupid]\" onclick=\"multiupdate(this)\" /><a href=\"".ADMINSCRIPT."?action=usergroups&operation=edit&id=$group[groupid]\" class=\"act\">$lang[edit]</a>".
-						"<a href=\"".ADMINSCRIPT."?action=usergroups&operation=copy&source=$group[groupid]\" title=\"$lang[usergroups_copy_comment]\" class=\"act\">$lang[usergroups_copy]</a>".
-                        "<a href=\"".ADMINSCRIPT."?action=usergroups&operation=viewsgroup&sgroupid=$group[groupid]\" onclick=\"ajaxget(this.href, 'sgroup_$group[groupid]', 'sgroup_$group[groupid]');doane(event);\" class=\"act\">$lang[view]</a> &nbsp;"
+						"<a href=\"".ADMINSCRIPT."?action=usergroups&operation=copy&source=$group[groupid]\" title=\"$lang[usergroups_copy_comment]\" class=\"act\">$lang[usergroups_copy]</a>"
 				), TRUE);
-				$sysgroup .= showtablerow('', array('colspan="6" id="sgroup_'.$group['groupid'].'" style="display: none"'), array(''), TRUE);
 			} elseif($group['type'] == 'special' && $group['radminid'] == '0') {
 
 				$specialgroupoption .= "<option value=\"g{$group[groupid]}\">".addslashes($group['grouptitle'])."</option>";
@@ -119,7 +115,9 @@ EOT;
 			array('usergroups_special', 'specialgroups', $_GET['type'] == 'special'),
 			array('usergroups_system', 'systemgroups', $_GET['type'] == 'system')
 		));
+		/*search={"nav_usergroups":"action=usergroups"}*/
 		showtips('usergroups_tips');
+		/*search*/
 
 		showformheader('usergroups&type=member');
 		showtableheader('usergroups_member', 'fixpadding', 'id="membergroups"'.($_GET['type'] && $_GET['type'] != 'member' ? ' style="display: none"' : ''));
@@ -395,9 +393,9 @@ EOT;
 } elseif($operation == 'viewsgroup') {
 
 	$sgroupid = $_GET['sgroupid'];
-	$num = C::t('common_member')->count_by_groupid_or_extgroupid($sgroupid);
+	$num = C::t('common_member')->count_by_groupid($sgroupid);
 	$sgroups = '';
-	foreach(C::t('common_member')->fetch_all_by_groupid_or_extgroupid($sgroupid, 0, 80) as $uid => $member) {
+	foreach(C::t('common_member')->fetch_all_by_groupid($sgroupid, 0, 80) as $uid => $member) {
 		$sgroups .= '<li><a href="home.php?mod=space&uid='.$uid.'" target="_blank">'.$member['username'].'</a></li>';
 	}
 	ajaxshowheader();
@@ -530,6 +528,7 @@ EOT;
 		$mgids[] = $gid;
 
 		if(!$multiset && $group['type'] == 'special' && $group['radminid'] < 1) {
+			/*search={"nav_usergroups":"action=usergroups","usergroups_edit_basic":"action=usergroups&operation=edit&anchor=system"}*/
 			showtagheader('div', 'system', $anchor == 'system');
 			showtableheader();
 			if($group['system'] == 'private') {
@@ -543,8 +542,10 @@ EOT;
 			showsetting('usergroups_edit_system_minspan', 'system_minspannew', $system['minspan'], 'text');
 			showtablefooter();
 			showtagfooter('div');
+			/*search*/
 		}
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_basic":"action=usergroups&operation=edit&anchor=basic"}*/
 		showmultititle();
 		showtagheader('div', 'basic', $anchor == 'basic');
 		showtableheader();
@@ -627,7 +628,9 @@ EOT;
 		showsetting('usergroups_edit_basic_close_ad', 'closeadnew', $group['closead'], 'radio');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_special":"action=usergroups&operation=edit&anchor=special"}*/
 		showtagheader('div', 'special', $anchor == 'special');
 		showtableheader();
 		showtitle('usergroups_edit_special');
@@ -652,7 +655,9 @@ EOT;
 		}
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_post":"action=usergroups&operation=edit&anchor=post"}*/
 		showtagheader('div', 'post', $anchor == 'post');
 		showtableheader();
 		showtitle('usergroups_edit_post');
@@ -711,7 +716,9 @@ EOT;
 		showsetting('usergroups_edit_attach_ext', 'attachextensionsnew', $group['attachextensions'], 'text');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_magic":"action=usergroups&operation=edit&anchor=magic"}*/
 		showtagheader('div', 'magic', $anchor == 'magic');
 		showtableheader();
 		showtitle('usergroups_edit_magic');
@@ -724,7 +731,9 @@ EOT;
 		showsetting('usergroups_edit_magic_max', 'maxmagicsweightnew', $group['maxmagicsweight'], 'text');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_invite":"action=usergroups&operation=edit&anchor=invite"}*/
 		showtagheader('div', 'invite', $anchor == 'invite');
 		showtableheader();
 		showtitle('usergroups_edit_invite');
@@ -735,6 +744,7 @@ EOT;
 		showsetting('usergroups_edit_invite_maxinviteday', 'maxinvitedaynew', $group['maxinviteday'], 'text');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
 		$raterangearray = array();
 		foreach(explode("\n", $group['raterange']) as $range) {
@@ -769,6 +779,7 @@ EOT;
 			showtablefooter();
 			showtagfooter('div');
 		} else {
+			/*search={"nav_usergroups":"action=usergroups","usergroups_edit_credit":"action=usergroups&operation=edit&anchor=credit"}*/
 			showtagheader('div', 'credit', $anchor == 'credit');
 			showtableheader();
 			showtitle('usergroups_edit_credit');
@@ -826,8 +837,10 @@ EOT;
 			echo '<tr><td class="lineheight" colspan="9">'.$lang['usergroups_edit_credit_rate_tips'].'</td></tr>';
 			showtablefooter();
 			showtagfooter('div');
+			/*search*/
 		}
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_home":"action=usergroups&operation=edit&anchor=home"}*/
 		showtagheader('div', 'home', $anchor == 'home');
 		showtableheader();
 		showtitle('usergroups_edit_home');
@@ -849,12 +862,17 @@ EOT;
 		showsetting('usergroups_edit_home_allow_friend', 'allowfriendnew', $group['allowfriend'], 'radio');
 		showsetting('usergroups_edit_home_allow_click', 'allowclicknew', $group['allowclick'], 'radio');
 		showsetting('usergroups_edit_home_allow_comment', 'allowcommentnew', $group['allowcomment'], 'radio');
+		showsetting('usergroups_edit_home_allow_myop', 'allowmyopnew', $group['allowmyop'], 'radio');
+		showsetting('usergroups_edit_home_allow_video_photo_ignore', 'videophotoignorenew', $group['videophotoignore'], 'radio');
+		showsetting('usergroups_edit_home_allow_view_video_photo', 'allowviewvideophotonew', $group['allowviewvideophoto'], 'radio');
 		showsetting('usergroups_edit_home_allow_space_diy_html', 'allowspacediyhtmlnew', $group['allowspacediyhtml'], 'radio');
 		showsetting('usergroups_edit_home_allow_space_diy_bbcode', 'allowspacediybbcodenew', $group['allowspacediybbcode'], 'radio');
 		showsetting('usergroups_edit_home_allow_space_diy_imgcode', 'allowspacediyimgcodenew', $group['allowspacediyimgcode'], 'radio');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_group":"action=usergroups&operation=edit&anchor=group"}*/
 		showtagheader('div', 'group', $anchor == 'group');
 		showtableheader();
 		showtitle('usergroups_edit_group');
@@ -874,7 +892,9 @@ EOT;
 		)), $group['allowgroupposturl'], 'mradio');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
+		/*search={"nav_usergroups":"action=usergroups","usergroups_edit_portal":"action=usergroups&operation=edit&anchor=portal"}*/
 		showtagheader('div', 'portal', $anchor == 'portal');
 		showtableheader();
 		showtitle('usergroups_edit_portal');
@@ -884,6 +904,7 @@ EOT;
 		showsetting('usergroups_edit_portal_allow_post_article_moderate', 'allowpostarticlemodnew', $group['allowpostarticlemod'], 'radio');
 		showtablefooter();
 		showtagfooter('div');
+		/*search*/
 
 		if($pluginsetting) {
 			showtagheader('div', 'plugin', $anchor == 'plugin');
@@ -1116,7 +1137,10 @@ EOT;
 			'allowclick' => $_GET['allowclicknew'],
 			'allowcomment' => $_GET['allowcommentnew'],
 			'allowcommentarticle' => intval($_GET['allowcommentarticlenew']),
+			'allowmyop' => $_GET['allowmyopnew'],
 			'allowcommentpost' => bindec(intval($_GET['allowcommentpostnew'][2]).intval($_GET['allowcommentpostnew'][1])),
+			'videophotoignore' => $_GET['videophotoignorenew'],
+			'allowviewvideophoto' => $_GET['allowviewvideophotonew'],
 			'allowspacediyhtml' => $_GET['allowspacediyhtmlnew'],
 			'allowspacediybbcode' => $_GET['allowspacediybbcodenew'],
 			'allowspacediyimgcode' => $_GET['allowspacediyimgcodenew'],

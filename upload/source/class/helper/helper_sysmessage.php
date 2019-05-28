@@ -21,7 +21,6 @@ class helper_sysmessage {
 			$title = $title ? $title : 'System Message';
 		}
 		$charset = CHARSET;
-		$y = date("Y");
 		echo <<<EOT
 <html>
 <head>
@@ -31,7 +30,7 @@ class helper_sysmessage {
 <meta name="description" content="System Message - Discuz! Board" />
 <meta name="generator" content="Discuz! " />
 <meta name="author" content="Discuz! Team and Comsenz UI Team" />
-<meta name="copyright" content="2001-{$y} Comsenz Inc." />
+<meta name="copyright" content="2001-2013 Comsenz Inc." />
 <meta name="MSSmartTagsPreventParsing" content="True" />
 <meta http-equiv="MSThemeCompatible" content="Yes" />
 </head>

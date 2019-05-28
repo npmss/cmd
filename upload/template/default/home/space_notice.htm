@@ -27,6 +27,7 @@
 					<li class="a"><a href="home.php?mod=space&do=notice&view=$view"><!--{eval echo lang('template', 'notice_'.$view)}--></a></li>
 				<!--{/if}-->
 			</ul>
+
 			<!--{if empty($list)}-->
 			<div class="emp mtw ptw hm xs2">
 				<!--{if $new == 1}-->
@@ -84,7 +85,7 @@
 					</div>
 				</div>
 
-				<!--{if $space[notifications]}-->
+				<!--{if $view!='userapp' && $space[notifications]}-->
 				<div class="mtm mbm"><a href="home.php?mod=space&do=notice&ignore=all">{lang ignore_same_notice_message} <em>&rsaquo;</em></a></div>
 				<!--{/if}-->
 

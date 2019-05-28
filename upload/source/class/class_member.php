@@ -80,8 +80,7 @@ class logging_ctl {
 
 			$loginhash = !empty($_GET['loginhash']) && preg_match('/^\w+$/', $_GET['loginhash']) ? $_GET['loginhash'] : '';
 
-			if(!($_G['member_loginperm'] = logincheck($_GET['username']))) {
-				captcha::report($_G['clientip']);
+			if(!($_G['member_loginperm'] = logincheck($_GET['username']))) {				
 				showmessage('login_strike');
 			}
 			if($_GET['fastloginfield']) {
@@ -109,7 +108,6 @@ class logging_ctl {
 					$groupid = $this->setting['regverify'] ? 8 : $this->setting['newusergroupid'];
 
 					C::t('common_member')->insert($uid, $result['ucresult']['username'], md5(random(10)), $result['ucresult']['email'], $_G['clientip'], $groupid, $init_arr);
-
 					$result['member'] = getuserbyuid($uid);
 					$result['status'] = 1;
 				}
@@ -522,10 +520,6 @@ class register_ctl {
 			include template($this->template);
 
 		} else {
-
-			if(C::t('common_member_login')->getUid($username)) {
-				showmessage('profile_username_duplicate');
-			}
 
 			$activationauth = array();
 			if(isset($_GET['activationauth']) && $_GET['activationauth']) {

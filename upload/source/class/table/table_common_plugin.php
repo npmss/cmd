@@ -29,15 +29,9 @@ class table_common_plugin extends discuz_table
 		return DB::fetch_all('SELECT * FROM %t WHERE identifier IN (%n)', array($this->_table, $identifier), 'identifier');
 	}
 
-	public function fetch_all_data($available = false, $catid = false, $displayorder = false) {
-		$catid = $catid ? ($available !== false ? ' AND catid='.intval($catid) : 'WHERE catid='.intval($catid)) : '';
+	public function fetch_all_data($available = false) {
 		$available = $available !== false ? 'WHERE available='.intval($available) : '';
-		$displayorder = $displayorder !== false ? ' displayorder DESC, ' : '';
-		return DB::fetch_all('SELECT * FROM %t %i %i ORDER BY available DESC, %i pluginid DESC', array($this->_table, $available, $catid, $displayorder));
-	}
-
-	public function fetch_maxdisplayorder_by_pluginid($pluginid) {
-		return DB::result_first("SELECT displayorder FROM %t WHERE available <> 0 AND pluginid <> %d ORDER BY displayorder DESC LIMIT 1", array($this->_table, $pluginid));
+		return DB::fetch_all('SELECT * FROM %t %i ORDER BY available DESC, pluginid DESC', array($this->_table, $available));
 	}
 
 	public function fetch_all_by_identifier($identifier) {
@@ -57,13 +51,6 @@ class table_common_plugin extends discuz_table
 			return;
 		}
 		DB::delete('common_plugin', DB::field('identifier', $identifier));
-	}
-
-	public function delete_by_catid($catid) {
-		if(!$catid) {
-			return;
-		}
-		DB::update('common_plugin', array('catid'=>'0'), array('catid'=>intval($catid)));
 	}
 
 }

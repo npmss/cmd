@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: db_driver_mysql.php 33349 2013-05-30 09:00:26Z kamichen $
+ *      $Id: db_driver_mysql.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -88,7 +88,7 @@ class db_driver_mysql
 			$halt && $this->halt('notconnect', $this->errno());
 		} else {
 			$this->curlink = $link;
-			if($this->version() > 4.1) {
+			if($this->version() > '4.1') {
 				$dbcharset = $dbcharset ? $dbcharset : $this->config[1]['dbcharset'];
 				$serverset = $dbcharset ? 'character_set_connection='.$dbcharset.', character_set_results='.$dbcharset.', character_set_client=binary' : '';
 				$serverset .= $this->version() > '5.0.1' ? ((empty($serverset) ? '' : ',').'sql_mode=\'\'') : '';
@@ -102,7 +102,6 @@ class db_driver_mysql
 	function table_name($tablename) {
 		if(!empty($this->map) && !empty($this->map[$tablename])) {
 			$id = $this->map[$tablename];
-			$this->tablepre =  $this->config['db'][$id]['tablepre'];
 			if(!$this->link[$id]) {
 				$this->connect($id);
 			}
@@ -213,7 +212,7 @@ class db_driver_mysql
 	}
 
 	function escape_string($str) {
-		return mysql_escape_string($str);
+		return mysql_real_escape_string($str);
 	}
 
 	function close() {

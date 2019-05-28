@@ -88,7 +88,7 @@ class dbstuff {
 			}
 		}
 
-		if($this->version() > 4.1) {
+		if($this->version() > '4.1') {
 			if($dbcharset) {
 				mysql_query("SET character_set_connection=".$dbcharset.", character_set_results=".$dbcharset.", character_set_client=binary", $this->link);
 			}
@@ -215,7 +215,7 @@ class dbstuffi {
 			$this->halt('Can not connect to MySQL server');
 		}
 
-		if($this->version() > 4.1) {
+		if($this->version() > '4.1') {
 			if($dbcharset) {
 				$this->link->set_charset($dbcharset);
 			}
@@ -529,7 +529,7 @@ if($get['method'] == 'export') {
 	unset($sqldump);
 
 	foreach($sqlquery as $sql) {
-		$sql = syntablestruct(trim($sql), $db->version() > 4.1, $dbcharset);
+		$sql = syntablestruct(trim($sql), $db->version() > '4.1', $dbcharset);
 
 		if($sql != '') {
 			$db->query($sql, 'SILENT');

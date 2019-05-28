@@ -80,7 +80,8 @@ if(!$operation) {
 	$keywords = $_GET['keywords'];
 	$pstarttime = $_GET['pstarttime'];
 	$pendtime = $_GET['pendtime'];
-
+	
+	$secStatus = false;	
 
 	$searchsubmit = $_GET['searchsubmit'];
 
@@ -99,6 +100,7 @@ if(!$operation) {
 		array('search', 'recyclebinpost&operation=search', 1),
 		array('clean', 'recyclebinpost&operation=clean', 0)
 	));
+	/*search={"nav_recyclebinpost":"action=recyclebinpost","search":"action=recyclebinpost&operation=search"}*/
 	echo <<<EOT
 <script type="text/javascript" src="static/js/calendar.js"></script>
 <script type="text/JavaScript">
@@ -117,14 +119,23 @@ EOT;
 	showsetting('recyclebinpost_search_keyword', 'keywords', $keywords, 'text');
 	showsetting('recyclebin_search_post_time', array('pstarttime', 'pendtime'), array($pstarttime, $pendtime), 'daterange');
 	showsetting('postsplit', '', '', getposttableselect());
+	if($secStatus){
+        showsetting('recyclebin_search_security_thread', 'security', $security, 'radio');
+	}
 	showsubmit('searchsubmit');
 	showtablefooter();
 	showformfooter();
 	showtagfooter('div');
+	/*search*/
 
 	if(submitcheck('searchsubmit')) {
 
+		$security = $secStatus && $security;
+		if($security){
+			$postlistcount = C::t('#security#security_evilpost')->count_by_search($posttableid, null, $keywords, -5, $inforum, null, ($authors ? explode(',', str_replace(' ', '', $authors)) : null), strtotime($pstarttime), strtotime($pendtime));
+		}else{
 			$postlistcount = C::t('forum_post')->count_by_search($posttableid, null, $keywords, -5, $inforum, null, ($authors ? explode(',', str_replace(' ', '', $authors)) : null), strtotime($pstarttime), strtotime($pendtime));
+		}
 
 		showtagheader('div', 'postlist', $searchsubmit);
 		showformheader('recyclebinpost&operation=search&frame=no', 'target="rbframe"', 'rbform');
@@ -153,12 +164,14 @@ EOT;
 			array('search', 'recyclebinpost&operation=search', 0),
 			array('clean', 'recyclebinpost&operation=clean', 1)
 		));
+		/*search={"nav_recyclebinpost":"action=recyclebinpost","clean":"action=recyclebinpost&operation=clean"}*/
 		showformheader('recyclebinpost&operation=clean');
 		showtableheader('recyclebinpost_clean');
 		showsetting('recyclebinpost_clean_days', 'days', '30', 'text');
 		showsubmit('cleanrbsubmit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 
@@ -190,11 +203,15 @@ EOT;
 }
 
 function recyclebinpostshowpostlist($fid, $authors, $starttime, $endtime, $keywords, $start_limit, $lpp) {
-	global $_G, $lang, $posttableid;//, $security;
+	global $_G, $lang, $posttableid, $security;
 
 	$tids = $fids = array();
 
+	if($security){
+		$postlist = C::t('#security#security_evilpost')->fetch_all_by_search($posttableid, null, $keywords, -5, $fid, null, ($authors ? explode(',', str_replace(' ', '', $authors)): null), strtotime($starttime), strtotime($endtime), null, null, $start_limit, $lpp);
+	}else{
 		$postlist = C::t('forum_post')->fetch_all_by_search($posttableid, null, $keywords, -5, $fid, null, ($authors ? explode(',', str_replace(' ', '', $authors)): null), strtotime($starttime), strtotime($endtime), null, null, $start_limit, $lpp);
+	}
 
 	if(empty($postlist)) return false;
 

@@ -44,9 +44,6 @@
 			var focusautoshow = window.setInterval('showfocus(\'next\', 1);', 5000);
 		</script>
 	<!--{/if}-->
-	<!--{if $_G['uid'] && $_G['member']['allowadmincp'] == 1 && $_G['setting']['showpatchnotice'] == 1}-->
-		<div class="focus patch" id="patch_notice"></div>
-	<!--{/if}-->
 
 	<!--{ad/footerbanner/wp a_f/1}--><!--{ad/footerbanner/wp a_f/2}--><!--{ad/footerbanner/wp a_f/3}-->
 	<!--{ad/float/a_fl/1}--><!--{ad/float/a_fr/2}-->
@@ -57,12 +54,11 @@
 	<div id="ft" class="wp cl">
 		<div id="flk" class="y">
 			<p>
-				<!--{if $_G['setting']['site_qq']}--><a href="http://wpa.qq.com/msgrd?v=3&uin=$_G['setting']['site_qq']&site=$_G['setting']['bbname']&menu=yes&from=DiscuzLite" target="_blank" title="QQ"><img src="{IMGDIR}/site_qq.jpg" alt="QQ" /></a><span class="pipe">|</span><!--{/if}-->
+				<!--{if $_G['setting']['site_qq']}--><a href="//wpa.qq.com/msgrd?v=3&uin=$_G['setting']['site_qq']&site=$_G['setting']['bbname']&menu=yes&from=discuz" target="_blank" title="QQ"><img src="{IMGDIR}/site_qq.jpg" alt="QQ" /></a><span class="pipe">|</span><!--{/if}-->
 				<!--{loop $_G['setting']['footernavs'] $nav}--><!--{if $nav['available'] && ($nav['type'] && (!$nav['level'] || ($nav['level'] == 1 && $_G['uid']) || ($nav['level'] == 2 && $_G['adminid'] > 0) || ($nav['level'] == 3 && $_G['adminid'] == 1)) ||
 						!$nav['type'] && ($nav['id'] == 'stat' && $_G['group']['allowstatdata'] || $nav['id'] == 'report' && $_G['uid'] || $nav['id'] == 'archiver' || $nav['id'] == 'mobile' || $nav['id'] == 'darkroom'))}-->$nav[code]<span class="pipe">|</span><!--{/if}--><!--{/loop}-->
 						<strong><a href="$_G['setting']['siteurl']" target="_blank">$_G['setting']['sitename']</a></strong>
-				<!--{if $_G['setting']['icp']}-->( <a href="http://www.miitbeian.gov.cn/" target="_blank">$_G['setting']['icp']</a><!--{if !$_G['setting']['police']}--> )<!--{/if}--><!--{/if}-->
-				<!--{if $_G['setting']['police']}--><span class="pipe">|</span><!--{if !$_G['setting']['icp']}-->( <!--{/if}--><a href="{$_G['setting']['policeurl']}" target="_blank">$_G['setting']['police']</a> )<!--{/if}-->
+				<!--{if $_G['setting']['icp']}-->( <a href="http://www.miitbeian.gov.cn/" target="_blank">$_G['setting']['icp']</a> )<!--{/if}-->
 				<!--{hook/global_footerlink}-->
 				<!--{if $_G['setting']['statcode']}-->$_G['setting']['statcode']<!--{/if}-->
 			</p>
@@ -70,14 +66,14 @@
 				{lang time_now}
 				<span id="debuginfo">
 				<!--{if debuginfo()}-->, Processed in $_G[debuginfo][time] second(s), $_G[debuginfo][queries] queries
-					<!--{if $_G['gzipcompress']}-->, Gzip On<!--{/if}--><!--{if $_G['adminid'] == 1 && C::memory()->type}-->, <!--{echo ucwords(C::memory()->type)}--> On<!--{/if}-->.
+					<!--{if $_G['gzipcompress']}-->, Gzip On<!--{/if}--><!--{if C::memory()->type}-->, <!--{echo C::memory()->type}--> On<!--{/if}-->.
 				<!--{/if}-->
 				</span>
 			</p>
 		</div>
 		<div id="frt">
-			<p>Powered by <a href="http://www.discuz.net" target="_blank">Discuz!</a> <em><a href="http://www.discuzfans.net" target="_blank">Lite</a></em><!--{if !empty($_G['setting']['boardlicensed'])}--> <a href="http://license.comsenz.com/?pid=1&host=$_SERVER[HTTP_HOST]" target="_blank">Licensed</a><!--{/if}--></p>
-			<p class="xs0">&copy; 2001-<!--{echo date("Y");}--> <a href="http://www.comsenz.com" target="_blank">Comsenz Inc.</a></p>
+			<p>Powered by <strong><a href="http://www.discuz.net" target="_blank">Discuz!</a></strong> <em>$_G['setting']['version']</em><!--{if !empty($_G['setting']['boardlicensed'])}--> <a href="http://license.comsenz.com/?pid=1&host=$_SERVER[HTTP_HOST]" target="_blank">Licensed</a><!--{/if}--></p>
+			<p class="xs0">&copy; 2001-2017 <a href="http://www.comsenz.com" target="_blank">Comsenz Inc.</a></p>
 		</div>
 		<!--{eval updatesession();}-->
 		<!--{if $_G['uid'] && $_G['group']['allowinvisible']}-->
@@ -102,7 +98,7 @@
 	<!--{if !isset($_G['cookie']['sendmail'])}-->
 	<script type="text/javascript" src="home.php?mod=misc&ac=sendmail&rand=$_G[timestamp]"></script>
 	<!--{/if}-->
-
+	
 <!--{/if}-->
 
 <!--{if $_GET['diy'] == 'yes'}-->
@@ -115,7 +111,11 @@
 		<script type="text/javascript" src="{$_G[setting][jspath]}space_diy.js?{VERHASH}"></script>
 	<!--{/if}-->
 <!--{/if}-->
-<!--{if $_G['uid'] && !$_G['setting']['bbclosed'] && !$_G['member']['freeze'] && !$_G['member']['groupexpiry'] && $_G['setting']['disableipnotice'] != 1 && !empty($_G['cookie']['lip']) && $_G['cookie']['lip'] != ',' && !in_array($_G['clientip'], explode(',', $_G['cookie']['lip']))}-->
+<!--{if $_G['uid'] && $_G['member']['allowadmincp'] == 1 && empty($_G['cookie']['pluginnotice'])}-->
+	<div class="focus plugin" id="plugin_notice"></div>
+	<script type="text/javascript">pluginNotice();</script>
+<!--{/if}-->
+<!--{if !$_G['setting']['bbclosed'] && !$_G['member']['freeze'] && !$_G['member']['groupexpiry'] && $_G['setting']['disableipnotice'] != 1 && $_G['uid'] && !empty($_G['cookie']['lip'])}-->
 	<div class="focus plugin" id="ip_notice"></div>
 	<script type="text/javascript">ipNotice();</script>
 <!--{/if}-->

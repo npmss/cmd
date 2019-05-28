@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: discuzcode.func.php 35182 2015-01-12 02:05:50Z nemohou $
+ *      $Id: discuzcode.func.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -103,7 +103,7 @@ function mobile_discuzcode($param) {
 			"",
 			"",
 			"",
-			"<p>",
+			"",
 			"<p>",
 			"",
 			""

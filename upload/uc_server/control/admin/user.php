@@ -100,10 +100,10 @@ class control extends adminbase {
 						$this->user['admin'] = 1;
 						$this->writelog('login', 'succeed');
 						if($iframe) {
-							header('location: '.UC_ADMINSCRIPT.'?m=frame&a=main&iframe=1'.($this->cookie_status ? '' : '&sid='.$this->view->sid));
+							header('location: admin.php?m=frame&a=main&iframe=1'.($this->cookie_status ? '' : '&sid='.$this->view->sid));
 							exit;
 						} else {
-							header('location: '.UC_ADMINSCRIPT.($this->cookie_status ? '' : '?sid='.$this->view->sid));
+							header('location: admin.php'.($this->cookie_status ? '' : '?sid='.$this->view->sid));
 							exit;
 						}
 					} else {
@@ -127,7 +127,7 @@ class control extends adminbase {
 	function onlogout() {
 		$this->writelog('logout');
 		$this->setcookie('sid', '');
-		header('location: '.UC_ADMINSCRIPT);
+		header('location: admin.php');
 	}
 
 	function onadd() {
@@ -157,7 +157,7 @@ class control extends adminbase {
 			}
 		}
 		$uid = $_ENV['user']->add_user($username, $password, $email);
-		$this->message('user_add_succeed', UC_ADMINSCRIPT.'?m=user&a=ls');
+		$this->message('user_add_succeed', 'admin.php?m=user&a=ls');
 	}
 
 	function onls() {
@@ -228,7 +228,7 @@ class control extends adminbase {
 			$user['smallavatar'] = '<img src="avatar.php?uid='.$user['uid'].'&size=small">';
 			$userlist[$key] = $user;
 		}
-		$multipage = $this->page($num, UC_PPP, $_GET['page'], UC_ADMINSCRIPT.'?m=user&a=ls&srchname='.$srchname.$urladd);
+		$multipage = $this->page($num, UC_PPP, $_GET['page'], 'admin.php?m=user&a=ls&srchname='.$srchname.$urladd);
 
 		$this->_format_userlist($userlist);
 		$this->view->assign('userlist', $userlist);

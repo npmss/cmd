@@ -44,8 +44,8 @@ function smilies_onload(id, smcols, seditorkey) {
 		if(smile[0] && smilies_array[smile[0]]) {
 			CURRENTSTYPE = smile[0];
 		} else {
-			for(i in smilies_type) {
-				CURRENTSTYPE = i.substring(1);break;
+			for(i in smilies_array) {
+				CURRENTSTYPE = i;break;
 			}
 		}
 		smiliestype = '<div id="'+id+'_tb" class="tb tb_s cl"><ul>';

@@ -4,9 +4,8 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: profile.php 35159 2014-12-23 02:22:03Z nemohou $
+ *      $Id: profile.php 34314 2014-02-20 01:04:24Z nemohou $
  */
-
 
 if(!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
@@ -30,7 +29,7 @@ class mobile_api {
 			$data['upgradeprogress'] = 100 - ceil($data['upgradecredit'] / ($data['group']['creditslower'] - $data['group']['creditshigher']) * 100);
 			$data['upgradeprogress'] = max($data['upgradeprogress'], 2);
 		}
-		unset($data['password'], $data['email'], $data['regip'], $data['lastip'], $data['regip_loc'], $data['lastip_loc']);
+		unset($data['password'], $data['email'], $data['regip'], $data['lastip'], $data['regip_loc'], $data['lastip_loc'], $data['qq'], $data['alipay'], $data['icq'], $data['yahoo'], $data['msn'], $data['taobao'], $data['mobile'], $data['telephone'], $data['idcard'], $data['idcardtype'], $data['address'], $data['realname'], $data['zipcode']);
 		$variable = array(
 			'space' => $data,
 			'extcredits' => $_G['setting']['extcredits'],

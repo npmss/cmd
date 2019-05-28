@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_editor.php 32078 2012-11-07 05:28:56Z monkey $
+ *      $Id: function_editor.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -202,7 +202,7 @@ function imgtag($attributes) {
 		}
 	}
 	@extract($value);
-	if(!preg_match("/^http:\/\//i", $src)) {
+	if(!preg_match("/^https?:\/\//is", $src)) {
 		$src = absoluteurl($src);
 	}
 	return $src ? ($width && $height ? '[img='.$width.','.$height.']'.$src.'[/img]' : '[img]'.$src.'[/img]') : '';

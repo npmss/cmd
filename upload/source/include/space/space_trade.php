@@ -238,7 +238,7 @@ if($count) {
 	}
 }
 
-if($_G['uid'] && preg_match('/^\w+$/', $_GET['view'])) {
+if($_G['uid']) {
 	$_GET['view'] = !$_GET['view'] ? 'we' : $_GET['view'];
 	$navtitle = lang('core', 'title_'.$_GET['view'].'_trade');
 	if($navtitle == 'title_'.$_GET['view'].'_trade') {

@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: install_function.php 36324 2016-12-22 01:01:16Z nemohou $
+ *      $Id: install_function.php 36362 2017-02-04 02:02:03Z nemohou $
  */
 
 if(!defined('IN_COMSENZ')) {
@@ -497,7 +497,7 @@ function createtable($sql, $dbver) {
 	$type = strtoupper(preg_replace("/^\s*CREATE TABLE\s+.+\s+\(.+?\).*(ENGINE|TYPE)\s*=\s*([a-z]+?).*$/isU", "\\2", $sql));
 	$type = in_array($type, array('MYISAM', 'HEAP', 'MEMORY')) ? $type : 'MYISAM';
 	return preg_replace("/^\s*(CREATE TABLE\s+.+\s+\(.+?\)).*$/isU", "\\1", $sql).
-	($dbver > 4.1 ? " ENGINE=$type DEFAULT CHARSET=".DBCHARSET : " TYPE=$type");
+	($dbver > '4.1' ? " ENGINE=$type DEFAULT CHARSET=".DBCHARSET : " TYPE=$type");
 }
 
 function dir_writeable($dir) {
@@ -536,11 +536,9 @@ function show_header() {
 	define('SHOW_HEADER', TRUE);
 	global $step;
 	$version = DISCUZ_VERSION;
-	$release = DISCUZ_RELEASE;
 	$install_lang = lang(INSTALL_LANG);
 	$title = lang('title_install');
 	$charset = CHARSET;
-	@header('Content-Type: text/html; charset='.CHARSET);
 	echo <<<EOT
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -562,7 +560,7 @@ function show_header() {
 <div class="container">
 	<div class="header">
 		<h1>$title</h1>
-		<span>Discuz!$version $install_lang $release</span>
+		<span>Discuz!$version $install_lang</span>
 EOT;
 
 	$step > 0 && show_step($step);
@@ -868,15 +866,13 @@ function dfopen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALSE, $
 	$scheme = $matches['scheme'];
 	$host = $matches['host'];
 	$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-	$port = !empty($matches['port']) ? $matches['port'] : ($scheme == 'https' ? 443 : 80);
+	$port = !empty($matches['port']) ? $matches['port'] : ($matches['scheme'] == 'https' ? 443 : 80);
 
 	if(function_exists('curl_init') && $allowcurl) {
 		$ch = curl_init();
 		$ip && curl_setopt($ch, CURLOPT_HTTPHEADER, array("Host: ".$host));
 		curl_setopt($ch, CURLOPT_URL, $scheme.'://'.($ip ? $ip : $host).':'.$port.$path);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		if($post) {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			if($encodetype == 'URLENCODE') {
@@ -926,7 +922,7 @@ function dfopen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALSE, $
 	}
 
 	$fpflag = 0;
-	if(!$fp = @fsocketopen(($scheme == 'https' ? 'ssl://' : '').($ip ? $ip : $host), $port, $errno, $errstr, $timeout)) {
+	if(!$fp = @fsocketopen(($scheme == 'https' ? 'ssl' : $scheme).'://'.($scheme == 'https' ? $host : ($ip ? $ip : $host)), $port, $errno, $errstr, $timeout)) {
 		$context = array(
 			'http' => array(
 				'method' => $post ? 'POST' : 'GET',

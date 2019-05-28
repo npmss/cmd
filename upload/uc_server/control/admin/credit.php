@@ -130,7 +130,7 @@ class control extends adminbase {
 			}
 			if($app = $this->cache['apps'][$appid]) {
 				$apifilename = isset($app['apifilename']) && $app['apifilename'] ? $app['apifilename'] : 'uc.php';
-				if($app['extra']['apppath'] && @include $app['extra']['apppath'].'./api/'.$apifilename) {
+				if($app['extra']['apppath'] && substr(strrchr($apifilename, '.'), 1, 10) == 'php' && @include $app['extra']['apppath'].'./api/'.$apifilename) {
 					$uc_note = new uc_note();
 					$data = trim($uc_note->getcreditsettings('', ''));
 				} else {
@@ -139,7 +139,7 @@ class control extends adminbase {
 				}
 				if(!$testrelease) {
 					if(!($data = $this->sync_unserialize($data, ''))) {
-						header('location: '.UC_API.'/'.UC_ADMINSCRIPT.'?m=credit&a=sync&step=0&stepapp='.$stepapp.'&testrelease=1&sid='.$this->view->sid);
+						header('location: '.UC_API.'/admin.php?m=credit&a=sync&step=0&stepapp='.$stepapp.'&testrelease=1&sid='.$this->view->sid);
 						exit();
 					} else {
 						$stepapp++;
@@ -158,9 +158,9 @@ class control extends adminbase {
 					@fwrite($fp, $s);
 					@fclose($fp);
 				}
-				header('location: '.UC_API.'/'.UC_ADMINSCRIPT.'?m=credit&a=sync&step=0&stepapp='.$stepapp.'&sid='.$this->view->sid);
+				header('location: '.UC_API.'/admin.php?m=credit&a=sync&step=0&stepapp='.$stepapp.'&sid='.$this->view->sid);
 			} else {
-				header('location: '.UC_API.'/'.UC_ADMINSCRIPT.'?m=credit&a=sync&step=1&sid='.$this->view->sid);
+				header('location: '.UC_API.'/admin.php?m=credit&a=sync&step=1&sid='.$this->view->sid);
 			}
 			exit();
 		}
@@ -198,7 +198,7 @@ class control extends adminbase {
 		$_ENV['note']->add('updatecreditsettings', implode('', $data));
 		$_ENV['note']->send();
 
-		$this->message('syncappcredits_updated',UC_ADMINSCRIPT.'?m=credit&a=ls');
+		$this->message('syncappcredits_updated','admin.php?m=credit&a=ls');
 	}
 
 	function sync_unserialize($s, $release_root) {

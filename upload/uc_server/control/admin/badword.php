@@ -72,7 +72,7 @@ class control extends adminbase {
 		}
 		$num = $_ENV['badword']->get_total_num();
 		$badwordlist = $_ENV['badword']->get_list($page, UC_PPP, $num);
-		$multipage = $this->page($num, UC_PPP, $page, UC_ADMINSCRIPT.'?m=badword&a=ls');
+		$multipage = $this->page($num, UC_PPP, $page, 'admin.php?m=badword&a=ls');
 
 		$this->view->assign('status', $status);
 		$this->view->assign('badwordlist', $badwordlist);

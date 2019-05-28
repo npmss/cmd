@@ -36,6 +36,13 @@ $lang = array(
 	'blockclass_announcement_field_endtime' => '结束时间',
 	'blockclass_announcement_script_announcement' => '站点公告',
 
+	'blockclass_html_myapp' => '漫游模块',
+	'blockclass_myapp_field_url' => '应用链接',
+	'blockclass_myapp_field_title' => '应用名称',
+	'blockclass_myapp_field_icon' => '应用图标',
+	'blockclass_myapp_field_icon_small' => '应用图标(小)',
+	'blockclass_myapp_field_icon_abouts' => '应用图标(大图)',
+	'blockclass_myapp_script_myapp' => '漫游应用',
 
 	'blockclass_forum' => '论坛类',
 
@@ -58,6 +65,7 @@ $lang = array(
 	'blockclass_thread_field_sorturl' => '分类信息URL',
 	'blockclass_thread_field_posts' => '总发帖数',
 	'blockclass_thread_field_todayposts' => '今日发帖数',
+	'blockclass_thread_field_lastposter' => '最后回复作者',
 	'blockclass_thread_field_lastpost' => '最后回复时间',
 	'blockclass_thread_field_dateline' => '发帖时间',
 	'blockclass_thread_field_replies' => '回复数',

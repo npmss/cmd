@@ -12,7 +12,7 @@ if(!defined('IN_DISCUZ') || !defined('IN_ADMINCP')) {
 cpheader();
 $operation = $operation ? $operation : '';
 
-$anchor = in_array($_GET['anchor'], array('base', 'edit', 'verify', 'verify1', 'verify2', 'verify3', 'verify4', 'verify5', 'verify6', 'verify7', 'authstr', 'refusal', 'pass')) ? $_GET['anchor'] : 'base';
+$anchor = in_array($_GET['anchor'], array('base', 'edit', 'verify', 'verify1', 'verify2', 'verify3', 'verify4', 'verify5', 'verify6', 'authstr', 'refusal', 'pass')) ? $_GET['anchor'] : 'base';
 $current = array($anchor => 1);
 $navmenu = array();
 
@@ -22,7 +22,7 @@ if($operation == 'verify') {
 	$anchor = in_array($_GET['anchor'], array('authstr', 'refusal', 'pass', 'add')) ? $_GET['anchor'] : 'authstr';
 	$current = array($anchor => 1);
 	if($anchor == 'add') {
-		if(!submitcheck('addverifysubmit') || $vid < 0 || $vid > 7) {
+		if(!submitcheck('addverifysubmit') || $vid < 0 || $vid > 6) {
 			$navmenu[0] = array('members_verify_nav_authstr', 'verify&operation=verify&anchor=authstr&do='.$vid, 0);
 			$navmenu[1] = array('members_verify_nav_refusal', 'verify&operation=verify&anchor=refusal&do='.$vid, 0);
 			$navmenu[2] = array('members_verify_nav_pass', 'verify&operation=verify&anchor=pass&do='.$vid, 0);
@@ -204,7 +204,7 @@ EOF;
 			} elseif ($anchor == 'authstr') {
 				$_GET['flag'] = 0;
 			}
-			$intkeys = array('uid', 'verifytype', 'flag', 'verify1', 'verify2', 'verify3', 'verify4', 'verify5', 'verify6', 'verify7');
+			$intkeys = array('uid', 'verifytype', 'flag', 'verify1', 'verify2', 'verify3', 'verify4', 'verify5', 'verify6');
 			$strkeys = array();
 			$randkeys = array();
 			$likekeys = array('username');
@@ -509,9 +509,12 @@ EOF;
 	$vid = $_GET['vid'] < 8 ? intval($_GET['vid']) : 0;
 	$verifyarr = $_G['setting']['verify'][$vid];
 	if(!submitcheck('verifysubmit')) {
+		if($vid == 7) {
+			showtips('members_verify_setting_tips');
+		}
 		showformheader("verify&operation=edit&vid=$vid", 'enctype');
 		showtableheader();
-		$readonly = $vid == 6 ? 'readonly' : '';
+		$readonly = $vid == 6 || $vid == 7 ? 'readonly' : '';
 		showsetting('members_verify_title', "verify[title]", $verifyarr['title'], 'text', $readonly);
 		showsetting('members_verify_enable', "verify[available]", $verifyarr['available'], 'radio');
 		$verificonhtml = '';
@@ -534,15 +537,19 @@ EOF;
 
 		if($vid == 6) {
 			showsetting('members_verify_view_real_name', "verify[viewrealname]", $verifyarr['viewrealname'], 'radio');
+		} elseif($vid == 7) {
+			showsetting('members_verify_view_video_photo', "verify[viewvideophoto]", $verifyarr['viewvideophoto'], 'radio');
 		}
-		$varname = array('verify[field]', array(), 'isfloat');
-		foreach(C::t('common_member_profile_setting')->fetch_all_by_available(1) as $value) {
-			if(!in_array($value['fieldid'], array('constellation', 'zodiac', 'birthyear', 'birthmonth', 'birthprovince', 'birthdist', 'birthcommunity', 'resideprovince', 'residedist', 'residecommunity'))) {
-				$varname[1][] = array($value['fieldid'], $value['title'], $value['fieldid']);
+		if($vid != 7) {
+			$varname = array('verify[field]', array(), 'isfloat');
+			foreach(C::t('common_member_profile_setting')->fetch_all_by_available(1) as $value) {
+				if(!in_array($value['fieldid'], array('constellation', 'zodiac', 'birthyear', 'birthmonth', 'birthprovince', 'birthdist', 'birthcommunity', 'resideprovince', 'residedist', 'residecommunity'))) {
+					$varname[1][] = array($value['fieldid'], $value['title'], $value['fieldid']);
+				}
 			}
-		}
 
-		showsetting('members_verify_setting_field', $varname, $verifyarr['field'], 'omcheckbox');
+			showsetting('members_verify_setting_field', $varname, $verifyarr['field'], 'omcheckbox');
+		}
 		$groupselect = array();
 		foreach(C::t('common_usergroup')->fetch_all_not(array(6, 7)) as $group) {
 			$group['type'] = $group['type'] == 'special' && $group['radminid'] ? 'specialadmin' : $group['type'];
@@ -563,7 +570,7 @@ EOF;
 			$_G['setting']['verify'][$key]['unverifyicon'] = str_replace($_G['setting']['attachurl'].'common/', '', $value['unverifyicon']);
 		}
 		$verifynew = getgpc('verify');
-		if($vid == 6) {
+		if($vid == 6 || $vid == 7) {
 			$verifynew['title'] = $_G['setting']['verify'][$vid]['title'];
 		}
 		if($verifynew['available'] == 1 && !trim($verifynew['title'])) {
@@ -624,11 +631,10 @@ EOF;
 	shownav('user', 'nav_members_verify');
 	showsubmenu('members_verify_setting');
 	if(!submitcheck('verifysubmit')) {
-		showtips('members_verify_setting_tips');
 		showformheader("verify");
 		showtableheader('members_verify_setting', 'fixpadding');
 		showsubtitle(array('members_verify_available', 'members_verify_id', 'members_verify_title', ''), 'header');
-		for($i = 1; $i < 8; $i++) {
+		for($i = 1; $i < 7; $i++) {
 			$readonly = $i == 6 ? true : false;
 			$url = parse_url($_G['setting']['verify'][$i]['icon']);
 			if(!$url['host'] && $_G['setting']['verify'][$i]['icon'] && strpos($_G['setting']['verify'][$i]['icon'], $_G['setting']['attachurl'].'common/') === false) {

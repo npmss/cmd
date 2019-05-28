@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: extend_thread_poll.php 31107 2012-07-17 07:48:13Z zhengqingpeng $
+ *      $Id: extend_thread_poll.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -130,7 +130,7 @@ class extend_thread_poll extends extend_thread_base {
 					$pollarray['visible'] = empty($_GET['visibilitypoll']);
 					$pollarray['expiration'] = $_GET['expiration'];
 					$pollarray['overt'] = !empty($_GET['overt']);
-					$pollarray['pollimage'] = array_values($_GET['pollimage']);
+					$pollarray['pollimage'] = $_GET['pollimage'];
 					foreach($_GET['polloptionid'] as $key => $value) {
 						if(!preg_match("/^\d*$/", $value)) {
 							showmessage('submit_invalid');
@@ -151,7 +151,6 @@ class extend_thread_poll extends extend_thread_base {
 					foreach($query as $tempoptid) {
 						$optid[] = $tempoptid['polloptionid'];
 					}
-					$pollimage_key = 0;
 					foreach($pollarray['options'] as $key => $value) {
 						$value = dhtmlspecialchars(trim($value));
 						if(in_array($_GET['polloptionid'][$key], $optid)) {
@@ -160,27 +159,13 @@ class extend_thread_poll extends extend_thread_base {
 							} else {
 								C::t('forum_polloption')->update_safe_tid($_GET['polloptionid'][$key], $this->thread['tid'], $pollarray['displayorder'][$key]);
 							}
-							if($pollarray['pollimage'][$pollimage_key]) {
-								$polloption_image = C::t('forum_polloption_image')->fetch_by_poid_tid_pid($_GET['polloptionid'][$key], $this->thread['tid'], $this->post['pid']);
-								if(empty($polloption_image)){
-									C::t('forum_polloption_image')->update($pollarray['pollimage'][$pollimage_key], array('poid' => $_GET['polloptionid'][$key], 'tid' => $this->thread['tid'], 'pid' => $this->post['pid']));
-									$pollarray['isimage'] = 1;
-								}else{
-									if($polloption_image['aid'] != $pollarray['pollimage'][$pollimage_key]){
-										C::t('forum_polloption_image')->update($polloption_image['aid'], array('poid' => 0, 'tid' => 0, 'pid' => 0));
-										C::t('forum_polloption_image')->update($pollarray['pollimage'][$pollimage_key], array('poid' => $_GET['polloptionid'][$key], 'tid' => $this->thread['tid'], 'pid' => $this->post['pid']));
-										$pollarray['isimage'] = 1;
-									}
-								}
-							}
 						} else {
 							$polloptionid = C::t('forum_polloption')->insert(array('tid' => $this->thread['tid'], 'displayorder' => $pollarray['displayorder'][$key], 'polloption' => $value), true);
-							if($pollarray['pollimage'][$pollimage_key]) {
-								C::t('forum_polloption_image')->update($pollarray['pollimage'][$pollimage_key], array('poid' => $polloptionid, 'tid' => $this->thread['tid'], 'pid' => $this->post['pid']));
+							if($pollarray['pollimage'][$key]) {
+								C::t('forum_polloption_image')->update($pollarray['pollimage'][$key], array('poid' => $polloptionid, 'tid' => $this->thread['tid'], 'pid' => $this->post['pid']));
 								$pollarray['isimage'] = 1;
 							}
 						}
-						$pollimage_key++;
 					}
 					$polloptionpreview = '';
 					$query = C::t('forum_polloption')->fetch_all_by_tid($this->thread['tid'], 1, 2);

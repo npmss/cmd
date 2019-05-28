@@ -108,7 +108,7 @@ function mkfeed($feed, $actors=array()) {
 	$feed['body_general'] = feed_mktarget($feed['body_general']);
 
 	if(is_numeric($feed['icon'])) {
-		$feed['icon_image'] = STATICURL."image/feed/userapp.gif";
+		$feed['icon_image'] = "http://appicon.manyou.com/icons/{$feed['icon']}";
 	} else {
 		$feed['icon_image'] = STATICURL."image/feed/{$feed['icon']}.gif";
 	}

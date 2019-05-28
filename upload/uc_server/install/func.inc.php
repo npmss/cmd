@@ -416,7 +416,7 @@ function createtable($sql) {
 	$type = strtoupper(preg_replace("/^\s*CREATE TABLE\s+.+\s+\(.+?\).*(ENGINE|TYPE)\s*=\s*([a-z]+?).*$/isU", "\\2", $sql));
 	$type = in_array($type, array('MYISAM', 'HEAP')) ? $type : 'MYISAM';
 	return preg_replace("/^\s*(CREATE TABLE\s+.+\s+\(.+?\)).*$/isU", "\\1", $sql).
-	(mysql_get_server_info() > 4.1 ? " ENGINE=$type DEFAULT CHARSET=".DBCHARSET : " TYPE=$type");
+	(mysql_get_server_info() > '4.1' ? " ENGINE=$type DEFAULT CHARSET=".DBCHARSET : " TYPE=$type");
 }
 
 function dir_writeable($dir) {
@@ -488,7 +488,7 @@ EOT;
 function show_footer($quit = true) {
 
 	echo <<<EOT
-		<div class="footer">&copy;2001 - 2011 <a href="http://www.comsenz.com/">Comsenz</a> Inc.</div>
+		<div class="footer">&copy;2001 - 2017 <a href="http://www.comsenz.com/">Comsenz</a> Inc.</div>
 	</div>
 </div>
 </body>
@@ -747,7 +747,7 @@ function dfopen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALSE, $
 	$scheme = $matches['scheme'];
 	$host = $matches['host'];
 	$path = $matches['path'] ? $matches['path'].(isset($matches['query']) && $matches['query'] ? '?'.$matches['query'] : '') : '/';
-	$port = !empty($matches['port']) ? $matches['port'] : ($scheme == 'https' ? 443 :80);
+	$port = !empty($matches['port']) ? $matches['port'] : ($matches['scheme'] == 'https' ? 443 : 80);
 
 	if($post) {
 		$out = "POST $path HTTP/1.0\r\n";

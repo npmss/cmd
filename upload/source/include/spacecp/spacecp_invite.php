@@ -47,6 +47,8 @@ $mailvar = array(
 	'siteurl' => $siteurl
 );
 
+$appinfo = array();
+
 if(!$creditnum) {
 	$inviteurl = getinviteurl(0, 0, $appid);
 }
@@ -167,14 +169,12 @@ if($_GET['op'] == 'resend') {
 		}
 
 		if($value = C::t('common_invite')->fetch_by_id_uid($id, $_G['uid'])) {
-		    if($value['email']){
-    			if($creditnum) {
-    				$inviteurl = getinviteurl($value['id'], $value['code'], $value['appid']);
-    			}
-    			$mailvar['inviteurl'] = $inviteurl;
+			if($creditnum) {
+				$inviteurl = getinviteurl($value['id'], $value['code'], $value['appid']);
+			}
+			$mailvar['inviteurl'] = $inviteurl;
 
-    			createmail($value['email'], $mailvar);
-		    }
+			createmail($value['email'], $mailvar);
 			showmessage('send_result_succeed', dreferer(), array('id' => $id), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
 
 		} else {
@@ -223,13 +223,11 @@ if($_GET['op'] == 'resend') {
 			$inviteurl = getinviteurl($value['id'], $value['code'], $value['appid']);
 
 			if($value['type']) {
-			    if($value['email']){
-			        $maillist[] = array(
-			            'email' => $value['email'],
-			            'url' => $inviteurl,
-			            'id' => $value['id']
-			        );
-			    }
+				$maillist[] = array(
+					'email' => $value['email'],
+					'url' => $inviteurl,
+					'id' => $value['id']
+				);
 			} else {
 				$list[$value[code]] = $inviteurl;
 				$count++;
@@ -252,14 +250,14 @@ $navtitle = lang('core', 'title_invite_friend');
 include template('home/spacecp_invite');
 
 function createmail($mail, $mailvar) {
-	global $_G, $space;
+	global $_G, $space, $appinfo;
 
 	$mailvar['saymsg'] = empty($_POST['saymsg'])?'':getstr($_POST['saymsg'], 500);
 
 	require_once libfile('function/mail');
 
-	$subject = lang('spacecp', 'invite_subject', $mailvar);
-	$message = lang('spacecp', 'invite_massage', $mailvar);
+	$subject = lang('spacecp', $appinfo?'app_invite_subject':'invite_subject', $mailvar);
+	$message = lang('spacecp', $appinfo?'app_invite_massage':'invite_massage', $mailvar);
 
 	if(!sendmail($mail, $subject, $message)) {
 		runlog('sendmail', "$mail sendmail failed.");
@@ -273,7 +271,8 @@ function getinviteurl($inviteid, $invitecode, $appid) {
 		$inviteurl = getsiteurl()."home.php?mod=invite&amp;id={$inviteid}&amp;c={$invitecode}";
 	} else {
 		$invite_code = space_key($_G['uid'], $appid);
-		$inviteurl = getsiteurl()."home.php?mod=invite&amp;u=$_G[uid]&amp;c=$invite_code";
+		$inviteapp = $appid?"&amp;app=$appid":'';
+		$inviteurl = getsiteurl()."home.php?mod=invite&amp;u=$_G[uid]&amp;c=$invite_code{$inviteapp}";
 	}
 	return $inviteurl;
 }

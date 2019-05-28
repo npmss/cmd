@@ -27,8 +27,8 @@ C::t('forum_postcache')->delete_by_dateline(TIMESTAMP-86400);
 C::t('forum_newthread')->delete_by_dateline(TIMESTAMP-1296000);
 C::t('common_seccheck')->truncate();
 
-if($settingnew['heatthread']['type'] == 2 && $settingnew['heatthread']['period']) {
-	$partakeperoid = 86400 * $settingnew['heatthread']['period'];
+if($_G['setting']['heatthread']['type'] == 2 && $_G['setting']['heatthread']['period']) {
+	$partakeperoid = 86400 * $_G['setting']['heatthread']['period'];
 	C::t('forum_threadpartake')->delete($_G[timestamp]-$partakeperoid);
 }
 
@@ -132,11 +132,7 @@ function removedir($dirname, $keepdir = FALSE) {
 	while(($file = readdir($handle)) !== FALSE) {
 		if($file != '.' && $file != '..') {
 			$dir = $dirname . DIRECTORY_SEPARATOR . $file;
-			if(is_dir($dir)) {
-				removedir($dir);
-			}elseif(!$keepdir || $file != 'index.htm'){
-				unlink($dir);
-			}
+			is_dir($dir) ? removedir($dir) : unlink($dir);
 		}
 	}
 	closedir($handle);

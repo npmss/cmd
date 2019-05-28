@@ -4,9 +4,8 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: viewthread.php 35159 2014-12-23 02:22:03Z nemohou $
+ *      $Id: viewthread.php 36278 2016-12-09 07:52:35Z nemohou $
  */
-
 if (!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
 }
@@ -105,7 +104,7 @@ class mobile_api {
 			if (strpos($variable['postlist'][$k]['message'], '[/tthread]') !== FALSE) {
 				$matches = array();
 				preg_match('/\[tthread=(.+?),(.+?)\](.*?)\[\/tthread\]/', $variable['postlist'][$k]['message'], $matches);
-				$variable['postlist'][$k]['message'] = preg_replace('/\[tthread=(.+?)\](.*?)\[\/tthread\]/', '', $variable['postlist'][$k]['message']);
+				$variable['postlist'][$k]['message'] = preg_replace('/\[tthread=(.+?)\](.*?)\[\/tthread\]/', lang('plugin/qqconnect', 'connect_tthread_message', array('username' => $matches[1], 'nick' => $matches[2])), $variable['postlist'][$k]['message']);
 			}
 			$variable['postlist'][$k]['message'] = preg_replace("/<a\shref=\"([^\"]+?)\"\starget=\"_blank\">\[viewimg\]<\/a>/is", "<img src=\"\\1\" />", $variable['postlist'][$k]['message']);
 			$variable['postlist'][$k]['message'] = mobile_api::_findimg($variable['postlist'][$k]['message']);
@@ -128,13 +127,7 @@ class mobile_api {
 				}
 				$variable['postlist'][$k]['imagelist'] = $imagelist;
 			}
-			foreach($variable['postlist'][$k]['attachlist'] as $aid) {
-				$variable['postlist'][$k]['attachments'][$aid]['aid'] = packaids($variable['postlist'][$k]['attachments'][$aid]);
-				$variable['postlist'][$k]['attachments'][$aid] = mobile_core::getvalues($variable['postlist'][$k]['attachments'][$aid], array('aid', 'dateline', 'filename', 'attachsize', 'payed', 'url'));
-			}
-			foreach($variable['postlist'][$k]['imagelist'] as $aid) {
-				$variable['postlist'][$k]['attachments'][$aid] = mobile_core::getvalues($variable['postlist'][$k]['attachments'][$aid], array('dateline', 'filename', 'attachment', 'payed', 'url', 'thumb'));
-			}
+			$variable['postlist'][$k]['message'] = preg_replace("/\[attach\]\d+\[\/attach\]/i", '', $variable['postlist'][$k]['message']);
 			$variable['postlist'][$k]['message'] = preg_replace('/(&nbsp;){2,}/', '', $variable['postlist'][$k]['message']);
 			$variable['postlist'][$k]['dateline'] = strip_tags($post['dateline']);
 			$variable['postlist'][$k]['groupiconid'] = mobile_core::usergroupIconId($post['groupid']);

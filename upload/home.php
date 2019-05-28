@@ -19,6 +19,9 @@ require_once './source/function/function_home.php';
 
 $discuz = C::app();
 
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
 
 $space = array();
 
@@ -33,12 +36,6 @@ if($mod == 'space' && ((empty($_GET['do']) || $_GET['do'] == 'index') && ($_G['i
 }
 $curmod = !empty($_G['setting']['followstatus']) && (empty($_GET['diy']) && empty($_GET['do']) && $mod == 'space' || $_GET['do'] == 'follow') ? 'follow' : $mod;
 define('CURMODULE', $curmod);
-
-
-$cachelist = array('magic','usergroups', 'diytemplatenamehome');
-$discuz->cachelist = $cachelist;
-$discuz->init();
-
 runhooks($_GET['do'] == 'profile' && $_G['inajax'] ? 'card' : $_GET['do']);
 
 require_once libfile('home/'.$mod, 'module');

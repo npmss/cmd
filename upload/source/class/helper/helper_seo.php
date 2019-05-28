@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: helper_seo.php 32836 2013-03-14 08:10:02Z zhangguosheng $
+ *      $Id: helper_seo.php 36278 2016-12-09 07:52:35Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -47,8 +47,8 @@ class helper_seo {
 
 
 	public static function strreplace_strip_split($searchs, $replaces, $str) {
-		$searchspace = array('((\s*\-\s*)+)', '((\s*\,\s*)+)', '((\s*\|\s*)+)', '((\s*\t\s*)+)', '((\s*_\s*)+)');
-		$replacespace = array('-', ',', '|', ' ', '_');
+		$searchspace = array('(((\s)*\-(\s)*)+)', '(((\s)*\,(\s)*)+)', '(((\s)*\|(\s)*)+)', '(((\s)*\t(\s)*)+)', '(((\s)*_(\s)*)+)');
+		$replacespace = array('$3-$3', '$3,$3', '$3|$3', '$3 $3', '$3_$3');
 		return trim(preg_replace($searchspace, $replacespace, str_replace($searchs, $replaces, $str)), ' ,-|_');
 	}
 

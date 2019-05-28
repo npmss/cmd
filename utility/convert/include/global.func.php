@@ -250,7 +250,7 @@ echo <<<EOT
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Discuz! X 系列产品升级转换</title>
-<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css">
 body,td { font-family: Tahoma; font-size: 12px; line-height: 150%;}
 form {margin: 0px; padding: 0px;}

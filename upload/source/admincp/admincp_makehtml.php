@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: admincp_makehtml.php 35034 2014-10-27 03:42:17Z laoguozhang $
+ *      $Id: admincp_makehtml.php 35041 2014-10-29 08:05:36Z nemohou $
  */
 
 if(!defined('IN_DISCUZ') || !defined('IN_DISCUZ')) {
@@ -49,6 +49,7 @@ if(!in_array($operation, array('aids', 'catids', 'topicids'))) {
 	showsubmenu('html', $_nav, '');
 }
 if($operation == 'all') {
+	/*search={"¨¦¨²3¨¦¨¨?2?":"action=makehtml&operation=all"}*/
 	showtips('makehtml_tips_all');
 
 	showformheader('makehtml&operation=all');
@@ -136,6 +137,7 @@ function make_html_article(starttime) {
 EOT;
 	showtablefooter();
 	showformfooter();
+	/*search*/
 } elseif($operation == 'index') {
 
 	showtips('makehtml_tips_index');
@@ -414,6 +416,7 @@ EOT;
 } elseif ($operation == 'makehtmlsetting') {
 
 	if(!submitcheck('makehtmlsetting')) {
+		/*search={"html":"action=makehtml&operation=makehtmlsetting","setting_functions_makehtml":"action=makehtml&operation=makehtmlsetting"}*/
 		$setting = $_G['setting'];
 		showformheader("makehtml&operation=makehtmlsetting");
 		showtableheader('', 'nobottom', 'id="makehtml"'.($_GET['operation'] != 'makehtmlsetting' ? ' style="display: none"' : ''));
@@ -433,6 +436,7 @@ EOT;
 		showtablefooter();
 		showsubmit('makehtmlsetting', 'submit');
 		showformfooter();
+		/*search*/
 	} else {
 		$settingnew = $_GET['settingnew'];
 		if(isset($settingnew['makehtml'])) {
@@ -490,6 +494,7 @@ EOT;
 		cpmsg('admincp_makehtml_cleanhtml_error', 'action=makehtml&operation=makehtmlsetting', 'error');
 	} else {
 		if(!submitcheck('cleanhtml')) {
+			/*search={"??¨¤¨ªHTML":"action=makehtml&operation=htmlclean"}*/
 
 			showformheader("makehtml&operation=cleanhtml");
 			showtableheader();
@@ -498,6 +503,7 @@ EOT;
 			showtablefooter();
 			showsubmit('cleanhtml', 'submit');
 			showformfooter();
+			/*search*/
 		} else {
 			if(isset($_GET['cleandata'])) {
 				$cleandata = $_GET['cleandata'];

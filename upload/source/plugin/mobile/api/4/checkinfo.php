@@ -6,7 +6,6 @@
  *
  *      $Id: checkinfo.php 34424 2014-04-24 05:17:08Z nemohou $
  */
-
 if (!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
 }

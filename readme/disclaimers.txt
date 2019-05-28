@@ -1,6 +1,0 @@
-Discuz! L1.0 由Discuz粉丝基于Discuz! X系列开发，仅供 Discuz! 粉丝网 用户进行学习交流，本团队不承担任何因使用本软件而产生问题的相关责任，若您将此程序用于生产环境，请自行承担风险，并准守Discuz官方的授权协议。
-
-相关网站
-Discuz! 官方站：http://www.discuz.net
-Discuz! 粉丝网：https://www.discuzfans.net
-交流QQ群：482345012

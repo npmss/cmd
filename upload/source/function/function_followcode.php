@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_followcode.php 35665 2015-11-06 04:09:22Z nemohou $
+ *      $Id: function_followcode.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -41,7 +41,7 @@ function followcode($message, $tid = 0, $pid = 0, $length = 0, $allowimg = true)
 	if($_G['setting']['plugins']['func'][HOOKTYPE]['discuzcode']) {
 		$_G['discuzcodemessage'] = & $message;
 		$param = func_get_args();
-		hookscript('discuzcode', 'global', 'funcs', array('param' => $param, 'caller' => 'discuzcode'), 'discuzcode');
+		hookscript('discuzcode', 'global', 'funcs', array('param' => $param, 'caller' => 'followcode'), 'discuzcode');
 	}
 	$_G['delattach'] = array();
 	$message = fparsesmiles($message);

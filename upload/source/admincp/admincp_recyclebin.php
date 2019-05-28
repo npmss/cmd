@@ -112,7 +112,8 @@ if(!$operation) {
 		$pendtime = $_GET['pendtime'];
 		$mstarttime = $_GET['mstarttime'];
 		$mendtime = $_GET['mendtime'];
-
+		
+		$secStatus = false;		
 
 		$searchsubmit = $_GET['searchsubmit'];
 
@@ -131,6 +132,7 @@ if(!$operation) {
 			array('search', 'recyclebin&operation=search', 1),
 			array('clean', 'recyclebin&operation=clean', 0)
 		));
+		/*search={"nav_recyclebin":"action=recyclebin","search":"action=recyclebin&operation=search"}*/
 		echo <<<EOT
 <script type="text/javascript" src="static/js/calendar.js"></script>
 <script type="text/JavaScript">
@@ -151,11 +153,15 @@ EOT;
 		showsetting('recyclebin_search_post_time', array('pstarttime', 'pendtime'), array($pstarttime, $pendtime), 'daterange');
 		showsetting('recyclebin_search_mod_time', array('mstarttime', 'mendtime'), array($mstarttime, $mendtime), 'daterange');
 
+		if($secStatus){
+			showsetting('recyclebin_search_security_thread', 'security', $security, 'radio');
+		}
 
 		showsubmit('searchsubmit');
 		showtablefooter();
 		showformfooter();
 		showtagfooter('div');
+		/*search*/
 
 		if(submitcheck('searchsubmit')) {
 
@@ -175,7 +181,12 @@ EOT;
 
 
 
+			$security = $secStatus && $security;
+			if($security){
+				$threadcount = C::t('#security#security_evilpost')->count_by_recyclebine($fid, $isgroup, $author, $admins, $pstarttime, $pendtime, $mstarttime, $mendtime, $keywords);
+			}else{
 				$threadcount = C::t('forum_thread')->count_by_recyclebine($fid, $isgroup, $author, $admins, $pstarttime, $pendtime, $mstarttime, $mendtime, $keywords);
+			}
 
 			$pagetmp = $page;
 
@@ -190,7 +201,11 @@ EOT;
 
 			if($threadcount) {
 
+				if($security){
+					$searchresult = C::t('#security#security_evilpost')->fetch_all_by_recyclebine($fid, $isgroup, $author, $admins, $pstarttime, $pendtime, $mstarttime, $mendtime, $keywords, ($pagetmp - 1) * $_G['ppp'], $_G['ppp']);
+				}else{
 					$searchresult = C::t('forum_thread')->fetch_all_by_recyclebine($fid, $isgroup, $author, $admins, $pstarttime, $pendtime, $mstarttime, $mendtime, $keywords, ($pagetmp - 1) * $_G['ppp'], $_G['ppp']);
+				}
 				$issettids = array();
 				foreach($searchresult as $thread) {
 					$disabledstr = '';
@@ -266,12 +281,14 @@ EOT;
 			array('search', 'recyclebin&operation=search', 0),
 			array('clean', 'recyclebin&operation=clean', 1)
 		));
+		/*search={"nav_recyclebin":"action=recyclebin","clean":"action=recyclebin&operation=clean"}*/
 		showformheader('recyclebin&operation=clean');
 		showtableheader('recyclebin_clean');
 		showsetting('recyclebin_clean_days', 'days', '30', 'text');
 		showsubmit('rbsubmit');
 		showtablefooter();
 		showformfooter();
+		/*search*/
 
 	} else {
 

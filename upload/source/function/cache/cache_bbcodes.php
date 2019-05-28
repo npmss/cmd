@@ -41,7 +41,11 @@ function build_cache_bbcodes() {
 				$bbcode['replacement'] = str_replace('{1}', '\\1', $bbcode['replacement']);
 				break;
 		}
+		if(preg_match("/\{(RANDOM|MD5)\}/", $bbcode['replacement'])) {
+			$replace = str_replace('{RANDOM}', '', str_replace('{MD5}', '', $bbcode['replacement']));
+		} else {
 			$replace = $bbcode['replacement'];
+		}
 
 		foreach($bbcode['perm'] as $groupid) {
 			for($i = 0; $i < $bbcode['nest']; $i++) {

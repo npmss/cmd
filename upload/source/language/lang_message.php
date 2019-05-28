@@ -232,9 +232,6 @@ $lang = array (
   'profile_username_illegal' => '用户名包含敏感字符',
   'profile_username_duplicate' => '该用户名已被注册',
   'profile_illegal' => '格式不正确或为空',
-  'profile_loginname_is_numeric' => '抱歉，登录名不能是纯数字',
-  'profile_loginname_tooshort' => '抱歉，您输入的登录名小于 3 个字符，请输入一个较长的登录名',
-  'profile_loginname_exists' => '抱歉，您输入的登录名重复，请更换',
   'task_nonexistence' => '抱歉，该任务不存在或已被删除',
   'task_not_found' => '任务文件丢失，{taskclassname}',
   'task_not_underway' => '不是进行中的任务',
@@ -250,6 +247,7 @@ $lang = array (
 
   'portal_status_off' => '抱歉，门户功能尚未开启',
 
+  'no_privilege_my_app_status' => '对不起，当前站点已经关闭了用户多应用服务。',
 
   'register_check_found' => '该用户名已注册，请更换用户名或<a href="member.php?mod=logging&action=login" onclick="showWindow(\'login\', this.href);return false;" class="xi2">登录</a>',
   'register_activation' => '用户名已存在',
@@ -310,7 +308,6 @@ $lang = array (
   'attachment_yetpay' => '您已购买过此附件，无需重复购买，现在将开始附件下载',
   'attachment_buyall' => '本帖所有附件购买成功 ',
   'attachment_buy' => '附件购买成功，开始下载“{filename}”',
-  'attachment_mobile_buy' => '附件购买成功',
   'no_privilege_postimage' => '抱歉，您目前没有权限上传图片，<a href="home.php?mod=spacecp&ac=usergroup" target="_blank">点击这里查看权限</a>',
   'no_privilege_postattach' => '抱歉，您目前没有权限上传附件，<a href="home.php?mod=spacecp&ac=usergroup" target="_blank">点击这里查看权限</a>',
   'thread_closed' => '该帖子已被关闭，不能评论！',
@@ -530,6 +527,7 @@ $lang = array (
 
   'search_portal_closed' => '抱歉，文章搜索已关闭',
 
+  'no_privilege_myapp' => '抱歉，该应用不存在或已关闭，您可以<a href="userapp.php?mod=manage&my_suffix=%2Fapp%2Flist">选择其他应用</a>',
 
   'collection_comment_closed' => '抱歉，管理员没有开放淘专辑的评论功能',
   'collection_comment_succ' => '发表评论成功',
@@ -564,6 +562,7 @@ $lang = array (
   'collection_follow_succ' => '成功订阅淘专辑',
   'collection_unfollow_succ' => '成功取消订阅淘专辑',
 
+  'no_privilege_deluserapp' => '抱歉，您没有权限操作此应用',
 
   'email_check_sucess' => '您的邮箱({email})验证激活成功 ',
   'email_check_account_invalid' => '抱歉，受保护用户或创始人不能使用邮箱验证，直接修改用户信息。',
@@ -1075,10 +1074,6 @@ $lang = array (
   'author_not_uploadpic' => '楼主暂时没有上传图片',
   'noreply_yourself_error' => '您不能对自己的回帖进行投票',
   'noreply_voted_error' => '您已经对此回帖投过票了',
-
-  'payapi_error' => '支付接口错误，请稍候再试',
-
-  'adminfile_edit' => '为保证系统后台安全，请修改 admin.php 为其他文件名',
 );
 
 ?>

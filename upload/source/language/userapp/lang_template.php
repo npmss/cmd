@@ -46,6 +46,7 @@ $lang = array (
 								<li>默认应用只能进行相关设置与移除，但移除后仍然会显示在您的右侧菜单中。</li></ol>',
   'open' => '展开',
   'recommend_unit' => '荐',
+  'myapp' => '我的应用',
   'appcenter' => '应用中心',
 );
 

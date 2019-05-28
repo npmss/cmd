@@ -13,7 +13,7 @@ if(!defined('IN_DISCUZ')) {
 
 $id = intval($_GET['id']);
 $uid = intval($_GET['u']);
-$appid = 0;//intval($_GET['app']);
+$appid = intval($_GET['app']);
 $acceptconfirm = false;
 if($_G['setting']['regstatus'] < 2) {
 	showmessage('not_open_invite', '', array(), array('return' => true));
@@ -29,7 +29,7 @@ if($_G['uid']) {
 		if(count($cookies) == 3) {
 			$uid = intval($cookies[0]);
 			$_GET['c'] = $cookies[1];
-			$appid = 0;//intval($cookies[2]);
+			$appid = intval($cookies[2]);
 		} else {
 			$id = intval($cookies[0]);
 			$_GET['c'] = $cookies[1];
@@ -57,7 +57,7 @@ if($id) {
 		showmessage('invite_code_endtime_error', '', array(), array('return' => true));
 	}
 
-	$appid = 0;//$invite['appid'];
+	$appid = $invite['appid'];
 	$uid = $invite['uid'];
 
 	$cookievar = "$id,$invite[code]";
@@ -66,12 +66,12 @@ if($id) {
 
 	$id = 0;
 	$invite_code = space_key($uid, $appid);
-	if($_GET['c'] != $invite_code) {
+	if($_GET['c'] !== $invite_code) {
 		showmessage('invite_code_error', '', array(), array('return' => true));
 	}
 	$inviteuser = getuserbyuid($uid);
 	loadcache('usergroup_'.$inviteuser['groupid']);
-	if(!empty($_G['cache']['usergroup_'.$inviteuser['groupid']]) && $_G['cache']['usergroup_'.$inviteuser['groupid']]['inviteprice']) {
+	if(!empty($_G['cache']['usergroup_'.$inviteuser['groupid']]) && (!$_G['cache']['usergroup_'.$inviteuser['groupid']]['allowinvite'] || $_G['cache']['usergroup_'.$inviteuser['groupid']]['inviteprice'])) {
 		showmessage('invite_code_error', '', array(), array('return' => true));
 	}
 
@@ -80,8 +80,6 @@ if($id) {
 } else {
 	showmessage('invite_code_error', '', array(), array('return' => true));
 }
-
-$userapp = array();
 
 $space = getuserbyuid($uid);
 if(empty($space)) {
@@ -124,7 +122,7 @@ if($acceptconfirm) {
 	}
 
 	include_once libfile('function/stat');
-	updatestat('invite');
+	updatestat($appid ? 'appinvite' : 'invite');
 
 	showmessage('invite_friend_ok', $jumpurl);
 

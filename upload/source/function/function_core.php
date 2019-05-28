@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: function_core.php 36324 2016-12-22 01:01:16Z nemohou $
+ *      $Id: function_core.php 36342 2017-01-09 01:15:30Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -209,9 +209,6 @@ function dhtmlspecialchars($string, $flags = null) {
 	} else {
 		if($flags === null) {
 			$string = str_replace(array('&', '"', '<', '>'), array('&amp;', '&quot;', '&lt;', '&gt;'), $string);
-			if(strpos($string, '&amp;#') !== false) {
-				$string = preg_replace('/&amp;((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $string);
-			}
 		} else {
 			if(PHP_VERSION < '5.4.0') {
 				$string = htmlspecialchars($string, $flags);
@@ -310,8 +307,8 @@ function checkrobot($useragent = '') {
 	static $kw_browsers = array('msie', 'netscape', 'opera', 'konqueror', 'mozilla');
 
 	$useragent = strtolower(empty($useragent) ? $_SERVER['HTTP_USER_AGENT'] : $useragent);
-	if(strpos($useragent, 'http://') === false && dstrpos($useragent, $kw_browsers)) return false;
 	if(dstrpos($useragent, $kw_spiders)) return true;
+	if(strpos($useragent, 'http://') === false && dstrpos($useragent, $kw_browsers)) return false;
 	return false;
 }
 function checkmobile() {
@@ -408,12 +405,7 @@ function avatar($uid, $size = 'middle', $returnsrc = FALSE, $real = FALSE, $stat
 		$staticavatar = $_G['setting']['avatarmethod'];
 	}
 
-
 	$ucenterurl = empty($ucenterurl) ? $_G['setting']['ucenterurl'] : $ucenterurl;
-
-	if($_G['setting']['httpsoptimize']){
-		$ucenterurl = preg_replace('/^https?:\/\//i', '//', $ucenterurl);
-	}
 	$size = in_array($size, array('big', 'middle', 'small')) ? $size : 'middle';
 	$uid = abs(intval($uid));
 	if(!$staticavatar && !$static) {
@@ -838,20 +830,25 @@ function libfile($libname, $folder = '') {
 }
 
 function dstrlen($str) {
-    $charset = strtolower(CHARSET);
-    if(function_exists("mb_strlen")){
-        return mb_strlen($str,$charset);
-    }
-    $re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
-    $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
-    $re['gbk']    = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
-    $re['big5']   = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
-    preg_match_all($re[$charset], $str, $match);
-    return count($match[0]);
+	if(strtolower(CHARSET) != 'utf-8') {
+		return strlen($str);
+	}
+	$count = 0;
+	for($i = 0; $i < strlen($str); $i++){
+		$value = ord($str[$i]);
+		if($value > 127) {
+			$count++;
+			if($value >= 192 && $value <= 223) $i++;
+			elseif($value >= 224 && $value <= 239) $i = $i + 2;
+			elseif($value >= 240 && $value <= 247) $i = $i + 3;
+	    	}
+    		$count++;
+	}
+	return $count;
 }
 
 function cutstr($string, $length, $dot = ' ...') {
-	if(dstrlen($string) <= $length) {
+	if(strlen($string) <= $length) {
 		return $string;
 	}
 
@@ -946,10 +943,6 @@ function rewriteoutput($type, $returntype, $host) {
 			'{fid}' => empty($_G['setting']['forumkeys'][$fid]) ? $fid : $_G['setting']['forumkeys'][$fid],
 			'{page}' => $page ? $page : 1,
 		);
-
-		if($r['{page}'] > 1 && $_G['setting']['rewriterule'][$type.'2']){
-			$type = $type.'2';
-		}
 	} elseif($type == 'forum_viewthread') {
 		list(,,, $tid, $page, $prevpage, $extra) = func_get_args();
 		$r = array(
@@ -957,9 +950,6 @@ function rewriteoutput($type, $returntype, $host) {
 			'{page}' => $page ? $page : 1,
 			'{prevpage}' => $prevpage && !IS_ROBOT ? $prevpage : 1,
 		);
-		if($r['{page}'] > 1 && $_G['setting']['rewriterule'][$type.'2']){
-			$type = $type.'2';
-		}
 	} elseif($type == 'home_space') {
 		list(,,, $uid, $username, $extra) = func_get_args();
 		$_G['setting']['rewritecompatible'] && $username = rawurlencode($username);
@@ -1012,7 +1002,6 @@ function rewriteoutput($type, $returntype, $host) {
 		}
 	}
 	$href = str_replace(array_keys($r), $r, $_G['setting']['rewriterule'][$type]).$fextra;
-	$host = preg_replace('/^https?:\/\//i', '//', $host);
 	if(!$returntype) {
 		return '<a href="'.$host.$href.'"'.(!empty($extra) ? stripslashes($extra) : '').'>';
 	} else {
@@ -1098,7 +1087,7 @@ function output_replace($content) {
 			$_G['setting']['output']['preg']['replace'] = str_replace('{CURHOST}', $_G['siteurl'], $_G['setting']['output']['preg']['replace']);
 		}
 
-		foreach ($_G['setting']['output']['preg']['search'] as $key => $value) {
+		foreach($_G['setting']['output']['preg']['search'] as $key => $value) {
 			$content = preg_replace_callback($value, create_function('$matches', 'return '.$_G['setting']['output']['preg']['replace'][$key].';'), $content);
 		}
 	}
@@ -1236,10 +1225,11 @@ function pluginmodule($pluginid, $type) {
 	if(!empty($_G['setting']['plugins'][$type][$pluginid]['url'])) {
 		dheader('location: '.$_G['setting']['plugins'][$type][$pluginid]['url']);
 	}
-	if(empty($identifier) || !preg_match("/^[a-z0-9_\-]+$/i", $module)) {
+	$directory = $_G['setting']['plugins'][$type][$pluginid]['directory'];
+	if(empty($identifier) || !preg_match("/^[a-z]+[a-z0-9_]*\/$/i", $directory) || !preg_match("/^[a-z0-9_\-]+$/i", $module)) {
 		showmessage('undefined_action');
 	}
-	if(@!file_exists(DISCUZ_ROOT.($modfile = './source/plugin/'.$identifier.'/'.$module.'.inc.php'))) {
+	if(@!file_exists(DISCUZ_ROOT.($modfile = './source/plugin/'.$directory.$module.'.inc.php'))) {
 		showmessage('plugin_module_nonexistence', '', array('mod' => $modfile));
 	}
 	return DISCUZ_ROOT.$modfile;
@@ -1669,7 +1659,7 @@ function g_icon($groupid, $return = 0) {
 	if(empty($_G['cache']['usergroups'][$groupid]['icon'])) {
 		$s =  '';
 	} else {
-		if(preg_match('/^https?:\/\//i', $_G['cache']['usergroups'][$groupid]['icon'])) {
+		if(substr($_G['cache']['usergroups'][$groupid]['icon'], 0, 5) == 'http:') {
 			$s = '<img src="'.$_G['cache']['usergroups'][$groupid]['icon'].'" alt="" class="vm" />';
 		} else {
 			$s = '<img src="'.$_G['setting']['attachurl'].'common/'.$_G['cache']['usergroups'][$groupid]['icon'].'" alt="" class="vm" />';
@@ -1874,7 +1864,6 @@ function cknewuser($return=0) {
 }
 
 function manyoulog($logtype, $uids, $action, $fid = '') {
-	return '';
 }
 
 function useractionlog($uid, $action) {
@@ -1984,7 +1973,6 @@ function updatemoderate($idtype, $ids, $status = 0) {
 }
 
 function userappprompt() {
-	return '';
 }
 
 function dintval($int, $allowarray = false) {
@@ -2035,7 +2023,7 @@ function check_diy_perm($topic = array(), $flag = '') {
 function strhash($string, $operation = 'DECODE', $key = '') {
 	$key = md5($key != '' ? $key : getglobal('authkey'));
 	if($operation == 'DECODE') {
-		$hashcode = gzuncompress(base64_decode(($string)));
+		$hashcode = gzuncompress(base64_decode($string));
 		$string = substr($hashcode, 0, -16);
 		$hash = substr($hashcode, -16);
 		unset($hashcode);
@@ -2052,7 +2040,7 @@ function strhash($string, $operation = 'DECODE', $key = '') {
 
 function dunserialize($data) {
 	if(($ret = unserialize($data)) === false) {
-		$ret = array();
+		$ret = unserialize(stripslashes($data));
 	}
 	return $ret;
 }
@@ -2096,13 +2084,14 @@ function currentlang() {
 		return '';
 	}
 }
-
-
-function dpreg_replace($pattern, $replacement, $subject, $limit = -1, &$count) {
-	if(PHP_VERSION < '7.0.0') {
+if(PHP_VERSION < '7.0.0') {
+	function dpreg_replace($pattern, $replacement, $subject, $limit = -1, &$count) {
 		return preg_replace($pattern, $replacement, $subject, $limit, $count);
-	} else {
-		return helper_preg::replace($pattern, $replacement, $subject, $limit, $count);
+	}
+} else {
+	function dpreg_replace($pattern, $replacement, $subject, $limit = -1, &$count) {
+		require_once libfile('function/preg');
+		return _dpreg_replace($pattern, $replacement, $subject, $limit, $count);
 	}
 }
 

@@ -15,6 +15,14 @@ function build_cache_fields_connect_register() {
 	global $_G;
 	$data = array();
 	$fields = array();
+	if($_G['setting']['connect']['register_gender']) {
+		$fields[] = 'gender';
+	}
+	if($_G['setting']['connect']['register_birthday']) {
+		$fields[] = 'birthyear';
+		$fields[] = 'birthmonth';
+		$fields[] = 'birthday';
+	}
 	if($fields) {
 
 		foreach(C::t('common_member_profile_setting')->fetch_all($fields) as $field) {

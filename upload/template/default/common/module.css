@@ -105,7 +105,7 @@ Created & Modified by Alice, Monkey, Lushnis, Pony, Dfox & DragonLee.
 			#category_grid h4 span { background:#CDCDCD; width:1px; height:30px; display:inline-block; position:absolute; left:0; top:0; }
 			#category_grid h4 span.tit_newimg { background:#FFF; }
 			#category_grid .newimgbox:hover h4 span, #category_grid .subjectbox:hover h4 span, #category_grid .replaybox:hover h4 span, #category_grid .hottiebox:hover h4 span, #category_grid .goodtiebox:hover h4 span { width:6px; background:url({IMGDIR}/grid.png) no-repeat 0 0;transition:width 0.2s ease 0s; overflow:hidden; }
-			#category_grid .newimgbox:hover h4 span.tit_newimg { background-position:0 -30px; }
+			#category_grid .newimgbox:hover h4 span.tit_newimg { background-position:0 -30px; } 
 			#category_grid .subjectbox:hover h4 span.tit_subject { background-position:0 0; }
 			#category_grid .replaybox:hover h4 span.tit_replay { background-position:0 -30px; }
 			#category_grid .hottiebox:hover h4 span.tit_hottie { background-position:0 -60px; }
@@ -613,7 +613,7 @@ Created & Modified by Alice, Monkey, Lushnis, Pony, Dfox & DragonLee.
 				.tl cite, .tl .num em { display: block; }
 				.tl th em { margin-right: 4px; zoom: 1; }
 					.tl th em, .tl th em a { color: #007CD5; }
-				.tl td em { font-size: 11px; font-family: Arial, PMingliu, sans-serif; -webkit-text-size-adjust: none; }
+				.tl td em { font-size: 11px; font-family: Arial, Psimsun, sans-serif; -webkit-text-size-adjust: none; }
 					.tl td em, .tl td em a { color: {LIGHTTEXT}; }
 			/*.tl .th th, .tl .th td { padding: 8px 0; background: {SPECIALBG}; border-top: 1px solid {SPECIALBORDER}; }*/
 			.tl .ts th, .tl .ts td { padding: 3px 0; border-bottom-color: {COMMONBORDER}; background: {COMMONBG}; }
@@ -622,8 +622,8 @@ Created & Modified by Alice, Monkey, Lushnis, Pony, Dfox & DragonLee.
 		.tl .th td, .tl .th th { height: 20px; border: none; vertical-align: baseline; }
 	.tl .tf { padding: 3px 0; }
 		.tf .showmenu:hover { border-color: {SPECIALBORDER}; }
-
-
+		
+		
 
 	.tl_reply { padding-left: 10px; background: url({IMGDIR}/dot.gif) no-repeat 0 7px; }
 
@@ -754,7 +754,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 	.album_info p { text-indent:2em; }
 	.tit_author { display:block; }
 	.tit_author a { color: #369; font-size:14px; font-weight:700; }
-
+	
 /* 作者指向时全部展开 by Alice */
 	.authi .none { display:inline-block; }
 	.authi .show { display:none; }
@@ -762,7 +762,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 	.authi:hover .show { display:inline-block; }
 	.ie6 .authi .none { display:none; }
 	.ie6 .authi .show { display:inline-block; }
-
+		
 /** end **/
 
 /** forum::forumdisplay,group::forumdisplay **/
@@ -776,7 +776,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 		/* 重定义 tab 标签样式分类数字 by alice 13032514 */
 		.ttp .num { background:#999; padding:0 5px; margin-left:5px; border-radius:3px; color:#FFF !important; }
 		.ttp .a .num { background:#91BDD3; }
-		/* 重定义 贴子更多分类标签 by alice 13032614 */
+		/* 重定义 贴子更多分类标签 by alice 13032614 */		
 		.pop_moremenu li { display:block; border-bottom:1px solid #E5EDF2; line-height:24px; }
 		.pop_moremenu a { display:inline; text-decoration:none; border-bottom:0; }
 		.pop_moremenu li:last-child { border-bottom:none; }
@@ -874,7 +874,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 		.pi em {}
 		.pti {}
 			.authicn { cursor: pointer; width:16px; }
-
+			
 /* 贴子掌上论坛弹窗 */
 	.code_bg {background: url({IMGDIR}/code_bg.png) no-repeat 0 0; display:inline-block; padding:4px; margin:10px 20px; }
 
@@ -913,7 +913,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 			.po .y { margin: 8px 0 0 5px; }
 			.po p { float: right; }
 				.po p a, .po p label { margin-right: 6px; }
-		.hin { opacity: 0;}
+		.hin { opacity: 0.2;}
 			.plhin:hover .hin { opacity: 1; }
 		.pob { line-height: 36px; }
 			.pob em { float: left;}
@@ -959,7 +959,7 @@ a.thread_mod { background: url({IMGDIR}/bigimg.png) no-repeat 0 -38px; padding-l
 					.rate_collapse .op { background-image: url({IMGDIR}/arrow_down.gif); }
 			.rate i { font-style: normal; }
 			.ratl .xw1 .xi1 { background:#FFF4DD; border-radius:3px; padding:2px 3px; }
-
+			
 			.icon_ring { background:#FFF4DD; display: inline-block; width:8px; height:8px; margin-right:5px; border:2px solid #F26C4F; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2); overflow: hidden; }
 			.icon_ring:hover { background:#F26C4F; border:2px solid #FFF; }
 
@@ -1023,15 +1023,14 @@ i.pstatus { display: block; margin-bottom: -30px; font-size: 12px; text-align: c
 		Explain:		帖子左侧用户互动操作
 		Last Modify:	Pony
 	*/
-	.pls .o li, .plc .o li { background-position: 0 50%; background-repeat: no-repeat; text-indent: 18px; }
-		.pls .o .callon, .plc .o .callon { background-image: url({IMGDIR}/home.gif); }
-		.pls .o .buddy, .plc .o .buddy { background-image: url({STATICURL}image/feed/friend.gif); }
-		.pls .o .poke2, .plc .o .poke2 { background-image: url({STATICURL}image/feed/poke.gif); }
-		.pls .o .pm2, .plc .o .pm2 { background-image: url({IMGDIR}/pmto.gif); }
-		.pls .o .addflw, .plc .o .addflw { background-image: url({IMGDIR}/flw_ico.png); }
+	.pls .o li { background-position: 0 50%; background-repeat: no-repeat; text-indent: 18px; }
+		.pls .o .callon { background-image: url({IMGDIR}/home.gif); }
+		.pls .o .buddy { background-image: url({STATICURL}image/feed/friend.gif); }
+		.pls .o .poke2 { background-image: url({STATICURL}image/feed/poke.gif); }
+		.pls .o .pm2 { background-image: url({IMGDIR}/pmto.gif); }
+		.pls .o .addflw { background-image: url({IMGDIR}/flw_ico.png); }
 	/* 帖子左侧用户组升级提示细微调整 Last Modify Pony */
 	.pls .tip_4 { margin-left: -5px; }
-	.plc .o li { width: 70px; }
 
 	/*
 		Name:			mod_thread_attr
@@ -1043,7 +1042,7 @@ i.pstatus { display: block; margin-bottom: -30px; font-size: 12px; text-align: c
 		.locked:hover background-color: #F7F7F7; }
 		.locked strong { color: {NOTICETEXT}; }
 		.locked a, .attach_nopermission a { color: {HIGHLIGHTLINK}; }
-	.attach_nopermission { margin: 10px 0; border: 1px dashed #AAAA92; background: #FFFFEE url({IMGDIR}/attach_nopermission_bg.png) no-repeat 100% 0; font-size: 12px; }
+	.attach_nopermission { margin: 10px 0; width: 600px; border: 1px dashed #AAAA92; background: #FFFFEE url({IMGDIR}/attach_nopermission_bg.png) no-repeat 100% 0; font-size: 12px; }
 		.attach_nopermission div { padding: 20px 0 20px 70px; border: 3px solid #FFF; background: url({IMGDIR}/attach_nopermission.png) no-repeat 15px 15px; }
 		.attach_nopermission:hover div { border-color: #DADAB1; }
 		.attach_tips { margin-bottom:15px; position: relative; }
@@ -1228,7 +1227,7 @@ i.pstatus { display: block; margin-bottom: -30px; font-size: 12px; text-align: c
 #fastsmilies { text-align: right; }
 	#fastsmilies table { table-layout: auto; width: 160px; height: 133px; }
 	#fastsmilies td { text-align: right; vertical-align: middle; cursor: pointer; }
-		#fastsmilies img { vertical-align: middle; padding-bottom: 5px;}
+		#fastsmilies img { vertical-align: middle; }
 /** end **/
 
 
@@ -1376,7 +1375,6 @@ i.pstatus { display: block; margin-bottom: -30px; font-size: 12px; text-align: c
 			#g_guide label { cursor: text; }
 		#g_guide strong { display: block; }
 	.fl .bm_h { border-bottom: none; background-color: transparent; }
-#create_group_btn { display: block; width: 198px; height:33px; background: url({IMGDIR}/create_group.png) no-repeat; }
 
 /* 群组列表 by Pony */
 	.fl_icn, .fl_icn_g { width: 48px; }
@@ -1763,88 +1761,6 @@ i.pstatus { display: block; margin-bottom: -30px; font-size: 12px; text-align: c
 		.creditl .cl { clear: both; float: none; width: auto; }
 			.creditl li em { font-weight: 700; }
 		.creditl u { text-decoration: none; }
-		
-/*
-	Explain:		html5头像上传， 直接调用static/image/common目录，免得第三方模板缺少图片
-*/
-#avatardesigner{border: 1px solid #CCC; padding: 10px;overflow: hidden;}
-#avataradjuster, #avatardisplayer{position: relative; display:none;}
-#avatardisplaycanvas{position: absolute; top: 0px; left: 0px;background:#FFF;}
-#avatarfileselector{
-    background:url(../../static/image/common/avatar_upload.gif) no-repeat;
-    position:relative;
-}
-#avatarfile{
-		font-size: 300px;
-    position:absolute;
-    right:0;
-    top:0;
-    opacity: 0;
-    filter:alpha(opacity=0);
-    cursor:pointer;
-}
-.backfileselectiondiv{
-    width: 104px;
-    height: 33px;
-    position: absolute;
-    right: 8px;
-    top: 0px;
-    background:url(../../static/image/common/avatar_back.gif) no-repeat;
-}
-.backfileselection{
-		width: 104px;
-    height: 33px;
-		padding: 2px;
-    position:absolute;
-    right:0;
-    top:0;
-    opacity: 0;
-    filter:alpha(opacity=0);
-    cursor:pointer;
-}
-.saveAvatardiv{
-    width: 104px;
-    height: 39px;
-    position: absolute;
-    right: 8px;
-    top: 180px; 
-    background:url(../../static/image/common/avatar_save.gif) no-repeat;
-}
-.saveAvatar{
-    width: 104px;
-    height: 39px;
-		padding: 2px;
-    position:absolute;
-    right:0;
-    top:0;
-    opacity: 0;
-    filter:alpha(opacity=0);
-    cursor:pointer;
-}
-.finishbuttondiv{
-    width: 92px;
-    height: 33px;
-    position: absolute;
-    right: 60px;
-    top: 190px;
-    background:url(../../static/image/common/avatar_finishbutton.gif) no-repeat;
-}
-.finishbutton{
-    width: 92px;
-    height: 33px;
-		padding: 2px;
-    position:absolute;
-    right:0;
-    top:0;
-    opacity: 0;
-    filter:alpha(opacity=0);
-    cursor:pointer;
-}
-#slider .ui-state-default {
-    background: white url(../../static/image/common/arrow_down_big.gif) no-repeat scroll 50% 50%;
-    margin-top: -8px;
-    border-width: 0px;
-}
 /** end **/
 
 

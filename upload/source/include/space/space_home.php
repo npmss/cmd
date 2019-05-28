@@ -34,7 +34,7 @@ if(empty($_GET['view'])) {
 	} else {
 		$_GET['view'] = 'all';
 	}
-} elseif(!in_array($_GET['view'], array('we', 'me', 'all'))) {
+} elseif(!in_array($_GET['view'], array('we', 'me', 'all', 'app'))) {
 	$_GET['view'] = 'all';
 }
 if(empty($_GET['order'])) {
@@ -70,32 +70,34 @@ $theurl = 'home.php?'.url_implode($gets);
 $hotlist = array();
 if(!IS_ROBOT) {
 	$feed_users = $feed_list = $user_list = $filter_list  = $list = $magic = array();
-	if($space['self'] && empty($start) && $_G['setting']['feedhotnum'] > 0 && ($_GET['view'] == 'we' || $_GET['view'] == 'all')) {
-		$hotlist_all = array();
-		$hotstarttime = $_G['timestamp'] - $_G['setting']['feedhotday']*3600*24;
-		$query = C::t('home_feed')->fetch_all_by_hot($hotstarttime);
-		foreach ($query as $value) {
-			if($value['hot']>0 && ckfriend($value['uid'], $value['friend'], $value['target_ids'])) {
-				if(empty($hotlist)) {
-					$hotlist[$value['feedid']] = $value;
-				} else {
-					$hotlist_all[$value['feedid']] = $value;
-				}
-			}
-		}
-		$nexthotnum = $_G['setting']['feedhotnum'] - 1;
-		if($nexthotnum > 0) {
-			if(count($hotlist_all)> $nexthotnum) {
-				$hotlist_key = array_rand($hotlist_all, $nexthotnum);
-				if($nexthotnum == 1) {
-					$hotlist[$hotlist_key] = $hotlist_all[$hotlist_key];
-				} else {
-					foreach ($hotlist_key as $key) {
-						$hotlist[$key] = $hotlist_all[$key];
+	if($_GET['view'] != 'app') {
+		if($space['self'] && empty($start) && $_G['setting']['feedhotnum'] > 0 && ($_GET['view'] == 'we' || $_GET['view'] == 'all')) {
+			$hotlist_all = array();
+			$hotstarttime = $_G['timestamp'] - $_G['setting']['feedhotday']*3600*24;
+			$query = C::t('home_feed')->fetch_all_by_hot($hotstarttime);
+			foreach ($query as $value) {
+				if($value['hot']>0 && ckfriend($value['uid'], $value['friend'], $value['target_ids'])) {
+					if(empty($hotlist)) {
+						$hotlist[$value['feedid']] = $value;
+					} else {
+						$hotlist_all[$value['feedid']] = $value;
 					}
 				}
-			} else {
-				$hotlist = array_merge($hotlist, $hotlist_all);
+			}
+			$nexthotnum = $_G['setting']['feedhotnum'] - 1;
+			if($nexthotnum > 0) {
+				if(count($hotlist_all)> $nexthotnum) {
+					$hotlist_key = array_rand($hotlist_all, $nexthotnum);
+					if($nexthotnum == 1) {
+						$hotlist[$hotlist_key] = $hotlist_all[$hotlist_key];
+					} else {
+						foreach ($hotlist_key as $key) {
+							$hotlist[$key] = $hotlist_all[$key];
+						}
+					}
+				} else {
+					$hotlist = array_merge($hotlist, $hotlist_all);
+				}
 			}
 		}
 	}
@@ -128,6 +130,60 @@ if(!IS_ROBOT) {
 
 		$diymode = 1;
 		if($space['self'] && $_GET['from'] != 'space') $diymode = 0;
+
+	} elseif($_GET['view'] == 'app' && $_G['setting']['my_app_status']) {
+
+		$uids = null;
+		if ($_GET['type'] == 'all') {
+
+			$ordersql = "dateline DESC";
+			$f_index = '';
+			$findex = '';
+
+		} else {
+
+
+			if($_GET['type'] == 'me') {
+				$uids = $_G['uid'];
+				$ordersql = "dateline DESC";
+				$f_index = '';
+				$findex = '';
+
+			} else {
+				$uids = array_merge(explode(',', $space['feedfriend']), 0);
+				$ordersql = "dateline DESC";
+				$f_index = 'USE INDEX(dateline)';
+				$findex = 'dateline';
+				$_GET['type'] = 'we';
+				$_G['home_tpl_hidden_time'] = 1;
+			}
+		}
+
+		$icon = empty($_GET['icon'])?'':trim($_GET['icon']);
+
+		$feed_list = $appfeed_list = $hiddenfeed_list = $filter_list = $hiddenfeed_num = $icon_num = array();
+		$count = $filtercount = 0;
+		foreach(C::t('home_feed_app')->fetch_all_by_uid_icon($uids, $icon, $start, $perpage) as $value) {
+			$feed_list[$value['icon']][] = $value;
+			$count++;
+		}
+		$multi = simplepage($count, $perpage, $page, $theurl);
+		require_once libfile('function/feed');
+
+		$list = array();
+		foreach ($feed_list as $key => $values) {
+			$nowcount = 0;
+			foreach ($values as $value) {
+				$value = mkfeed($value);
+				$nowcount++;
+				if($nowcount>5 && empty($icon)) {
+					break;
+				}
+				$list[$key][] = $value;
+			}
+		}
+		$need_count = false;
+		$typeactives = array($_GET['type'] => ' class="a"');
 
 	} else {
 

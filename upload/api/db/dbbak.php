@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: dbbak.php 35017 2014-10-13 08:19:00Z nemohou $
+ *      $Id: dbbak.php 35016 2014-10-13 08:16:14Z nemohou $
  */
 
 @define('IN_API', true);
@@ -91,7 +91,7 @@ class dbstuff {
 			}
 		}
 
-		if($this->version() > 4.1) {
+		if($this->version() > '4.1') {
 			if($dbcharset) {
 				mysql_query("SET character_set_connection=".$dbcharset.", character_set_results=".$dbcharset.", character_set_client=binary", $this->link);
 			}
@@ -218,7 +218,7 @@ class dbstuffi {
 			$this->halt('Can not connect to MySQL server');
 		}
 
-		if($this->version() > 4.1) {
+		if($this->version() > '4.1') {
 			if($dbcharset) {
 				$this->link->set_charset($dbcharset);
 			}
@@ -533,7 +533,7 @@ if($get['method'] == 'export') {
 	unset($sqldump);
 
 	foreach($sqlquery as $sql) {
-		$sql = syntablestruct(trim($sql), $db->version() > 4.1, $dbcharset);
+		$sql = syntablestruct(trim($sql), $db->version() > '4.1', $dbcharset);
 
 		if($sql != '') {
 			$db->query($sql, 'SILENT');

@@ -63,7 +63,6 @@ if(!empty($srchfid) && !is_numeric($srchfid)) {
 	$forumselect = str_replace('<option value="'.$srchfid.'">', '<option value="'.$srchfid.'" selected="selected">', $forumselect);
 }
 
-
 if(!submitcheck('searchsubmit', 1)) {
 
 	if($_GET['adv']) {

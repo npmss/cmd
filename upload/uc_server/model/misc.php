@@ -4,7 +4,7 @@
 	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: misc.php 1180 2014-11-17 08:30:35Z andyzheng $
+	$Id: misc.php 1127 2011-12-14 04:24:58Z svn_project_zhangjie $
 */
 
 !defined('IN_UC') && exit('Access Denied');
@@ -65,7 +65,7 @@ class miscmodel {
 		$scheme = $matches['scheme'];
 		$host = $matches['host'];
 		$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-		$port = !empty($matches['port']) ? $matches['port'] : ($scheme == 'https' ? 443 :80);
+		$port = !empty($matches['port']) ? $matches['port'] : ($matches['scheme'] == 'https' ? 443 : 80);
 
 		if($post) {
 			$out = "POST $path HTTP/1.0\r\n";

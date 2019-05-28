@@ -61,7 +61,7 @@
 					<span><input name="subject" id="subject" class="px" value="$postinfo[subject]" tabindex="21" style="width: 25em" /></span>
 				<!--{else}-->
 					<span id="subjecthide" class="z">RE: $thread[subject] [<a href="javascript:;" onclick="display('subjecthide');display('subjectbox');">{lang modify}</a>]</span>
-					<span id="subjectbox" style="display:none"><input name="subject" id="subject" class="px" value="RE: {echo dhtmlspecialchars(str_replace('\'', '\\\'', $thread[subject]))}" tabindex="21" style="width: 25em" /></span>
+					<span id="subjectbox" style="display:none"><input name="subject" id="subject" class="px" value="" tabindex="21" style="width: 25em" /></span>
 				<!--{/if}-->
 			</div>
 			<!--{if !$isfirstpost && $thread[special] == 5 && empty($firststand)}-->

@@ -2,27 +2,11 @@
 	[Discuz!] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: common.js 34611 2014-06-11 10:28:49Z nemohou $
+	$Id: common.js 36359 2017-01-20 05:06:45Z nemohou $
 */
 
 function $(id) {
 	return !id ? null : document.getElementById(id);
-}
-
-var jq = null;
-function $jq() {
-    src = JSPATH + 'jquery.min.js?' + VERHASH;
-	if(!JSLOADED[src]) {
-        var checkrun = function () {
-            if(JSLOADED[src]) {
-                jq = jQuery.noConflict();
-            } else {
-                setTimeout(function () {checkrun();}, 50);
-            }
-        };
-		appendscript(src);
-        return checkrun();
-	}
 }
 
 function $C(classname, ele, tag) {
@@ -263,7 +247,7 @@ function Ajax(recvType, waitId) {
 	};
 	aj.processHandle = function() {
 		if(aj.XMLHttpRequest.readyState == 4 && aj.XMLHttpRequest.status == 200) {
-			if(aj.waitId && aj.waitId !== 'undefined' && aj.waitId !== null) {
+			if(aj.waitId) {
 				aj.waitId.style.display = 'none';
 			}
 			if(aj.recvType == 'HTML') {
@@ -1515,11 +1499,6 @@ function parseurl(str, mode, parsecode) {
 function codetag(text, br) {
 	var br = !br ? 1 : br;
 	DISCUZCODE['num']++;
-
-	text = text.replace(/<\/blockquote><blockquote>/ig, '<br>');
-	text = text.replace(/<div>([\s\S]*?)<\/div>/ig, "$1");
-	text = text.replace(/<p>([\s\S]*?)<\/p>/ig, "$1");
-
 	if(br > 0 && typeof wysiwyg != 'undefined' && wysiwyg) text = text.replace(/<br[^\>]*>/ig, '\n');
 	text = text.replace(/\$/ig, '$$');
 	DISCUZCODE['html'][DISCUZCODE['num']] = '[code]' + text + '[/code]';
@@ -1593,7 +1572,47 @@ function getClipboardData() {
 }
 
 function setCopy(text, msg) {
-	$F('_setCopy', arguments);
+	var cp = document.createElement('textarea');
+	cp.style.fontSize = '12pt';
+	cp.style.border = '0';
+	cp.style.padding = '0';
+	cp.style.margin = '0';
+	cp.style.position = 'absolute';
+	cp.style.left = '-9999px';
+	var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+	cp.style.top = yPosition + 'px';
+	cp.setAttribute('readonly', '');
+	cp.value = text;
+	$('append_parent').appendChild(cp);
+	cp.select();
+	cp.setSelectionRange(0, cp.value.length);
+	try {
+		var success = document.execCommand('copy', false, null);
+	} catch (e) {
+		var success = false;
+	}
+	$('append_parent').removeChild(cp);
+
+	if(success) {
+		if(msg) {
+			showPrompt(null, null, '<span>' + msg + '</span>', 1500);
+		}
+	} else if(BROWSER.ie) {
+		var r = clipboardData.setData('Text', text);
+		if(r) {
+			if(msg) {
+				showPrompt(null, null, '<span>' + msg + '</span>', 1500);
+			}
+		} else {
+			showDialog('<div class="c"><div style="width: 200px; text-align: center;">复制失败，请选择“允许访问”</div></div>', 'alert');
+		}
+	} else {
+		var msg = '<div class="c"><div style="width: 200px; text-align: center; text-decoration:underline;">点此复制到剪贴板</div>' +
+		AC_FL_RunContent('id', 'clipboardswf', 'name', 'clipboardswf', 'devicefont', 'false', 'width', '200', 'height', '40', 'src', STATICURL + 'image/common/clipboard.swf', 'menu', 'false',  'allowScriptAccess', 'sameDomain', 'swLiveConnect', 'true', 'wmode', 'transparent', 'style' , 'margin-top:-20px') + '</div>';
+		showDialog(msg, 'info');
+		text = text.replace(/[\xA0]/g, ' ');
+		CLIPBOARDSWFDATA = text;
+	}
 }
 
 function copycode(obj) {
@@ -1715,6 +1734,7 @@ function showForummenu(fid) {
 }
 
 function showUserApp() {
+	$F('_showUserApp', arguments);
 }
 
 function cardInit() {
@@ -1773,10 +1793,10 @@ function strLenCalc(obj, checklen, maxlen) {
 	}
 }
 
-function patchNotice() {
-}
-
 function pluginNotice() {
+	if($('plugin_notice')) {
+		ajaxget('misc.php?mod=patch&action=pluginnotice', 'plugin_notice', '');
+	}
 }
 
 function ipNotice() {

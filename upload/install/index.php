@@ -37,7 +37,7 @@ $allow_method = array('show_license', 'env_check', 'app_reg', 'db_init', 'ext_in
 $step = intval(getgpc('step', 'R')) ? intval(getgpc('step', 'R')) : 0;
 $method = getgpc('method');
 
-@header('Content-Type: text/html; charset='.CHARSET);
+header('Content-Type: text/html; charset='.CHARSET);
 
 if(empty($method) || !in_array($method, $allow_method)) {
 	$method = isset($allow_method[$step]) ? $allow_method[$step] : '';
@@ -296,7 +296,7 @@ if($method == 'show_license') {
 				}
 			}
 			$mysql_version = ($mysqlmode == 'mysql') ? mysql_get_server_info() : $link->server_info;
-			if($mysql_version > 4.1) {
+			if($mysql_version > '4.1') {
 				if($mysqlmode == 'mysql') {
 					mysql_query("CREATE DATABASE IF NOT EXISTS `$dbname` DEFAULT CHARACTER SET ".DBCHARSET, $link);
 				} else {
@@ -343,7 +343,7 @@ if($method == 'show_license') {
 
 
 		$uid = DZUCFULL ? 1 : $adminuser['uid'];
-		$authkey = substr(md5($_SERVER['SERVER_ADDR'].$_SERVER['HTTP_USER_AGENT'].$dbhost.$dbuser.$dbpw.$dbname.$username.$password.$pconnect.substr($timestamp, 0, 6)), 8, 6).random(10);
+		$authkey = md5($_SERVER['SERVER_ADDR'].$_SERVER['HTTP_USER_AGENT'].$dbhost.$dbuser.$dbpw.$dbname.$username.$password.$pconnect.substr($timestamp, 0, 8)).random(18);
 		$_config['db'][1]['dbhost'] = $dbhost;
 		$_config['db'][1]['dbname'] = $dbname;
 		$_config['db'][1]['dbpw'] = $dbpw;
@@ -373,6 +373,7 @@ if($method == 'show_license') {
 		$sql = str_replace("\r\n", "\n", $sql);
 
 		runquery($sql);
+		runquery($extrasql);
 
 		$sql = file_get_contents(ROOT_PATH.'./install/data/install_data.sql');
 		$sql = str_replace("\r\n", "\n", $sql);
@@ -393,11 +394,9 @@ if($method == 'show_license') {
 		}
 		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
 		$siteuniqueid = 'DX'.$chars[date('y')%60].$chars[date('n')].$chars[date('j')].$chars[date('G')].$chars[date('i')].$chars[date('s')].substr(md5($onlineip.$timestamp), 0, 4).random(4);
-		$fansuniqueid = 'FANS'.$chars[date('y')%60].$chars[date('n')].$chars[date('j')].$chars[date('G')].$chars[date('i')].$chars[date('s')].substr(md5($onlineip.$timestamp), 0, 4).random(6);
 
 		$db->query("REPLACE INTO {$tablepre}common_setting (skey, svalue) VALUES ('authkey', '$authkey')");
 		$db->query("REPLACE INTO {$tablepre}common_setting (skey, svalue) VALUES ('siteuniqueid', '$siteuniqueid')");
-		$db->query("REPLACE INTO {$tablepre}common_setting (skey, svalue) VALUES ('fansuniqueid', '$fansuniqueid')");
 		$db->query("REPLACE INTO {$tablepre}common_setting (skey, svalue) VALUES ('adminemail', '$email')");
 
 		install_extra_setting();
@@ -415,7 +414,7 @@ if($method == 'show_license') {
 
 		install_data($username, $uid);
 
-		$testdata = $portalstatus = 0;
+		$testdata = $portalstatus = 1;
 		$groupstatus = $homestatus = 0;
 
 		if($testdata) {

@@ -4,7 +4,7 @@
 	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: user.php 1175 2014-11-03 05:45:47Z hypowang $
+	$Id: user.php 1177 2014-11-03 05:46:57Z hypowang $
 */
 
 !defined('IN_UC') && exit('Access Denied');
@@ -291,7 +291,7 @@ class usercontrol extends base {
 		$this->load('misc');
 		$app = $this->cache['apps'][$appid];
 		$apifilename = isset($app['apifilename']) && $app['apifilename'] ? $app['apifilename'] : 'uc.php';
-		if($app['extra']['apppath'] && @include $app['extra']['apppath'].'./api/'.$apifilename) {
+		if($app['extra']['apppath'] && substr(strrchr($apifilename, '.'), 1, 10) == 'php' && @include $app['extra']['apppath'].'./api/'.$apifilename) {
 			$uc_note = new uc_note();
 			return $uc_note->getcredit(array('uid' => $uid, 'credit' => $credit), '');
 		} else {
@@ -398,9 +398,9 @@ class usercontrol extends base {
 
 		if(getgpc('base64', 'G')){
 			if($success) {
-				return "success";
+				return "<script>window.parent.postMessage('success','*');</script>";
 			} else {
-				return "failure";
+				return "<script>window.parent.postMessage('failure','*');</script>";
 			}
 		}else{
 			if($success) {

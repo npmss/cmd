@@ -1,10 +1,10 @@
 <?php
 
 /*
-	[UCenter] (C)2001-2009 Comsenz Inc.
+	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id$
+	$Id: admin.php 1139 2012-05-08 09:02:11Z liulanbo $
 */
 
 error_reporting(0);
@@ -17,17 +17,11 @@ $mtime = explode(' ', microtime());
 $starttime = $mtime[1] + $mtime[0];
 
 define('IN_UC', TRUE);
-define('UC_ADMINSCRIPT', basename(__FILE__));
-define('UC_ROOT', substr(__FILE__, 0, '-'.strlen(UC_ADMINSCRIPT)));
+define('UC_ROOT', substr(__FILE__, 0, -9));
 define('UC_API', strtolower((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'))));
 define('UC_DATADIR', UC_ROOT.'data/');
 define('UC_DATAURL', UC_API.'/data');
 define('MAGIC_QUOTES_GPC', get_magic_quotes_gpc());
-
-if(UC_ADMINSCRIPT == 'admin.php' && $_SERVER['REMOTE_ADDR'] != '127.0.0.1'){
-	exit('Modify admin.php file name');
-}
-
 
 unset($GLOBALS, $_ENV, $HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_COOKIE_VARS, $HTTP_SERVER_VARS, $HTTP_ENV_VARS);
 
@@ -52,11 +46,9 @@ define('RELEASE_ROOT', '');
 
 header('Content-Type: text/html; charset='.CHARSET);
 
-if(in_array($m, array('admin', 'app', 'badword', 'cache', 'db', 'domain', 'frame', 'log', 'note', 'feed', 'mail', 'sms', 'setting', 'user', 'credit', 'seccode', 'tool', 'plugin', 'pm'))) {
+if(in_array($m, array('admin', 'app', 'badword', 'cache', 'db', 'domain', 'frame', 'log', 'note', 'feed', 'mail', 'setting', 'user', 'credit', 'seccode', 'tool', 'plugin', 'pm'))) {
 	include UC_ROOT."control/admin/$m.php";
 	$control = new control();
-
-
 	$method = 'on'.$a;
 	if(method_exists($control, $method) && $a{0} != '_') {
 		$control->$method();

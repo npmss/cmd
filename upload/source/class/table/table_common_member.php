@@ -128,22 +128,10 @@ class table_common_member extends discuz_table_archive
 		return $groupid ? DB::result_first('SELECT COUNT(*) FROM %t WHERE '.DB::field('groupid', $groupid), array($this->_table)) : 0;
 	}
 
-	public function count_by_groupid_or_extgroupid($groupid) {
-		return $groupid ? DB::result_first('SELECT COUNT(*) FROM %t WHERE '.DB::field('groupid', $groupid).' or '.DB::field('extgroupids', $groupid).' or '.DB::field('extgroupids', "%i\t".$groupid."%i", 'like').' or '.DB::field('extgroupids', "%i".$groupid."\t%i", 'like'), array($this->_table,'%','%','%','%')) : 0;
-	}
-
 	public function fetch_all_by_groupid($groupid, $start = 0, $limit = 0) {
 		$users = array();
 		if(($groupid = dintval($groupid, true))) {
 			$users = DB::fetch_all('SELECT * FROM '.DB::table($this->_table).' WHERE '.DB::field('groupid', $groupid).' '.DB::limit($start, $limit), null, 'uid');
-		}
-		return $users;
-	}
-
-	public function fetch_all_by_groupid_or_extgroupid($groupid, $start = 0, $limit = 0) {
-		$users = array();
-		if(($groupid = dintval($groupid, true))) {
-			$users = DB::fetch_all('SELECT * FROM '.DB::table($this->_table).' WHERE '.DB::field('groupid', $groupid).' or '.DB::field('extgroupids', $groupid).' or '.DB::field('extgroupids', "%i\t".$groupid."%i", 'like').' or '.DB::field('extgroupids', "%i".$groupid."\t%i", 'like').' '.DB::limit($start, $limit), null, 'uid');
 		}
 		return $users;
 	}
@@ -325,6 +313,7 @@ class table_common_member extends discuz_table_archive
 			C::t('common_member_profile')->insert($profile, false, true);
 			C::t('common_member_field_forum')->insert($ext, false, true);
 			C::t('common_member_field_home')->insert($ext, false, true);
+			manyoulog('user', $uid, 'add');
 		}
 	}
 

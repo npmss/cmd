@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: table_forum_forum.php 33548 2013-07-04 08:19:27Z laoguozhang $
+ *      $Id: table_forum_forum.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -197,7 +197,7 @@ class table_forum_forum extends discuz_table
 	}
 
 	public function update_oldrank_and_yesterdayposts() {
-		DB::query("UPDATE ".DB::table($this->_table).' SET oldrank=rank,yesterdayposts=todayposts');
+		DB::query("UPDATE ".DB::table($this->_table).' SET oldrank=`rank`,yesterdayposts=todayposts');
 	}
 	public function update_group_level($levelid, $fid) {
 		if(!intval($levelid) || !intval($fid)) {

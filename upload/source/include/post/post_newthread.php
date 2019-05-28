@@ -19,6 +19,9 @@ if(($special == 1 && !$_G['group']['allowpostpoll']) || ($special == 2 && !$_G['
 	showmessage('group_nopermission', NULL, array('grouptitle' => $_G['group']['grouptitle']), array('login' => 1));
 }
 
+if($_G['setting']['connect']['allow'] && $_G['setting']['accountguard']['postqqonly'] && !$_G['member']['conisbind']) {
+	showmessage('postperm_qqonly_nopermission');
+}
 
 if(!$_G['uid'] && !((!$_G['forum']['postperm'] && $_G['group']['allowpost']) || ($_G['forum']['postperm'] && forumperm($_G['forum']['postperm'])))) {
 	if(!defined('IN_MOBILE')) {
@@ -36,6 +39,9 @@ if(!$_G['uid'] && !((!$_G['forum']['postperm'] && $_G['group']['allowpost']) || 
 	showmessage('post_forum_newthread_nopermission', NULL);
 }
 
+if(!$_G['uid'] && ($_G['setting']['need_avatar'] || $_G['setting']['need_email'] || $_G['setting']['need_friendnum'])) {
+	showmessage('postperm_login_nopermission', NULL, array(), array('login' => 1));
+}
 
 checklowerlimit('post', 0, 1, $_G['forum']['fid']);
 

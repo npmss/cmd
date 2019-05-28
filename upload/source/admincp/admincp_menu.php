@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: admincp_menu.php 34521 2014-05-14 09:07:25Z nemohou $
+ *      $Id: admincp_menu.php 36284 2016-12-12 00:47:50Z nemohou $
  */
 
 global $_G;
@@ -22,15 +22,14 @@ $topmenu = array (
 	'style' => '',
 	'topic' => '',
 	'user' => '',
+	'portal' => '',
+	'forum' => '',
+	'group' => '',
+	'safe' => '',
+	'extended' => '',
+	'plugin' => $isfounder ? 'plugins' : '',
+	'tools' => '',
 );
-
-$_G['setting']['portalstatus'] && $topmenu['portal'] = '';
-$topmenu['forum'] = '';
-$_G['setting']['groupstatus'] && $topmenu['group'] = '';
-$topmenu['safe'] = '';
-$topmenu['extended'] = '';
-$topmenu['plugin'] = $isfounder ? 'plugins' : '';
-$topmenu['tools'] = '';
 
 $menu['index'] = array(
 	array('menu_home', 'index'),
@@ -47,31 +46,26 @@ $menu['global'] = array(
 	array('menu_setting_optimize', 'setting_cachethread'),
 	array('menu_setting_seo', 'setting_seo'),
 	array('menu_setting_domain', 'domain'),
+	array('menu_setting_follow', 'setting_follow'),
+	array('menu_setting_home', 'setting_home'),
+	array('menu_setting_user', 'setting_permissions'),
+	array('menu_setting_credits', 'setting_credits'),
+	array('menu_setting_datetime', 'setting_datetime'),
+	array('menu_setting_attachments', 'setting_attach'),
+	array('menu_setting_imgwater', 'setting_imgwater'),
+	array('menu_posting_attachtypes', 'misc_attachtype'),
+	array('menu_setting_search', 'setting_search'),
+	array('menu_setting_district', 'district'),
+	array('menu_setting_ranklist', 'setting_ranklist'),
+	array('menu_setting_mobile', 'setting_mobile'),
+	array('menu_setting_antitheft', 'setting_antitheft'),
 );
-
-
-$_G['setting']['followstatus'] && $menu['global'][] = array('menu_setting_follow', 'setting_follow');
-
-
-$menu['global'][] = array('menu_setting_home', 'setting_home');
-$menu['global'][] = array('menu_setting_user', 'setting_permissions');
-$menu['global'][] = array('menu_setting_credits', 'setting_credits');
-$menu['global'][] = array('menu_setting_datetime', 'setting_datetime');
-$menu['global'][] = array('menu_setting_attachments', 'setting_attach');
-$menu['global'][] = array('menu_setting_imgwater', 'setting_imgwater');
-$menu['global'][] = array('menu_posting_attachtypes', 'misc_attachtype');
-$menu['global'][] = array('menu_setting_search', 'setting_search');
-$menu['global'][] = array('menu_setting_district', 'district');
-
-$_G['setting']['rankliststatus'] && $menu['global'][] = array('menu_setting_ranklist', 'setting_ranklist');
-
-$menu['global'][] = array('menu_setting_mobile', 'setting_mobile');
-$menu['global'][] = array('menu_setting_antitheft', 'setting_antitheft');
 
 $menu['style'] = array(
 	array('menu_setting_customnav', 'nav'),
 	array('menu_setting_styles', 'setting_styles'),
 	array('menu_styles', 'styles'),
+	$isfounder ? array('menu_styles_templates', 'templates') : null,
 	array('menu_posting_smilies', 'smilies'),
 	array('menu_click', 'click'),
 	array('menu_thread_stamp', 'misc_stamp'),
@@ -84,50 +78,34 @@ $menu['topic'] = array(
 	array('menu_posting_censors', 'misc_censor'),
 	array('menu_maint_report', 'report'),
 	array('menu_setting_tag', 'tag'),
+	array('menu_setting_collection', 'collection'),
+	array(cplang('nav_forum'), '', 1),
+		array('menu_maint_threads', 'threads'),
+		array('menu_maint_prune', 'prune'),
+		array('menu_maint_attaches', 'attach'),
+	array(cplang('nav_forum'), '', 2),
+	array(cplang('nav_group'), '', 1),
+		array('menu_maint_threads_group', 'threads_group'),
+		array('menu_maint_prune_group', 'prune_group'),
+		array('menu_maint_attaches_group', 'attach_group'),
+	array(cplang('nav_group'), '', 2),
+	array(cplang('thread'), '', 1),
+    		array('menu_moderate_recyclebin', 'recyclebin'),
+		array('menu_moderate_recyclebinpost', 'recyclebinpost'),
+		array('menu_threads_forumstick', 'threads_forumstick'),
+		array('menu_postcomment', 'postcomment'),
+	array(cplang('thread'), '', 2),
+	array(cplang('nav_home'), '', 1),
+		array('menu_maint_doing', 'doing'),
+		array('menu_maint_blog', 'blog'),
+		array('menu_maint_blog_recycle_bin', 'blogrecyclebin'),
+		array('menu_maint_feed', 'feed'),
+		array('menu_maint_album', 'album'),
+		array('menu_maint_pic', 'pic'),
+		array('menu_maint_comment', 'comment'),
+		array('menu_maint_share', 'share'),
+	array(cplang('nav_home'), '', 2),
 );
-$_G['setting']['collectionstatus'] && $menu['topic'][] = array('menu_setting_collection', 'collection');
-
-$menu['topic'][] = array(cplang('nav_forum'), '', 1);
-$menu['topic'][] = array('menu_maint_threads', 'threads');
-$menu['topic'][] = array('menu_maint_prune', 'prune');
-$menu['topic'][] = array('menu_maint_attaches', 'attach');
-$menu['topic'][] = array(cplang('nav_forum'), '', 2);
-
-
-if($_G['setting']['groupstatus']){
-	$menu['topic'][] = array(cplang('nav_group'), '', 1);
-	$menu['topic'][] = array('menu_maint_threads_group', 'threads_group');
-	$menu['topic'][] = array('menu_maint_prune_group', 'prune_group');
-	$menu['topic'][] = array('menu_maint_attaches_group', 'attach_group');
-	$menu['topic'][] = array(cplang('nav_group'), '', 2);
-}
-$menu['topic'][] = array(cplang('thread'), '', 1);
-$menu['topic'][] = array('menu_moderate_recyclebin', 'recyclebin');
-$menu['topic'][] = array('menu_moderate_recyclebinpost', 'recyclebinpost');
-$menu['topic'][] = array('menu_threads_forumstick', 'threads_forumstick');
-$menu['topic'][] = array('menu_postcomment', 'postcomment');
-$menu['topic'][] = array(cplang('thread'), '', 2);
-
-$nav_home = array();
-$_G['setting']['doingstatus'] && $menu['topic'][] = array('menu_maint_doing', 'doing');
-if($_G['setting']['blogstatus']){
-	$nav_home[] = array('menu_maint_blog', 'blog');
-	$nav_home[] = array('menu_maint_blog_recycle_bin', 'blogrecyclebin');
-}
-$_G['setting']['feedstatus'] && $nav_home[] = array('menu_maint_feed', 'feed');
-if($_G['setting']['albumstatus']){
-	$nav_home[] = array('menu_maint_album', 'album');
-	$nav_home[] = array('menu_maint_pic', 'pic');
-}
-$_G['setting']['wallstatus'] && $nav_home[] = array('menu_maint_comment', 'comment');
-$_G['setting']['sharestatus'] && $nav_home[] = array('menu_maint_share', 'share');
-if(!empty($nav_home)){
-	$menu['topic'][] = array(cplang('nav_home'), '', 1);
-	foreach($nav_home as $value){
-		$menu['topic'][] = $value;
-	}
-	$menu['topic'][] = array(cplang('nav_home'), '', 2);
-}
 
 $menu['user'] = array(
 	array('menu_members_edit', 'members_search'),
@@ -175,18 +153,8 @@ $menu['forum'] = array(
 	array('menu_forums', 'forums'),
 	array('menu_forums_merge', 'forums_merge'),
 	array('menu_forums_infotypes', 'threadtypes'),
+	array('menu_grid', 'grid'),
 );
-$menu['forum'][] = array(cplang('nav_forum'), '', 1);
-$menu['forum'][] = array('menu_maint_threads', 'threads');
-$menu['forum'][] = array('menu_maint_prune', 'prune');
-$menu['forum'][] = array('menu_maint_attaches', 'attach');
-$menu['forum'][] = array(cplang('nav_forum'), '', 2);
-$menu['forum'][] = array(cplang('thread'), '', 1);
-$menu['forum'][] = array('menu_moderate_recyclebin', 'recyclebin');
-$menu['forum'][] = array('menu_moderate_recyclebinpost', 'recyclebinpost');
-$menu['forum'][] = array('menu_threads_forumstick', 'threads_forumstick');
-$menu['forum'][] = array('menu_postcomment', 'postcomment');
-$menu['forum'][] = array(cplang('thread'), '', 2);
 
 $menu['group'] = array(
 	array('menu_group_setting', 'group_setting'),
@@ -198,7 +166,7 @@ $menu['group'] = array(
 );
 
 $menu['safe'] = array(
-	array('menu_safe_setting', 'setting_sec'),
+	array('menu_safe_setting', 'setting_sec'),	
 	array('menu_safe_seccheck', 'setting_seccheck'),
 	array('menu_security', 'optimizer_security'),
 	array('menu_safe_accountguard', 'setting_accountguard'),
@@ -242,10 +210,8 @@ if(file_exists($menudir = DISCUZ_ROOT.'./source/admincp/menu')) {
 
 if($isfounder) {
 	$menu['plugin'] = array(
-		array('menu_addons', 'cloudaddons" target="_blank'),
+		array('menu_addons', 'cloudaddons'),
 		array('menu_plugins', 'plugins'),
-		array('menu_styles', 'styles'),
-		array('menu_packs', 'packs'),
 	);
 }
 loadcache('adminmenu');
@@ -275,13 +241,12 @@ if($isfounder) {
 
 	$menu['founder'] = array(
 		array('menu_founder_perm', 'founder_perm'),
-		array('menu_setting_mail', 'setting_mail'),
+		array('menu_setting_mail', 'setting_mail'),		
 		array('menu_setting_uc', 'setting_uc'),
 		array('menu_db', 'db_export'),
 		array('menu_membersplit', 'membersplit_check'),
 		array('menu_postsplit', 'postsplit_manage'),
 		array('menu_threadsplit', 'threadsplit_manage'),
-	    array('menu_upgrade', 'upgrade'),
 		array('menu_optimizer', 'optimizer_performance'),
 	);
 
@@ -309,3 +274,5 @@ if(!isfounder() && !isset($GLOBALS['admincp']->perms['all'])) {
 	}
 	$menu = $menunew;
 }
+
+?>

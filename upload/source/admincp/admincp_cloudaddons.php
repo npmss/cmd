@@ -20,43 +20,18 @@ if(!$admincp->isfounder) {
 
 if(!$operation) {
 
-	if($_G['isHTTPS'] && $_G['setting']['httpsoptimize'] && !isset($_GET['frame'])){
-		$query = array();
-		parse_str($_SERVER['QUERY_STRING'], $query);
-		unset($query['frames']);
-		$query['frame'] = 'no';
-		$query_sting_tmp = http_build_query($query);
-		echo '<script type="text/javascript">parent.location.href=\''.ADMINSCRIPT . '?' . $query_sting_tmp.'\';</script>';
-		exit;
-	}
-
 	cloudaddons_check();
 	shownav('cloudaddons');
 	$extra = '';
 	if(!empty($_GET['id'])) {
 		$extra .= '&mod=app&ac=item&id='.rawurlencode($_GET['id']);
-	}elseif($_GET['copyright']){
-	    switch ($_GET['copyright']){
-	        case 'Tencent':
-	        case 'Comsenz Inc.':
-	            $f_k = '%BF%B5%CA%A2%D0%C2%B4%B4';
-	            break;
-	        default:
-	        		if(strpos('1314study', $f_k)){
-	        			$f_k = '1314%D1%A7%CF%B0%CD%F8';
-	        		}else{
-		            $f_k = rawurlencode(diconv($_GET['copyright'], CHARSET, 'GBK'));
-		          }
-	            break;
-	    }
-	    $extra .= '&type=d&f_k='.$f_k;
 	}
 	if(!empty($_GET['extra'])) {
 		$extra .= '&'.addslashes($_GET['extra']);
 	}
 	$url = cloudaddons_url($extra);
 	echo '<script type="text/javascript">location.href=\''.$url.'\';</script>';
-	exit;
+
 } elseif($operation == 'download') {
 	$step = intval($_GET['step']);
 	$addoni = intval($_GET['i']);
@@ -105,7 +80,7 @@ if(!$operation) {
 					cloudaddons_faillog($_GET['rid'], 101);
 					cpmsg('cloudaddons_download_write_error', '', 'error');
 				}
-				fwrite($fp, cloudaddons_uncompress($data['Data'], $file));
+				fwrite($fp, gzuncompress(base64_decode($data['Data'])));
 				fclose($fp);
 				if($data['MD5']) {
 					$md5total .= $data['MD5'];
@@ -142,7 +117,6 @@ if(!$operation) {
 				cloudaddons_faillog($_GET['rid'], 105);
 				cpmsg('cloudaddons_download_error', '', 'error', array('ErrorCode' => 105));
 			}
-			cloudaddons_filecheck();
 			cpmsg('cloudaddons_installing', "action=cloudaddons&operation=download&addonids=$_GET[addonids]&i=$addoni&end=$end&step=2&md5hash=".$_GET['md5hash'].'&timestamp='.$_GET['timestamp'], 'loading', array('addonid' => $_GET['key'].'.'.$_GET['type']), FALSE);
 		}
 	} elseif($step == 2) {
@@ -196,19 +170,19 @@ if(!$operation) {
 		if($_GET['type'] == 'plugin') {
 			$plugin = C::t('common_plugin')->fetch_by_identifier($_GET['key']);
 			if(!$plugin['pluginid']) {
-				dheader('location: '.ADMINSCRIPT.'?action=plugins&operation=import&dir='.$_GET['key'] . '&formhash=' . FORMHASH);
+				dheader('location: '.ADMINSCRIPT.'?action=plugins&operation=import&dir='.$_GET['key']);
 			} else {
-				dheader('location: '.ADMINSCRIPT.'?action=plugins&operation=upgrade&pluginid='.$plugin['pluginid'] . '&formhash=' . FORMHASH);
+				dheader('location: '.ADMINSCRIPT.'?action=plugins&operation=upgrade&pluginid='.$plugin['pluginid']);
 			}
 		} elseif($_GET['type'] == 'template') {
-			dheader('location: '.ADMINSCRIPT.'?action=styles&operation=import&dir='.$_GET['key'] . '&formhash=' . FORMHASH);
+			dheader('location: '.ADMINSCRIPT.'?action=styles&operation=import&dir='.$_GET['key']);
 		} else {
 			cloudaddons_validator($_GET['key'].'.pack');
 			cloudaddons_installlog($_GET['key'].'.pack');
 			if(file_exists(DISCUZ_ROOT.'./data/addonpack/'.$_GET['key'].'.php')) {
 				dheader('location: '.$_G['siteurl'].'data/addonpack/'.$_GET['key'].'.php');
 			}
-			cpmsg('cloudaddons_pack_installed', 'action=packs', 'succeed');
+			cpmsg('cloudaddons_pack_installed', '', 'succeed');
 		}
 	}
 }

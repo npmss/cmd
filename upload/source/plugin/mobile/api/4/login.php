@@ -4,9 +4,8 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: login.php 35024 2014-10-14 07:43:43Z nemohou $
+ *      $Id: login.php 34314 2014-02-20 01:04:24Z nemohou $
  */
-
 
 if(!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
@@ -19,6 +18,12 @@ include_once 'member.php';
 class mobile_api {
 
 	function common() {
+		if(!empty($_GET['mlogout'])) {
+			if($_GET['hash'] == formhash()) {			
+				clearcookies();
+			}
+			mobile_core::result(array());
+		}
 	}
 
 	function output() {

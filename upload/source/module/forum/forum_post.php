@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: forum_post.php 33848 2013-08-21 06:24:53Z hypowang $
+ *      $Id: forum_post.php 36293 2016-12-14 02:50:56Z nemohou $
  */
 
 if(!defined('IN_DISCUZ')) {
@@ -12,14 +12,11 @@ if(!defined('IN_DISCUZ')) {
 }
 define('NOROBOT', TRUE);
 
-if(!$_G['uid']){
-	showmessage('not_loggedin', null, array(), array('login' => 1));
-}
-
 cknewuser();
 
 require_once libfile('class/credit');
 require_once libfile('function/post');
+require_once libfile('function/forumlist');
 
 
 $pid = intval(getgpc('pid'));
@@ -112,6 +109,9 @@ if($_GET['action'] == 'edit' || $_GET['action'] == 'reply') {
 
 	if($thread['closed'] == 1 && !$_G['forum']['ismoderator']) {
 		showmessage('post_thread_closed');
+	}
+	if(!$thread['isgroup'] && $post_autoclose = checkautoclose($thread)) {
+		showmessage($post_autoclose, '', array('autoclose' => $_G['forum']['autoclose']));
 	}
 }
 

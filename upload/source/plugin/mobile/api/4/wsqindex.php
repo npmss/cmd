@@ -6,7 +6,6 @@
  *
  *      $Id: wsqindex.php 34422 2014-04-23 09:56:17Z nemohou $
  */
-
 if (!defined('IN_MOBILE_API')) {
 	exit('Access Denied');
 }

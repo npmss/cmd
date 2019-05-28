@@ -13,58 +13,13 @@ if(!defined('IN_DISCUZ')) {
 
 class discuz_upgrade {
 
-	var $upgradeurl = 'http://upgrade.discuzfans.com/';
+	var $upgradeurl = 'http://upgrade.discuz.com/DiscuzX/';
 	var $locale = 'SC';
 	var $charset = 'GBK';
 
-	public function check_news($nocache = false){
-	    global $_G;
-	    $list = array();
-	    $file = DISCUZ_ROOT.'./data/sysdata/cache_fansnews.php';
-	    if(!file_exists($file) || filemtime($file) < TIMESTAMP - 86400 || $nocache){
-	        $data = array(
-	            'uniqueid' => $_G['setting']['siteuniqueid'],
-	            'fansuniqueid' => $_G['setting']['fansuniqueid'],
-	            'set_sitename' => $_G['setting']['sitename'],
-	            'set_siteurl' => $_G['setting']['siteurl'],
-	            'cur_siteurl' => $_G['siteurl'],
-	            'cur_siteroot' => $_G['siteroot'],
-	            'cur_siteport' => $_G['siteport'],
-	            'cur_sitever' => DISCUZ_VERSION,
-	            'cur_siterel' => DISCUZ_RELEASE,
-	            'cur_sitechar' => currentlang(),
-	            'cur_serveros' => PHP_OS,
-	            'cur_serverphp' => PHP_VERSION,
-	            'cur_serverinfo' => $_SERVER['SERVER_SOFTWARE'],
-	            'cur_serverdb' => helper_dbtool::dbversion(),
-	            'last_adminuid' => $_G['uid'],
-	            'last_adminname' => $_G['username'],
-	            'last_adminip' => $_G['clientip'],
-	            'last_adminport' => $_G['remoteport'],
-	        );
-	        $str = http_build_query($data);
-	        $post = array(
-	            'uniqueid'=> $_G['setting']['siteuniqueid'],
-	            'authcode'=> authcode($str, 'ENCODE', $_G['setting']['siteuniqueid'], 60),
-	        );
-	        $str = dfsockopen($this->upgradeurl.'/news/','',$post);
-	        include_once libfile('class/xml');
-	        $return = xml2array($str);
-	        include_once libfile('function/cache');
-	        if($return && $return['news'] && is_array($return['news']['list'])){
-	            writetocache('fansnews', getcachevars(array('list' => $return['news']['list'])));
-	        }else{
-	        		writetocache('fansnews', getcachevars(array('list' => array())));
-	        }
-	    }else{
-	        @include_once DISCUZ_ROOT.'./data/sysdata/cache_fansnews.php';
-	    }
-	    return $list;
-	}
-
 	public function fetch_updatefile_list($upgradeinfo) {
 
-		$file = DISCUZ_ROOT.'./data/update/Discuz! L'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/updatelist.tmp';
+		$file = DISCUZ_ROOT.'./data/update/Discuz! X'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/updatelist.tmp';
 		$upgradedataflag = true;
 		$upgradedata = @file_get_contents($file);
 		if(!$upgradedata) {
@@ -73,8 +28,7 @@ class discuz_upgrade {
 		}
 
 		$return = array();
-		$upgradedata = str_ireplace("\r\n", "\n", $upgradedata);
-		$upgradedataarr = explode("\n", $upgradedata);
+		$upgradedataarr = explode("\r\n", $upgradedata);
 		foreach($upgradedataarr as $k => $v) {
 			if(!$v) {
 				continue;
@@ -104,20 +58,15 @@ class discuz_upgrade {
 			return array();
 		}
 
-		$md5datanew = array();
-		foreach ($discuzfiles as $line){
-		    $file = trim(substr($line, 34));
-		    $md5datanew[$file] = substr($line, 0, 32);
-		}
-
-
 		$newupgradefilelist = array();
 		foreach($upgradefilelist as $v) {
 			$newupgradefilelist[$v] = md5_file(DISCUZ_ROOT.'./'.$v);
 		}
 
 		$modifylist = $showlist = $searchlist = array();
-		foreach($md5datanew as $file => $line) {
+		foreach($discuzfiles as $line) {
+			$file = trim(substr($line, 34));
+			$md5datanew[$file] = substr($line, 0, 32);
 			if(isset($newupgradefilelist[$file])) {
 				if($md5datanew[$file] != $newupgradefilelist[$file]) {
 					if(!$upgradeinfo['isupdatetemplate'] && preg_match('/\.htm$/i', $file)) {
@@ -131,9 +80,8 @@ class discuz_upgrade {
 				}
 			}
 		}
-
 		if($searchlist) {
-			$file = DISCUZ_ROOT.'./data/update/Discuz! L'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/updatelist.tmp';
+			$file = DISCUZ_ROOT.'./data/update/Discuz! X'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/updatelist.tmp';
 			$upgradedata = file_get_contents($file);
 			$upgradedata = str_replace($searchlist, '', $upgradedata);
 			$fp = fopen($file, 'w');
@@ -159,33 +107,13 @@ class discuz_upgrade {
 		}
 	}
 
-
-	public function check_newversion() {
-
-	    include_once libfile('class/xml');
-	    include_once libfile('function/cache');
-
-	    $return = false;
-	    $upgradefile = $this->upgradeurl.'/newversion/';
-	    $response = xml2array(dfsockopen($upgradefile));
-	    if(isset($response['newversion'])) {
-	        C::t('common_setting')->update('newversion', $response);
-	        $return = true;
-	    } else {
-	        C::t('common_setting')->update('newversion', '');
-	        $return = false;
-	    }
-	    updatecache('setting');
-	    return $return;
-	}
-
 	public function check_upgrade() {
 
 		include_once libfile('class/xml');
 		include_once libfile('function/cache');
 
 		$return = false;
-		$upgradefile = $this->upgradeurl.$this->versionpath().'/'.DISCUZ_RELEASE.'/';
+		$upgradefile = $this->upgradeurl.$this->versionpath().'/'.DISCUZ_RELEASE.'/upgrade.xml';
 		$response = xml2array(dfsockopen($upgradefile));
 		if(isset($response['cross']) || isset($response['patch'])) {
 			C::t('common_setting')->update('upgrade', $response);
@@ -229,7 +157,7 @@ class discuz_upgrade {
 	}
 
 	public function download_file($upgradeinfo, $file, $folder = 'upload', $md5 = '', $position = 0, $offset = 0) {
-		$dir = DISCUZ_ROOT.'./data/update/Discuz! L'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/';
+		$dir = DISCUZ_ROOT.'./data/update/Discuz! X'.$upgradeinfo['latestversion'].' Release['.$upgradeinfo['latestrelease'].']/';
 		$this->mkdirs(dirname($dir.$file));
 		$downloadfileflag = true;
 

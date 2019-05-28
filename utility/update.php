@@ -4,7 +4,7 @@
  *      [Discuz!] (C)2001-2099 Comsenz Inc.
  *      This is NOT a freeware, use is subject to license terms
  *
- *      $Id: update.php 33990 2013-09-13 10:20:02Z nemohou $
+ *      $Id: update.php 36348 2017-01-13 06:36:44Z nemohou $
  */
 
 include_once('../source/class/class_core.php');
@@ -55,18 +55,23 @@ if($_GET['from']) {
 }
 
 $lockfile = DISCUZ_ROOT.'./data/update.lock';
+if($_GET['lock']){
+    @touch($lockfile);
+    @unlink(DISCUZ_ROOT.'./install/update.php');
+    show_msg('<span id="finalmsg">恭喜，数据库结构升级完成！</span>');
+}
 if(file_exists($lockfile) && !$_GET['from']) {
 	show_msg('请您先登录服务器ftp，手工删除 ./data/update.lock 文件，再次运行本文件进行升级。');
 }
 
-$sqlfile = DISCUZ_ROOT.'./install/data/install.sql';
+$devmode = file_exists(DISCUZ_ROOT.'./install/data/install_dev.sql');
+$sqlfile = DISCUZ_ROOT.($devmode ? './install/data/install_dev.sql' : './install/data/install.sql');
 
 if(!file_exists($sqlfile)) {
 	show_msg('SQL文件 '.$sqlfile.' 不存在');
 }
 $first_to_2_5 = !C::t('common_setting')->skey_exists('strongpw');
 $first_to_3_0 = !C::t('common_setting')->skey_exists('antitheft');
-$first_to_L1_0 = !C::t('common_setting')->skey_exists('guestpage1');
 if($_POST['delsubmit']) {
 	if(!empty($_POST['deltables'])) {
 		foreach ($_POST['deltables'] as $tname => $value) {
@@ -118,6 +123,7 @@ if($_GET['step'] == 'start') {
 	} else {
 		show_msg('说明：<br>本升级程序会参照最新的SQL文件，对数据库进行同步升级。<br>
 			请确保当前目录下 ./data/install.sql 文件为最新版本。<br><br>
+			升级完成后会关闭所有插件以确保正常运行，请站长逐个开启每一个插件检测是否兼容新版本。<br><br>
 			<a href="'.$theurl.'?step=prepare'.($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '').'">准备完毕，升级开始</a>');
 	}
 } elseif ($_GET['step'] == 'waitingdb') {
@@ -237,15 +243,6 @@ if($_GET['step'] == 'start') {
 	$i = empty($_GET['i'])?0:intval($_GET['i']);
 	$count_i = count($newtables);
 	if($i>=$count_i) {
-    $mastertables = array('common_member', 'common_member_count', 'common_member_status', 'common_member_profile', 'common_member_field_home', 'common_member_field_forum');
-		foreach($mastertables as $key => $tablename) {
-			if(DB::fetch_first("SHOW TABLES LIKE '".DB::table("{$tablename}_archive")."'")){
-				C::t('common_member_archive')->rebuild_table($key);
-			} else {
-				$createtable = DB::fetch_first('SHOW CREATE TABLE '.DB::table($tablename));
-				DB::query(str_replace(DB::table($tablename), DB::table("{$tablename}_archive"), $createtable['Create Table']));
-			}
-		}
 		show_msg('数据库结构升级完毕，进入下一步数据升级操作', $theurl.'?step=data');
 	}
 	$newtable = $newtables[$i];
@@ -263,9 +260,9 @@ if($_GET['step'] == 'start') {
 
 		$maths[3] = strtoupper($maths[3]);
 		if($maths[3] == 'MEMORY' || $maths[3] == 'HEAP') {
-			$type = helper_dbtool::dbversion() > 4.1 ? " ENGINE=MEMORY".(empty($config['dbcharset'])?'':" DEFAULT CHARSET=$config[dbcharset]" ): " TYPE=HEAP";
+			$type = helper_dbtool::dbversion() > '4.1' ? " ENGINE=MEMORY".(empty($config['dbcharset'])?'':" DEFAULT CHARSET=$config[dbcharset]" ): " TYPE=HEAP";
 		} else {
-			$type = helper_dbtool::dbversion() > 4.1 ? " ENGINE=MYISAM".(empty($config['dbcharset'])?'':" DEFAULT CHARSET=$config[dbcharset]" ): " TYPE=MYISAM";
+			$type = helper_dbtool::dbversion() > '4.1' ? " ENGINE=MYISAM".(empty($config['dbcharset'])?'':" DEFAULT CHARSET=$config[dbcharset]" ): " TYPE=MYISAM";
 		}
 		$usql = $maths[1].$type;
 
@@ -672,6 +669,9 @@ if($_GET['step'] == 'start') {
 			);
 		}
 		if(empty($settings['group_recommend'])) {
+			if($settings['newbiespan'] > 0) {
+				$newsettings['newbiespan'] = round($settings['newbiespan'] * 60);
+			}
 			DB::query("UPDATE ".DB::table('common_member_field_forum')." SET attentiongroup=''");
 
 			$query = DB::query("SELECT f.fid, f.name, ff.description, ff.icon FROM ".DB::table('forum_forum')." f LEFT JOIN ".DB::table('forum_forumfield')." ff USING(fid) WHERE f.status='3' AND f.type='sub' ORDER BY f.commoncredits desc LIMIT 8");
@@ -823,78 +823,8 @@ if($_GET['step'] == 'start') {
 			$newsettings['showfollowcollection'] = 8;
 		}
 
-		if(!isset($settings['allowfastreply'])) {
-		    $newsettings['allowfastreply'] = 1;
-		}
-
-		if(!isset($settings['allowreplybg'])) {
-		    $newsettings['allowreplybg'] = 0;
-		}
-
 		if(!isset($settings['antitheft'])) {
 			$newsettings['antitheft'] = array('allow' => 0, 'max' => 200);
-		}
-
-		if(!isset($settings['police'])) {
-		    $newsettings['police'] = '';
-		}
-		if(!isset($settings['policeurl'])) {
-		    $newsettings['policeurl'] = 'http://www.beian.gov.cn/portal/recordQuery';
-		}
-
-		if(!isset($settings['ec_wxpay_appid'])) {
-		    $newsettings['ec_wxpay_appid'] = '';
-		}
-		if(!isset($settings['ec_wxpay_appsecret'])) {
-		    $newsettings['ec_wxpay_appsecret'] = '';
-		}
-		if(!isset($settings['ec_wxpay_mch_id'])) {
-		    $newsettings['ec_wxpay_mch_id'] = '';
-		}
-		if(!isset($settings['ec_wxpay_key'])) {
-		    $newsettings['ec_wxpay_key'] = '';
-		}
-
-		if($first_to_L1_0) {
-			$newsettings['guestpage1'] = 1;//PC端游客只允许看帖子第一页
-			$newsettings['httpsoptimize'] = 0;
-			$newsettings['authoronleft'] = 0;
-			$newsettings['threadguestlite'] = 1;
-			$newsettings['close_leftinfo'] = 1;
-			$newsettings['close_leftinfo_userctrl'] = 0;
-			$newsettings['allowfastreply'] = 1;
-			$newsettings['showavatars'] = 0;
-			$newsettings['homestyle'] = 0;
-			$newsettings['homepagestyle'] = 0;
-			$newsettings['allowwidthauto'] = 1;
-			$newsettings['switchwidthauto'] = 0;
-			$newsettings['threadmaxpages'] = 100;
-			$newsettings['globalstick'] = 0;
-			$newsettings['cacheindexlife'] = 900;
-			$newsettings['cachethreadlife'] = 900;
-			$newsettings['threadcaches'] = 100;
-			$newsettings['preventrefresh'] = 1;
-			$newsettings['delayviewcount'] = 1;
-			$newsettings['nocacheheaders'] = 0;
-			$newsettings['sessionclose'] = 1;
-			$newsettings['onlineguestsmultiple'] = 10;
-			$newsettings['blockcachetimerange'] = '3,7';
-			$newsettings['allowquickviewprofile'] = 0;
-
-			unset($newsettings['video_allowalbum']);
-			unset($newsettings['video_allowblog']);
-			unset($newsettings['video_allowcomment']);
-			unset($newsettings['video_allowdoing']);
-			unset($newsettings['video_allowfriend']);
-			unset($newsettings['video_allowpoke']);
-			unset($newsettings['video_allowshare']);
-			unset($newsettings['video_allowuserapp']);
-			unset($newsettings['video_allowviewspace']);
-			unset($newsettings['video_allowwall']);
-
-
-			DB::query("ALTER TABLE ".DB::table('common_plugin')." DROP `directory`");
-			DB::query("ALTER TABLE ".DB::table('common_plugin')." DROP `datatables`");
 		}
 
 		if(!isset($settings['repliesrank'])) {
@@ -961,7 +891,6 @@ if($_GET['step'] == 'start') {
 		if($first_to_2_5) {
 			DB::query('UPDATE '.DB::table('common_admingroup')." SET allowmanagecollection='1' WHERE admingid='1' OR admingid='2'");
 		}
-
 		DB::query('UPDATE '.DB::table('common_admingroup')." SET allowmakehtml='1' WHERE admingid=1");
 		show_msg("管理组设置升级完成", "$theurl?step=data&op=$nextop");
 	} elseif($_GET['op'] == 'updatethreadtype') {
@@ -1038,7 +967,7 @@ if($_GET['step'] == 'start') {
 
 		show_msg("道具升级完成", "$theurl?step=data&op=$nextop");
 	} elseif($_GET['op'] == 'updatereport') {
-		$nextop = 'nav';
+		$nextop = 'myappcount';
 		if(!C::t('common_setting')->skey_exists('report_reward')) {
 			$report_uids = array();
 			$founders = $_G['config']['admincp']['founder'] !== '' ? explode(',', str_replace(' ', '', addslashes($_G['config']['admincp']['founder']))) : array();
@@ -1074,6 +1003,16 @@ if($_GET['step'] == 'start') {
 		}
 
 		show_msg("举报升级完成", "$theurl?step=data&op=$nextop");
+	} elseif($_GET['op'] == 'myappcount') {
+
+		$nextop = 'nav';
+		$needupgrade = DB::query("SELECT COUNT(*) FROM ".DB::table('common_myapp_count'), 'SILENT');
+		if($needupgrade) {
+			DB::query("DROP TABLE `".DB::table('common_myapp_count')."`");
+			DB::query("DROP TABLE `".DB::table('home_userapp_stat')."`");
+		}
+		show_msg("漫游应用统计升级完成", "$theurl?step=data&op=$nextop");
+
 	} elseif($_GET['op'] == 'nav') {
 
 		$nextop = 'forumstatus';
@@ -1115,7 +1054,7 @@ if($_GET['step'] == 'start') {
 							DB::update('common_nav', array('available' => 1),
 									"navtype=2 AND type=0 AND identifier IN('feed', 'blog', 'album', 'share', 'doing', 'wall')");
 						}
-						DB::query("REPLACE INTO ".DB::table('common_setting')." VALUES ('homestyle', '0'),('homepagestyle', '0'),('feedstatus', '$homestatus'),('blogstatus', '$homestatus'),('doingstatus', '$homestatus'),('albumstatus', '$homestatus'),('sharestatus', '$homestatus'),('wallstatus', '$homestatus')");
+						DB::query("REPLACE INTO ".DB::table('common_setting')." VALUES ('homestyle', '1'),('homepagestyle', '1'),('feedstatus', '$homestatus'),('blogstatus', '$homestatus'),('doingstatus', '$homestatus'),('albumstatus', '$homestatus'),('sharestatus', '$homestatus'),('wallstatus', '$homestatus')");
 					}
 				}
 				DB::update('common_nav', array('name' => $nav['name'], 'available' => $nav['available'], 'displayorder' => $nav['displayorder']),
@@ -1183,12 +1122,6 @@ if($_GET['step'] == 'start') {
 		if($allowcusbbcodes) {
 			DB::query("UPDATE ".DB::table('forum_bbcode')." SET perm='".implode("\t", $allowcusbbcodes)."' WHERE perm=''");
 		}
-
-		$replacement = DB::result_first("SELECT replacement FROM ".DB::table('forum_bbcode')." WHERE tag = 'qq' AND id = 2 LIMIT 1");
-		if($replacement && strpos($replacement, 'Uin') !== false){
-			DB::query("REPLACE INTO ".DB::table("forum_bbcode")." VALUES ('2','2','qq','bb_qq.gif','<a href=\"http://wpa.qq.com/msgrd?v=3&uin={1}&amp;site=[Discuz!Lite]&amp;from=DiscuzLite&amp;menu=yes\" target=\"_blank\"><img src=\"static/image/common/qq_big.gif\" border=\"0\"></a>','[qq]688888[/qq]','显示 QQ 在线状态，点这个图标可以和他（她）聊天','1','请输入 QQ 号码:<a href=\"\" class=\"xi2\" onclick=\"this.href=\'http://wp.qq.com/set.html?from=discuz&uin=\'+$(\'e_cst1_qq_param_1\').value\" target=\"_blank\" style=\"float:right;\">设置QQ在线状态&nbsp;&nbsp;</a>','1','21','1	2	3	10	11	12	13	14	15	16	17	18	19');");
-		}
-
 		show_msg("自定义代码权限升级完毕", "$theurl?step=data&op=$nextop");
 	} elseif($_GET['op'] == 'stamp') {
 		$nextop = 'block_item';
@@ -1746,6 +1679,7 @@ if($_GET['step'] == 'start') {
 		if(!DB::result_first("SELECT COUNT(*) FROM ".DB::table("forum_threadprofile")." WHERE global=1")) {
 			DB::query("INSERT INTO ".DB::table("forum_threadprofile")." (`id`, `name`, `template`, `global`) VALUES
 				  (1, '默认方案', 'a:2:{s:4:\"left\";s:399:\"{numbercard}\r\n{groupicon}<p>{*}</p>{/groupicon}\r\n{authortitle}<p><em>{*}</em></p>{/authortitle}\r\n{customstatus}<p class=\"xg1\">{*}</p>{/customstatus}\r\n{star}<p>{*}</p>{/star}\r\n{upgradeprogress}<p>{*}</p>{/upgradeprogress}\r\n<dl class=\"pil cl\">\r\n\t<dt>{baseinfo=credits,1}</dt><dd>{baseinfo=credits,0}</dd>\r\n</dl>\r\n{medal}<p class=\"md_ctrl\">{*}</p>{/medal}\r\n<dl class=\"pil cl\">{baseinfo=field_qq,0}</dl>\";s:3:\"top\";s:82:\"<dl class=\"cl\">\r\n<dt>{baseinfo=credits,1}</dt><dd>{baseinfo=credits,0}</dd>\r\n</dl>\";}', 1);");
+			DB::query("REPLACE INTO ".DB::table("forum_bbcode")." VALUES ('2','2','qq','bb_qq.gif','<a href=\"http://wpa.qq.com/msgrd?v=3&uin={1}&amp;site=[Discuz!]&amp;from=discuz&amp;menu=yes\" target=\"_blank\"><img src=\"static/image/common/qq_big.gif\" border=\"0\"></a>','[qq]688888[/qq]','显示 QQ 在线状态，点这个图标可以和他（她）聊天','1','请输入 QQ 号码:<a href=\"\" class=\"xi2\" onclick=\"this.href=\'http://wp.qq.com/set.html?from=discuz&uin=\'+$(\'e_cst1_qq_param_1\').value\" target=\"_blank\" style=\"float:right;\">设置QQ在线状态&nbsp;&nbsp;</a>','1','21','1	2	3	10	11	12	13	14	15	16	17	18	19');");
 		}
 
 		show_msg("布局方案设置升级完毕", "$theurl?step=data&op=$nextop");
@@ -1844,41 +1778,18 @@ if($_GET['step'] == 'start') {
 		}
 		$configfile = DISCUZ_ROOT.'./config/config_global.php';
 		include $configfile;
-
+		DB::query("UPDATE ".DB::table('common_plugin')." SET available='0' WHERE modules NOT LIKE '%s:6:\"system\";i:2;%'");
 		if(save_config_file($configfile, $_config, $default_config, $deletevar)) {
-			show_msg("数据处理完成", "$theurl?step=style");
+			show_msg("数据处理完成", "$theurl?step=delete");
 		} else {
-			show_msg('"config/config_global.php" 文件已更新，由于 "config/" 目录不可写入，我们已将更新的文件保存到 "data/" 目录下，请通过 FTP 软件将其转移到 "config/" 目录下覆盖源文件。<br /><br /><a href="'.$theurl.'?step=style">当您完成上述操作后点击这里继续</a>');
+			show_msg('"config/config_global.php" 文件已更新，由于 "config/" 目录不可写入，我们已将更新的文件保存到 "data/" 目录下，请通过 FTP 软件将其转移到 "config/" 目录下覆盖源文件。<br /><br /><a href="'.$theurl.'?step=delete">当您完成上述操作后点击这里继续</a>');
 		}
 	}
 
-} elseif ($_GET['step'] == 'style') {
-	if(empty($_GET['confirm'])) {
-		show_msg("请确认是否要恢复默认风格？<br /><br /><a href=\"$theurl?step=style&confirm=yes".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 是 ]</a>&nbsp;&nbsp;<a href=\"$theurl?step=pluginsdisable".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 否 ]</a>", '');
-	}
-
-	define('IN_ADMINCP', true);
-	require_once libfile('function/admincp');
-	require_once libfile('function/importdata');
-	$dir = DB::result_first("SELECT t.directory FROM ".DB::table('common_style')." s LEFT JOIN ".DB::table('common_template')." t ON t.templateid=s.templateid WHERE s.styleid='1'");
-	import_styles(1, $dir, 1, 0, 0);
-	C::t('common_setting')->update('styleid', 1);
-
-	show_msg("默认风格已恢复，进入下一步", "$theurl?step=pluginsdisable");
-
-} elseif ($_GET['step'] == 'pluginsdisable') {
-	if(empty($_GET['confirm'])) {
-		show_msg("关闭所有非系统插件以确保正常运行，请站长逐个开启每一个插件检测是否兼容新版本。<br><br>请确认是否要关闭所有非系统插件？<br /><br /><a href=\"$theurl?step=pluginsdisable&confirm=yes".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 是 ]</a>&nbsp;&nbsp;<a href=\"$theurl?step=delete".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 否 ]</a>", '');
-	}
-
-	DB::query("UPDATE ".DB::table('common_plugin')." SET available='0' WHERE modules NOT LIKE '%s:6:\"system\";i:2;%'");
-
-	show_msg("非系统插件已关闭，进入下一步", "$theurl?step=delete");
-
-} elseif ($_GET['step'] == 'delete') {
+}elseif ($_GET['step'] == 'delete') {
 
 	if(!$devmode) {
-		show_msg("数据删除不处理，进入下一步", "$theurl?step=cache");
+		show_msg("数据删除不处理，进入下一步", "$theurl?step=style");
 	}
 
 	$oldtables = array();
@@ -1962,45 +1873,39 @@ if($_GET['step'] == 'start') {
 	}
 
 	if(empty($deltables) && empty($delcolumns)) {
-		echo "<p>与标准数据库相比，没有需要删除的数据表和字段</p><a href=\"$theurl?step=cache".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">请点击进入下一步</a></p>";
+		echo "<p>与标准数据库相比，没有需要删除的数据表和字段</p><a href=\"$theurl?step=style".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">请点击进入下一步</a></p>";
 	} else {
-		echo "<p><input type=\"submit\" name=\"delsubmit\" value=\"提交删除\"></p><p>您也可以忽略多余的表和字段<br><a href=\"$theurl?step=cache".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">直接进入下一步</a></p>";
+		echo "<p><input type=\"submit\" name=\"delsubmit\" value=\"提交删除\"></p><p>您也可以忽略多余的表和字段<br><a href=\"$theurl?step=style".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">直接进入下一步</a></p>";
 	}
 	echo '</form>';
 
 	show_footer();
 	exit();
 
-} elseif ($_GET['step'] == 'cache') {
-
-	if(!$devmode && @$fp = fopen($lockfile, 'w')) {
-		fwrite($fp, ' ');
-		fclose($fp);
+} elseif ($_GET['step'] == 'style') {
+	if(empty($_GET['confirm'])) {
+		show_msg("请确认是否要恢复默认风格？<br /><br /><a href=\"$theurl?step=style&confirm=yes".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 是 ]</a>&nbsp;&nbsp;<a href=\"$theurl?step=cache".($_GET['from'] ? '&from='.rawurlencode($_GET['from']).'&frommd5='.rawurlencode($_GET['frommd5']) : '')."\">[ 否 ]</a>", '');
 	}
+
+	define('IN_ADMINCP', true);
+	require_once libfile('function/admincp');
+	require_once libfile('function/importdata');
+	$dir = DB::result_first("SELECT t.directory FROM ".DB::table('common_style')." s LEFT JOIN ".DB::table('common_template')." t ON t.templateid=s.templateid WHERE s.styleid='1'");
+	import_styles(1, $dir, 1, 0, 0);
+	C::t('common_setting')->update('styleid', 1);
+
+	show_msg("默认风格已恢复，进入下一步", "$theurl?step=cache");
+
+} elseif ($_GET['step'] == 'cache') {
 
 	dir_clear(ROOT_PATH.'./data/template');
 	dir_clear(ROOT_PATH.'./data/cache');
 	dir_clear(ROOT_PATH.'./data/threadcache');
 	dir_clear(ROOT_PATH.'./uc_client/data');
 	dir_clear(ROOT_PATH.'./uc_client/data/cache');
+	savecache('setting', '');
 
-	require_once libfile('function/cache');
-	updatecache();
-
-	require_once libfile('function/block');
-	blockclass_cache();
-
-	if($_G['config']['output']['tplrefresh']) {
-		cleartemplatecache();
-	}
-
-	@unlink(DISCUZ_ROOT.'./install/update.php');
-
-	if($_GET['from']) {
-		show_msg('<span id="finalmsg">缓存更新中，请稍候 ...</span><iframe src="../misc.php?mod=initsys" style="display:none;" onload="window.location.href=\''.$_GET['from'].'\'"></iframe>');
-	} else {
-		show_msg('<span id="finalmsg">缓存更新中，请稍候 ...</span><iframe src="../misc.php?mod=initsys" style="display:none;" onload="document.getElementById(\'finalmsg\').innerHTML = \'恭喜，数据库结构升级完成！为了数据安全，请删除本文件。\'"></iframe>');
-	}
+	show_msg('<span id="finalmsg">缓存更新中，请稍候 ...</span><iframe src="../misc.php?mod=initsys" style="display:none;" onload="window.location.href=\''.$theurl.'?lock=true\'"></iframe>');
 
 }
 
@@ -2109,10 +2014,7 @@ function show_header() {
 	$nowarr = array($_GET['step'] => ' class="current"');
 	if(in_array($_GET['step'], array('waitingdb','prepare'))) {
 		$nowarr = array('sql' => ' class="current"');
-	}elseif(in_array($_GET['step'], array('style','pluginsdisable'))) {
-		$nowarr = array('data' => ' class="current"');
 	}
-	@header("Content-Type:text/html;charset=".$config['charset']);
 	print<<<END
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml">
@@ -2149,10 +2051,9 @@ END;
 }
 
 function show_footer() {
-	$y = date("Y");
 	print<<<END
 	</div>
-	<div id="footer">&copy; Comsenz Inc. 2001-{$y} http://www.comsenz.com</div>
+	<div id="footer">&copy; Comsenz Inc. 2001-2017 http://www.comsenz.com</div>
 	</div>
 	<br>
 	</body>
@@ -2376,7 +2277,7 @@ function create_table($sql, $dbcharset) {
 	$type = strtoupper(preg_replace("/^\s*CREATE TABLE\s+.+\s+\(.+?\).*(ENGINE|TYPE)\s*=\s*([a-z]+?).*$/isU", "\\2", $sql));
 	$type = in_array($type, array('MYISAM', 'HEAP', 'MEMORY')) ? $type : 'MYISAM';
 	return preg_replace("/^\s*(CREATE TABLE\s+.+\s+\(.+?\)).*$/isU", "\\1", $sql).
-	(helper_dbtool::dbversion() > 4.1 ? " ENGINE=$type DEFAULT CHARSET=".$dbcharset : " TYPE=$type");
+	(helper_dbtool::dbversion() > '4.1' ? " ENGINE=$type DEFAULT CHARSET=".$dbcharset : " TYPE=$type");
 }
 
 ?>

@@ -22,33 +22,33 @@ function build_cache_smilies_js() {
 	foreach(C::t('forum_imagetype')->fetch_all_by_type('smiley', 1) as $type) {
 		$return_data = array();
 		$return_datakey = '';
-		$i = 0;$j = 1;$pre = '';
-		$return_type .= 'smilies_type[\'_'.$type['typeid'].'\'] = [\''.str_replace('\'', '\\\'', $type['name']).'\', \''.str_replace('\'', '\\\'', $type['directory']).'\'];';
-		$return_datakey .= 'smilies_array['.$type['typeid'].'] = new Array();';
-		foreach(C::t('common_smiley')->fetch_all_by_type_code_typeid('smiley', $type['typeid']) as $smiley) {
-			if($i >= $spp) {
-				$return_data[$j] = 'smilies_array['.$type['typeid'].']['.$j.'] = ['.$return_data[$j].'];';
-				$j++;$i = 0;$pre = '';
-			}
-			if($size = @getimagesize(DISCUZ_ROOT.'./static/image/smiley/'.$type['directory'].'/'.$smiley['url'])) {
-				$smiley['code'] = str_replace('\'', '\\\'', $smiley['code']);
-				$smileyid = $smiley['id'];
-				$s = smthumb($size, $_G['setting']['smthumb']);
-				$smiley['w'] = $s['w'];
-				$smiley['h'] = $s['h'];
-				$l = smthumb($size);
-				$smiley['lw'] = $l['w'];
-				unset($smiley['id'], $smiley['directory']);
-				$return_data[$j] .= $pre.'[\''.$smileyid.'\', \''.$smiley['code'].'\',\''.str_replace('\'', '\\\'', $smiley['url']).'\',\''.$smiley['w'].'\',\''.$smiley['h'].'\',\''.$smiley['lw'].'\']';
-				if(is_array($fastsmiley[$type['typeid']]) && in_array($smileyid, $fastsmiley[$type['typeid']])) {
-					$return_fast .= $fpre.'[\''.$type['typeid'].'\',\''.$j.'\',\''.$i.'\']';
-					$fpre = ',';
+			$i = 0;$j = 1;$pre = '';
+			$return_type .= 'smilies_type[\'_'.$type['typeid'].'\'] = [\''.str_replace('\'', '\\\'', $type['name']).'\', \''.str_replace('\'', '\\\'', $type['directory']).'\'];';
+			$return_datakey .= 'smilies_array['.$type['typeid'].'] = new Array();';
+			foreach(C::t('common_smiley')->fetch_all_by_type_code_typeid('smiley', $type['typeid']) as $smiley) {
+				if($i >= $spp) {
+					$return_data[$j] = 'smilies_array['.$type['typeid'].']['.$j.'] = ['.$return_data[$j].'];';
+					$j++;$i = 0;$pre = '';
 				}
-				$pre = ',';
+				if($size = @getimagesize(DISCUZ_ROOT.'./static/image/smiley/'.$type['directory'].'/'.$smiley['url'])) {
+					$smiley['code'] = str_replace('\'', '\\\'', $smiley['code']);
+					$smileyid = $smiley['id'];
+					$s = smthumb($size, $_G['setting']['smthumb']);
+					$smiley['w'] = $s['w'];
+					$smiley['h'] = $s['h'];
+					$l = smthumb($size);
+					$smiley['lw'] = $l['w'];
+					unset($smiley['id'], $smiley['directory']);
+					$return_data[$j] .= $pre.'[\''.$smileyid.'\', \''.$smiley['code'].'\',\''.str_replace('\'', '\\\'', $smiley['url']).'\',\''.$smiley['w'].'\',\''.$smiley['h'].'\',\''.$smiley['lw'].'\']';
+					if(is_array($fastsmiley[$type['typeid']]) && in_array($smileyid, $fastsmiley[$type['typeid']])) {
+						$return_fast .= $fpre.'[\''.$type['typeid'].'\',\''.$j.'\',\''.$i.'\']';
+						$fpre = ',';
+					}
+					$pre = ',';
+				}
+				$i++;
 			}
-			$i++;
-		}
-		$return_data[$j] = 'smilies_array['.$type['typeid'].']['.$j.'] = ['.$return_data[$j].'];';
+			$return_data[$j] = 'smilies_array['.$type['typeid'].']['.$j.'] = ['.$return_data[$j].'];';
 		$return_array .= $return_datakey.implode('', $return_data);
 	}
 	$cachedir = DISCUZ_ROOT.'./data/cache/';
