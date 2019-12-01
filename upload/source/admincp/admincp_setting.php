@@ -2468,6 +2468,7 @@ EOT;
 		showtagheader('tbody', 'mobileext', $setting['mobile']['allowmobile'], 'sub');
 		showsetting('setting_mobile_allowmnew', 'settingnew[mobile][allowmnew]', $setting['mobile']['allowmnew'], 'radio');
 		showsetting('setting_mobile_mobileforward', 'settingnew[mobile][mobileforward]', $setting['mobile']['mobileforward'], 'radio');
+        	showsetting('setting_mobile_otherindex', 'settingnew[mobile][otherindex]', $setting['mobile']['otherindex'], 'radio');
 		showsetting('setting_mobile_register', 'settingnew[mobile][mobileregister]', $setting['mobile']['mobileregister'], 'radio');
 		showsetting('setting_mobile_hotthread', 'settingnew[mobile][mobilehotthread]', $setting['mobile']['mobilehotthread'], 'radio');
 		showsetting('setting_mobile_displayorder3', 'settingnew[mobile][mobiledisplayorder3]', $setting['mobile']['mobiledisplayorder3'], 'radio');
@@ -2630,6 +2631,10 @@ EOT;
 
 		$ucdbpassnew = $settingnew['uc']['dbpass'] == '********' ? addslashes(UC_DBPW) : addslashes($settingnew['uc']['dbpass']);
 		$settingnew['uc']['key'] = addslashes($settingnew['uc']['key'] == '********' ? addslashes(UC_KEY) : $settingnew['uc']['key']);
+
+		if(function_exists("mysql_connect") && ini_get("mysql.allow_local_infile")=="1" && constant("UC_DBHOST") != $settingnew['uc']['dbhost']){
+			cpmsg('uc_config_load_data_local_infile_error', '', 'error');
+		}
 
 		if($settingnew['uc']['connect']) {
 			$uc_dblink = function_exists("mysql_connect") ? @mysql_connect($settingnew['uc']['dbhost'], $settingnew['uc']['dbuser'], $ucdbpassnew, 1) : new mysqli($settingnew['uc']['dbhost'], $settingnew['uc']['dbuser'], $ucdbpassnew);
@@ -3330,6 +3335,7 @@ EOT;
 		$settingnew['mobile_arr']['allowmobile'] = intval($settingnew['mobile']['allowmobile']);
 		$settingnew['mobile_arr']['allowmnew'] = intval($settingnew['mobile']['allowmnew']);
 		$settingnew['mobile_arr']['mobileforward'] = intval($settingnew['mobile']['mobileforward']);
+        	$settingnew['mobile_arr']['otherindex'] = intval($settingnew['mobile']['otherindex']);
 		$settingnew['mobile_arr']['mobileregister'] = intval($settingnew['mobile']['mobileregister']);
 		$settingnew['mobile_arr']['mobileseccode'] = intval($settingnew['mobile']['mobileseccode']);
 		$settingnew['mobile_arr']['mobilehotthread'] = intval($settingnew['mobile']['mobilehotthread']);

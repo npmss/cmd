@@ -1358,7 +1358,7 @@ $lang = array
 	'setting_profile_time_zone' => '时区',
 	'setting_profile_tips' => '<li>用户栏目分组至少必须启用一项，如果都不启用，默认为全部启用</li>',
 
-	'setting_threadprofile_tpl_tpls' => '<li>{<b>标记</b>} 不含参数的贴内用户信息标记调用。</li><li>{<b>标记</b>=<b>参数</b>} 含参数的贴内用户信息标记调用，多个参数用","分割</li><li>{<b>标记</b>}<b>HTML</b>{<b>*</b>}<b>HTML</b>{/<b>标记</b>} 当有调用内容有值时显示 {*} 前后的 HTML 内容</li><li>“<b>plugin:插件标识</b>”格式的<b>标记</b>为插件增加的贴内用户信息标记调用。插件开发人员在设计新的贴内用户信息标记前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'setting_threadprofile_tpl_tpls' => '<li>{<b>标记</b>} 不含参数的贴内用户信息标记调用。</li><li>{<b>标记</b>=<b>参数</b>} 含参数的贴内用户信息标记调用，多个参数用","分割</li><li>{<b>标记</b>}<b>HTML</b>{<b>*</b>}<b>HTML</b>{/<b>标记</b>} 当有调用内容有值时显示 {*} 前后的 HTML 内容</li><li>“<b>plugin:插件标识</b>”格式的<b>标记</b>为插件增加的贴内用户信息标记调用。插件开发人员在设计新的贴内用户信息标记前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 
 	'setting_numbercard' => '用户属性名片',
 	'setting_numbercard_row' => '第 {i} 列',
@@ -2066,7 +2066,7 @@ $lang = array
 	'setting_seccheck' => '验证设置',
 	'setting_accountguard' => '帐号保镖',
 	'setting_sec_code_tips' => '<li>使用图片作为验证码文字，图片必须包含字符“2346789BCEFGHJKMPQRTVWXY”24 个字符，且必须为 GIF 透明图片、背景透明、前景黑色，黑色为图片的第一个索引色。图片大小不限制，但建议宽度不大于验证码宽度的 1/4，高度不大于验证码高度。制作完毕后在 static/image/seccode/gif/ 下创建一个新的子目录，目录名任意，把制作完毕的 24 个 GIF 图片上传到新子目录下</li><li>使用图片作为验证码的背景，把制作好的 JPG 图片上传到 static/image/seccode/background/ 目录下，站点将随机使用里面的图片作为验证码的背景</li><li>使用 TTF 字体作为验证码文字，把下载的 TTF 英文字体文件上传到 static/image/seccode/font/en/ 目录下，站点将随机使用里面的字体文件作为验证码的文字</li><li>使用中文图片验证码前，需要把包含完整中文汉字的 TTF 中文字体文件上传到 static/image/seccode/font/ch/ 目录下，站点将随机使用里面的字体文件作为验证码的文字</li><li>系统验证码位于 source/class/seccode/ 目录中，插件验证码位于 source/plugin/插件目录/seccode/ 目录中。</li>',
-	'setting_sec_qaa_tips' => '<li>验证问题应该言简意赅，没有歧义，正常人都能够正确作答。请经常更新验证问答的问题及答案以防止被猜测！</li><li>系统验证问答位于 source/class/secqaa/ 目录中，插件验证问答位于 source/plugin/插件目录/secqaa/ 目录中。</li><li>插件开发人员在设计新的验证问答脚本前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'setting_sec_qaa_tips' => '<li>验证问题应该言简意赅，没有歧义，正常人都能够正确作答。请经常更新验证问答的问题及答案以防止被猜测！</li><li>系统验证问答位于 source/class/secqaa/ 目录中，插件验证问答位于 source/plugin/插件目录/secqaa/ 目录中。</li><li>插件开发人员在设计新的验证问答脚本前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 
 	'setting_sec_seclevel' => '安全验证模式',
 	'setting_sec_seclevel_comment' => '通常情况下，我们推荐您使用高级验证模式。当您站点有较多用户遇到验证码无法通过的时候，您可以使用一般验证模式',
@@ -2584,6 +2584,8 @@ $lang = array
 	'setting_mobile_allowmnew_comment' => '使用新触屏版，新触屏版的 URL 为“' . $_G['siteurl'] . 'm/”',
 	'setting_mobile_mobileforward' => '开启手机浏览器自动跳转',
 	'setting_mobile_mobileforward_comment' => '开启后用户使用手机浏览器访问社区论坛功能页以外页面时自动跳转到论坛首页进行访问',
+	'setting_mobile_otherindex' => '允许非论坛作为首页',
+	'setting_mobile_otherindex_comment' => '开启后手机版也可以将插件、门户等页面设置为首页',
 	'setting_mobile_preview' => '开启电脑访问手机版预览功能',
 	'setting_mobile_preview_comment' => '当电脑浏览器访问手机版时，给予用户引导手机登录的预览页面，用户可以在电脑版中预览手机版首页',
 	'setting_mobile_register' => '是否允许手机版注册',
@@ -3534,6 +3536,7 @@ $lang = array
 	'members_ban_delshare' => '分享',
 	'members_ban_postcomment' => '点评',
 	'members_ban_delcomment' => '评论和留言',
+	'members_ban_delprofile' => '用户资料',
 	'members_ban_delavatar' => '头像',
 	'members_ban_reason' => '理由',
 	'members_ban_reason_comment' => '禁止或解禁用户的理由',
@@ -5211,7 +5214,7 @@ $lang = array
 	'plugins_vars_variable' => '配置变量名(必填)',
 	'plugins_vars_type' => '配置类型',
 	'plugins_add' => '设计新插件',
-	'plugins_add_tips' => '<li><b>本功能仅供插件开发者使用。</b></li><li>插件开发人员在使用本功能前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li><li>警告: 不正确的插件设计或安装可能危及到整个站点的正常使用。</li>',
+	'plugins_add_tips' => '<li><b>本功能仅供插件开发者使用。</b></li><li>插件开发人员在使用本功能前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li><li>警告: 不正确的插件设计或安装可能危及到整个站点的正常使用。</li>',
 	'plugins_import' => '导入插件数据',
 	'plugins_import_ignore_version' => '允许导入老版本 Discuz! 的插件(易产生错误!!)',
 	'plugins_update_to' => '更新到 ',
@@ -5440,7 +5443,7 @@ $lang = array
 
 
 	'magics' => '道具中心',
-	'magics_tips' => '<li>系统道具位于 source/class/magic/ 目录中，插件道具位于 source/plugin/插件目录/magic/ 目录中</li><li>插件开发人员在设计新的道具前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'magics_tips' => '<li>系统道具位于 source/class/magic/ 目录中，插件道具位于 source/plugin/插件目录/magic/ 目录中</li><li>插件开发人员在设计新的道具前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 
 	'magics_config' => '道具基本设置',
 	'magics_config_open' => '是否打开道具中心',
@@ -5514,7 +5517,7 @@ $lang = array
 	'tasks_tips_edit' => '<li>只有任务标示为“可用”状态，会员才可能看到并参与他。</li><li>任务是可以设置开始时间的，您可以预定某个任务何时开始。如果没有设置，那么这个任务默认就是开始了。</li>',
 	'tasks_tips_add_member' => '<li>会员类任务目前包括三种：添加好友、收藏主题、使用道具，此类任务用来鼓励和引导会员使用论坛的某个功能，活跃论坛的氛围。</li><li>设置不同的完成任务条件，可以创造出适合您论坛的任务。</li>',
 	'tasks_tips_add_post' => '<li>帖子类任务目前包括三种：发新主题、发新回复、发新主题/回复。</li><li>帖子类任务如果指定了版块，那么请您注意用户组及版块的权限设置，否则有的用户申请了任务，可能由于无权在该版块发帖，而永远无法完成任务。</li><li>发新回复的任务您可以指定回复某个主题或者某个作者的主题，但请注意该主题必须存在，否则用户无法完成任务。</li>',
-	'tasks_tips_add_type' => '<li>系统任务位于 source/class/task/ 目录中，插件任务位于 source/plugin/插件目录/task/ 目录中。</li><li>插件开发人员在设计新的任务类型前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'tasks_tips_add_type' => '<li>系统任务位于 source/class/task/ 目录中，插件任务位于 source/plugin/插件目录/task/ 目录中。</li><li>插件开发人员在设计新的任务类型前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 	'tasks_edit' => '编辑任务',
 	'tasks_list' => '任务列表',
 	'tasks_edit_basic' => '编辑任务设置',
@@ -5591,7 +5594,7 @@ $lang = array
 	'ec' => '电子商务',
 
 	'ec_alipay' => '支付宝设置',
-	'ec_alipay_tips' => '<li>“支付宝”(<a href="http://www.alipay.com" target="_blank">http://www.alipay.com</a>)是中国领先的网上支付平台，由全球最佳 B2B 公司阿里巴巴公司创建，为 Discuz! 用户提供积分购买及论坛 B2C、C2C 交易平台。您只需进行简单的设置，即可使论坛内容和人气，真成为除广告收入外的重要利润来源，从而实现论坛的规模化经营。</li><li><b>由于涉及现金交易，为避免因操作不当而造成的资金损失，请在开始使用支付宝积分交易功能(不包含支付宝按钮功能)前，务必仔细阅读《用户使用说明书》中有关电子商务的部分，当确认完全理解和接受相关流程及使用方法后再进行相关设置。</b></li><li>您可以设置允许用户通过现金在线支付的方式，为其交易积分账户充值，用于购买帖子内容、购买用户组权限、积分转账或用户组升级等功能。支付宝积分交易功能，需在“<a href="'.$BASESCRIPT.'?action=setting&operation=credits" target="_blank">积分设置</a>”中启用交易积分，并同时设置相应的积分策略以满足不同场合的需要。请务必正确设置您的收款支付宝账号，否则将造成用户付款后积分无法实时到账，造成大量需要人工处理的订单信息。</li><li>除 Discuz! 官方网站或官方论坛另行通知以外，Discuz! 提供的支付宝支付服务每笔交易收取 1.5% 的手续费。请及时关注相关业务的最新通知，各项政策或流程的变更、调整，以 Discuz! 官方网站或官方论坛提供的信息为准。</li><li>您使用支付宝服务是建立在完全自愿的基础上，除 Discuz! 因主观恶意的因素造成的资金损失以外，北京康盛新创科技有限责任公司不对因使用此功能造成的任何损失承担责任。</li><li>支付宝业务咨询 Email 为 <a href="mailto:6688@taobao.com">6688@taobao.com</a>；支付宝客户服务电话为 +86-0571-88156688。</li>',
+	'ec_alipay_tips' => '<li>“支付宝”(<a href="http://www.alipay.com" target="_blank">http://www.alipay.com</a>)是中国领先的网上支付平台，由全球最佳 B2B 公司阿里巴巴公司创建，为 Discuz! 用户提供积分购买及论坛 B2C、C2C 交易平台。您只需进行简单的设置，即可使论坛内容和人气，真成为除广告收入外的重要利润来源，从而实现论坛的规模化经营。</li><li><b>由于涉及现金交易，为避免因操作不当而造成的资金损失，请在开始使用支付宝积分交易功能(不包含支付宝按钮功能)前，务必仔细阅读《用户使用说明书》中有关电子商务的部分，当确认完全理解和接受相关流程及使用方法后再进行相关设置。</b></li><li>您可以设置允许用户通过现金在线支付的方式，为其交易积分账户充值，用于购买帖子内容、购买用户组权限、积分转账或用户组升级等功能。支付宝积分交易功能，需在“<a href="'.$BASESCRIPT.'?action=setting&operation=credits" target="_blank">积分设置</a>”中启用交易积分，并同时设置相应的积分策略以满足不同场合的需要。请务必正确设置您的收款支付宝账号，否则将造成用户付款后积分无法实时到账，造成大量需要人工处理的订单信息。</li><li>除 Discuz! 官方网站或官方论坛另行通知以外，Discuz! 提供的支付宝支付服务每笔交易收取 1.5% 的手续费。请及时关注相关业务的最新通知，各项政策或流程的变更、调整，以 Discuz! 官方网站或官方论坛提供的信息为准。</li><li>您使用支付宝服务是建立在完全自愿的基础上，除 Discuz! 因主观恶意的因素造成的资金损失以外，腾讯云不对因使用此功能造成的任何损失承担责任。</li><li>支付宝业务咨询 Email 为 <a href="mailto:6688@taobao.com">6688@taobao.com</a>；支付宝客户服务电话为 +86-0571-88156688。</li>',
 	'ec_alipay_account' => '收款支付宝账号',
 	'ec_alipay_account_comment' => '如果开启兑换或交易功能，请填写真实有效的支付宝账号，用于收取用户以现金兑换交易积分的相关款项。如账号无效或安全码有误，将导致用户支付后无法正确对其积分账户自动充值，或进行正常的交易对其积分账户自动充值，或进行正常的交易。<br />如您没有支付宝帐号，<a href="http://www.alipay.com/redir.do?id=307&site=allbbs&target=https%3A%2F%2Fwww.alipay.com%2Fuser%2Fuser_register.htm" target="_blank">请点击这里注册</a>',
 	'ec_alipay_check' => '支付测试',
@@ -5629,7 +5632,7 @@ $lang = array
 	'ec_tenpay_checklink_virtualgoods' => '虚拟商品订单测试',
 	'ec_tenpay_checklink_goods' => '实物商品订单测试',
 	'ec_tenpay_tips' => '<li>“财付通”(<a href="http://www.tenpay.com" target="_blank">http://www.tenpay.com</a>)是腾讯公司创办的中国领先的在线支付平台，为 Discuz! 用户提供积分购买交易平台。</li><li>如需启用积分充值即时到账，请使用财付通<b>企业版</b>并开通<b>即时到账交易</b>；否则，只需要开通“<b>中介担保交易</b>”即可。</li>
-<li><b>由于涉及现金交易，为避免因操作不当而造成的资金损失，请在开始使用财付通积分交易功能(不包含财付通按钮功能)前，务必仔细阅读《用户使用说明书》中有关电子商务的部分，当确认完全理解和接受相关流程及使用方法后再进行相关设置。</b></li><li>您可以设置允许用户通过现金在线支付的方式，为其交易积分账户充值，用于购买帖子内容、购买用户组权限、积分转账或用户组升级等功能。财付通积分交易功能，需在“积分设置”中启用交易积分，并同时设置相应的积分策略以满足不同场合的需要。请务必正确设置您的收款财付通账号，否则将造成用户付款后积分无法实时到账，造成大量需要人工处理的订单信息。</li><li>除 Discuz! 官方网站或官方论坛另行通知以外，Discuz! 提供的财付通支付服务每笔交易收取 1% 的手续费。请及时关注相关业务的最新通知，各项政策或流程的变更、调整，以 Discuz! 官方网站或官方论坛提供的信息为准。</li><li>您使用财付通服务是建立在完全自愿的基础上，除 Discuz! 因主观恶意的因素造成的资金损失以外，北京康盛新创科技有限责任公司不对因使用此功能造成的任何损失承担责任。</li><li>财付通服务热线：0755-83762288-2(全天24小时服务热线)</li>',
+<li><b>由于涉及现金交易，为避免因操作不当而造成的资金损失，请在开始使用财付通积分交易功能(不包含财付通按钮功能)前，务必仔细阅读《用户使用说明书》中有关电子商务的部分，当确认完全理解和接受相关流程及使用方法后再进行相关设置。</b></li><li>您可以设置允许用户通过现金在线支付的方式，为其交易积分账户充值，用于购买帖子内容、购买用户组权限、积分转账或用户组升级等功能。财付通积分交易功能，需在“积分设置”中启用交易积分，并同时设置相应的积分策略以满足不同场合的需要。请务必正确设置您的收款财付通账号，否则将造成用户付款后积分无法实时到账，造成大量需要人工处理的订单信息。</li><li>除 Discuz! 官方网站或官方论坛另行通知以外，Discuz! 提供的财付通支付服务每笔交易收取 1% 的手续费。请及时关注相关业务的最新通知，各项政策或流程的变更、调整，以 Discuz! 官方网站或官方论坛提供的信息为准。</li><li>您使用财付通服务是建立在完全自愿的基础上，除 Discuz! 因主观恶意的因素造成的资金损失以外，腾讯云不对因使用此功能造成的任何损失承担责任。</li><li>财付通服务热线：0755-83762288-2(全天24小时服务热线)</li>',
 
 	'ec_orders' => '积分充值订单',
 	'ec_orders_tips' => '<li>请在开始使用支付宝积分交易订单管理功能(不包含支付宝按钮功能)前，务必仔细阅读《用户使用说明书》中有关电子商务的部分，当确认完全理解和接受相关流程及使用方法后再进行相关操作。</li><li>如果您的用户反映在线支付后无法自动为其积分账户充值，可能是由于您的支付宝账户的通知接口设置有误，或您的网站无法被支付宝通知系统正常访问所致。您可以登录支付宝交易管理界面，通过比对交易详情人工确认相关订单。</li><li>订单信息保留 60 天，因此您只能查询和管理 60 天之内的订单信息，超过 60 天的信息将被自动删除。</li>',
@@ -6225,7 +6228,7 @@ $lang = array
 	'adv_custom_edit' => '编辑自定义广告位',
 	'adv_custom_delete' => '删除此自定义广告位吗？',
 	'adv_customnamenew' => '请输入此自定义广告位的新名称:',
-	'adv_list_tip' => '<li>您可以使用“自定义广告位”在页面的任意位置添加广告位。<li>系统广告位位于 source/class/adv/ 目录中，插件广告位位于 source/plugin/插件目录/adv/ 目录中。</li><li>插件开发人员在设计新的广告位前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'adv_list_tip' => '<li>您可以使用“自定义广告位”在页面的任意位置添加广告位。<li>系统广告位位于 source/class/adv/ 目录中，插件广告位位于 source/plugin/插件目录/adv/ 目录中。</li><li>插件开发人员在设计新的广告位前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 	'adv_custom_target' => '自定义投放范围，输入站点根目录程序文件名(无扩展名)，多个用逗号分隔',
 
 	'adv_edit' => '编辑广告',
@@ -6703,7 +6706,7 @@ $lang = array
 	'blockstyle_add_parity' => '当前数据是否在奇数行',
 
 	'blockxml' => '第三方模块',
-	'blockxml_tips' => '<li>插件开发人员在设计新的第三方模块前请务必仔细阅读《<a href="https://open.dismall.net/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
+	'blockxml_tips' => '<li>插件开发人员在设计新的第三方模块前请务必仔细阅读《<a href="https://open.dismall.com/?!devdoc" target="_blank">Discuz! 技术文档</a>》中的内容。</li>',
 	'blockxml_list' => '第三方模块列表',
 	'blockxml_name' => '模块名称',
 	'blockxml_signtype_no' => '不使用签名',

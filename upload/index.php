@@ -109,7 +109,7 @@ if(!empty($_SERVER['QUERY_STRING']) && is_numeric($_SERVER['QUERY_STRING'])) {
 				}
 			} else {
 				if($jump) {
-					$url = empty($_ENV['domain']['app']['default']) ? (!empty($_ENV['domain']['defaultindex']) ? $_ENV['domain']['defaultindex'] : 'forum.php') : '//'.$_ENV['domain']['app']['default'];
+					$url = empty($_ENV['domain']['app']['default']) ? (!empty($_ENV['domain']['defaultindex']) ? $_ENV['domain']['defaultindex'] : 'forum.php') : ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http').'://'.$_ENV['domain']['app']['default'];
 				} else {
 					$_ENV['curapp'] = 'forum';
 				}
@@ -131,7 +131,6 @@ if(!empty($url)) {
 		}
 		require './'.$parse['path'];
 	} else {
-		header("HTTP/1.1 301 Moved Permanently");
 		header("location: $url");
 	}
 } else {
