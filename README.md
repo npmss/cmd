@@ -12,4 +12,4 @@ https://gitee.com/3dming/DiscuzL/attach_files
 - Discuz! 应用中心：https://addon.dismall.com
 - Discuz! 开放平台：https://open.dismall.com
 
-![输入图片说明](https://images.gitee.com/uploads/images/2019/1201/204503_13d83b85_134400.png "qqqun.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0414/013740_25adce24_134400.png "qqqun.png")
